@@ -1,0 +1,102 @@
+/* .Rooms {
+    text-align: center;
+}
+
+.Rooms-header {
+    background-color: #282c34;
+    min-height: 10vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+}
+
+.Rooms-content {
+    min-height: 90vh;
+    color: white;
+}
+
+.Rooms-list {
+    margin: 0px;
+    padding: 75px 5px;
+    list-style: none;
+}
+
+.Rooms-list-item {
+    position: relative;
+    border-radius: 2px;
+    border: 2px rgb(228, 228, 228) solid;
+    margin: 5px;
+    width: 250px;
+    height: 150px;
+    display: inline-flex;
+    text-align: center;
+    flex-direction: column;
+}
+
+.Rooms-list-item:hover {
+    border: 2px rgb(187, 187, 187) solid;
+}
+
+.Rooms-list-item img {
+    width: inherit;
+    height: inherit;
+    display: block;
+}
+
+.Rooms-list-item .label {
+    position: absolute;
+    width: 100%;
+    padding: 10px 5px;
+    box-sizing: border-box;
+    background: #000000b9;
+    bottom: 0px;
+}
+
+.Room-single img {
+    margin: 15px 5px;
+    max-width: calc(95% - 5px);
+}
+
+.Rooms a {
+    text-decoration: none;
+    color: inherit;
+    width: inherit;
+    height: inherit;
+}
+
+@media screen and (max-width: 800px) {
+    .Rooms {
+        width: 100%;
+        height: auto;
+        text-align: center;
+        position: relative;
+        padding-top: 0;
+    }
+
+    .Rooms a {
+        width: initial;
+        min-height: 50px;
+         padding-top: 56.25%;  16:9 Aspect Ratio  
+    }
+
+    .Rooms-list {
+        padding: 5px 5px;
+    }
+
+    .Rooms-list-item {
+        margin: 10px auto;
+        width: 95%;
+        height: auto;
+    }
+
+    .Rooms-list-item img {
+        width: 100%;
+    }
+} */
+
+.Guest-list {
+    color: white;
+}

@@ -1,0 +1,80 @@
+import pool from '../js/sql';
+import { ResourceError } from '../dtos/Error';
+import { RowDataPacket } from 'mysql';
+import { Dto } from '../dtos/Dto';
+
+export async function query(query: string, args?: Array<string | number | boolean>) {
+    try {
+        if (args) {
+            for (let i = 0; i < args.length; i++) {
+                if (args[i] === undefined) {
+                    throw new ResourceError(`Undefined argument in query in position ${i}.`);
+                } else if (args[i] === true) {
+                    args[i] = 1;
+                } else if (args[i] === false) {
+                    args[i] = 0;
+                }
+            }
+            console.info(`Executing query: '${query}' with [${args.map(x => `'${x}'`).join(', ')}]`);
+        } else {
+            console.info(`Executing query: '${query}'`);
+        }
+        const response = await pool.promise().execute(query, args);
+        return response[0] as RowDataPacket[];
+    } catch (error) {
+        console.log(error);
+        throw new ResourceError(`SQL error.`, error, 500);
+    }
+}
+
+export async function querySelectAll<T extends Dto>(obj: { new(): T; }, where?: { [key: string]: string | number }): Promise<T[]> {
+    const results: T[] = [];
+    const from = new obj().dtoName;
+    const whereValues: any[] = [];
+    const whereNames: string[] = [];
+    if (where) {
+        for (const key in where) {
+            if (whereNames.length > 0) {
+                whereNames.push(' AND ');
+            } else {
+                whereNames.push('WHERE ');
+            }
+            whereValues.push(where[key]);
+            whereNames.push(`\`${key}\` = ?`);
+        }
+    }
+    if (!from) {
+        throw new ResourceError(`Object ${obj} has no dtoName.`);
+    }
+    const preparedQuery = `SELECT * FROM \`${from}\` ${whereNames ? whereNames.join('') : undefined}`;
+    const rows = await query(preparedQuery, whereValues ? whereValues : undefined) as T[];
+    for (const row of rows) {
+        const newObj = new obj();
+        Object.assign(newObj, row);
+        results.push(newObj);
+    }
+    return results;
+}
+
+export async function queryInsert<T extends Dto>(obj: { new(): T; }, valueNamePairs: { [key: string]: string | number | boolean }) {
+    const tableName = new obj().dtoName;
+    const values: any[] = [];
+    const names = [];
+    const placeholders: string[] = [];
+    if (!tableName) throw new ResourceError(`Object ${obj} has no dtoName.`, obj, 500);
+    if (!valueNamePairs || Object.keys(valueNamePairs).length === 0)
+        throw new ResourceError(`Cannot insert, no values defined.`, valueNamePairs, 500);
+    for (const key in valueNamePairs) {
+        if (names.length > 0) {
+            names.push(', ');
+            placeholders.push(', ');
+        }
+        values.push(valueNamePairs[key]);
+        names.push(`\`${key}\``);
+        placeholders.push('?');
+    }
+
+    const preparedQuery = `INSERT INTO \`${tableName}\` (${names.join('')}) VALUES (${placeholders.join('')})`;
+    const result = await query(preparedQuery, values) as any;
+    return result.insertId as number;
+}

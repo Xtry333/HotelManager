@@ -1,0 +1,18 @@
+{
+  "name": "client-vue",
+  "version": "1.0.0",
+  "description": "Hotel Manager Client Vue",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Xtry333/HotelManager/client-vue"
+  },
+  "author": "Xtry333",
+  "license": "ISC",
+  "dependencies": {
+    "vue": "^2.6.10"
+  }
+}

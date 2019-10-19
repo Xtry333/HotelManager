@@ -509,9 +509,8 @@ const Hello_1 = __webpack_require__(/*! ./components/Hello */ "./src/components/
 __webpack_require__(/*! ./style.less */ "./src/style.less");
 class App extends React.Component {
     componentDidMount() {
-        console.info(`${this.props.title}`);
+        console.info(`Hi ${this.props.title}`);
     }
-    ;
     render() {
         return (React.createElement("div", { id: "App" },
             React.createElement(Hello_1.Hello, { compiler: "TypeScript", framework: "React" })));

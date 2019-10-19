@@ -7,8 +7,8 @@ export interface AppProps { title: "React App!" }
 
 export class App extends React.Component<AppProps, {}> {
     componentDidMount() {
-        console.info(`${this.props.title}`);
-    };
+        console.info(`Hi ${this.props.title}`);
+    }
 
     render() {
         return (

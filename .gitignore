@@ -2,6 +2,7 @@
 /node_modules
 /client-ng/node_modules/
 /client-vue/node_modules/
+/client-react/node_modules/
 /client/node_modules/
 /server/node_modules/
 hotelmanager.sql

@@ -23,7 +23,8 @@
     "typescript": "^3.6.4",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.9",
-    "webpack-dev-server": "^3.8.2"
+    "webpack-dev-server": "^3.8.2",
+    "write-file-webpack-plugin": "^4.5.1"
   },
   "dependencies": {
     "react": "^16.10.2",

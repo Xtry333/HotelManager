@@ -1,17 +1,12 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
+const WriteFilePlugin = require('write-file-webpack-plugin');
 
 const env = 'development';
 const isProduction = env === 'production';
 
 module.exports = {
     mode: env,
-    devServer: {
-        watchContentBase: true,
-        contentBase: path.join(__dirname, '.'),
-        compress: true,
-        port: 9000
-    },
 
     // Enable sourcemaps for debugging webpack's output.
     devtool: "source-map",
@@ -20,6 +15,11 @@ module.exports = {
         // Add '.ts' and '.tsx' as resolvable extensions.
         extensions: [".ts", ".tsx", ".js"],
         modules: ["src", "node_modules"]
+    },
+
+    output: {
+        filename: 'main.js',
+        path: path.join(__dirname, './dist'),
     },
 
     module: {
@@ -58,7 +58,14 @@ module.exports = {
         ]
     },
 
-    plugins: isProduction ? [new MiniCssExtractPlugin()] : [],
+    devServer: {
+        watchContentBase: true,
+        contentBase: path.resolve(__dirname, '.'),
+        compress: true,
+        port: 9000
+    },
+
+    plugins: isProduction ? [new MiniCssExtractPlugin()] : [new WriteFilePlugin()],
     // When importing a module whose path matches one of the following, just
     // assume a corresponding global variable exists and use that instead.
     // This is important because it allows us to avoid bundling all of our

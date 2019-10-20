@@ -7,7 +7,8 @@ const isProduction = env === 'production';
 module.exports = {
     mode: env,
     devServer: {
-        contentBase: path.join(__dirname, 'dist'),
+        watchContentBase: true,
+        contentBase: path.join(__dirname, '.'),
         compress: true,
         port: 9000
     },
@@ -17,7 +18,8 @@ module.exports = {
 
     resolve: {
         // Add '.ts' and '.tsx' as resolvable extensions.
-        extensions: [".ts", ".tsx"]
+        extensions: [".ts", ".tsx", ".js"],
+        modules: ["src", "node_modules"]
     },
 
     module: {

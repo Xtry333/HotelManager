@@ -1,8 +1,9 @@
 {
   "name": "client-react",
   "version": "1.0.0",
-  "description": "",
+  "description": "Client for Hotel Manager written on React",
   "main": "index.js",
+  "repository": "https://github.com/Xtry333/HotelManager/client-react",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -21,7 +22,8 @@
     "ts-loader": "^6.2.0",
     "typescript": "^3.6.4",
     "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.9"
+    "webpack-cli": "^3.3.9",
+    "webpack-dev-server": "^3.8.2"
   },
   "dependencies": {
     "react": "^16.10.2",

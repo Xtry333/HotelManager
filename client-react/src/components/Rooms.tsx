@@ -3,15 +3,19 @@ import { Route, Link, Redirect, RouteComponentProps } from "react-router-dom";
 import { Get } from '../Server';
 import { RoomView } from '../dtos/Room.dto';
 
-export interface RoomProps { room: number } 
+export interface RoomProps { roomId: number }
 export interface RoomState { room: RoomView, editMode: boolean }
 
 class Room extends React.Component<RoomProps & RouteComponentProps, RoomState> {
-    //state = { room: -1, editMode: false, singout: false };
+    constructor() {
+        super(undefined, undefined);
+        this.state = { room: null, editMode: false };
+    }
+
 
     async componentDidMount() {
         try {
-            const id = this.props.room;
+            const id = this.props.roomId;
             const results = await Get(`room/${id}`, undefined, this.props.history);
             this.setState({ room: results.data });
         } catch (error) {
@@ -74,13 +78,13 @@ function RoomItem(props: any) {
     );
 }
 
-export interface RoomsProps {};
-export interface RoomsState {rooms: RoomView[]};
+export interface RoomsProps { };
+export interface RoomsState { rooms: RoomView[] };
 
 class Rooms extends React.Component<RoomsProps & RouteComponentProps, RoomsState> {
     constructor() {
         super(undefined, undefined);
-        this.state = {rooms: []};
+        this.state = { rooms: [] };
     }
 
     componentDidMount() {
@@ -108,7 +112,7 @@ class Rooms extends React.Component<RoomsProps & RouteComponentProps, RoomsState
                 <header className="Rooms-header">Rooms Management</header>
                 <div className='Rooms-content'>
                     <Route path='/rooms/' exact render={p => <RoomList {...p} >{rooms}</RoomList>} />
-                    <Route path='/room/:id' render={p => <Room room={p.match.params.id} {...p} />} />
+                    <Route path='/room/:id' render={p => <Room roomId={p.match.params.id} {...p} />} />
                 </div>
             </div>
         );

@@ -6,7 +6,7 @@ import { Login, Logout } from './components/Login';
 //import Future from './components/Future';
 import Home from './components/Home';
 import Rooms from './components/Rooms';
-//import Guests from './components/Guests';
+import Guests from './components/Guests';
 //import Reservations from './components/Reservations';
 //import Confirmation from './components/Confirmation';
 
@@ -46,7 +46,7 @@ class App extends React.Component<{}, AppState> {
                                 {/* <Route path='/future/' component={Future} /> */}
                                 <Route path='/room*' component={Rooms} />
                                 {/* <Route path='/reservation*' component={Reservations} /> */}
-                                {/* <Route path='/guests/' component={Guests} /> */}
+                                <Route path='/guests/' component={Guests} />
                             </div>
                         </div>
                     ) : (<Redirect to='/login' />))} />

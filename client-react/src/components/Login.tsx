@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Server from './Server';
+import Server from '../Server';
 import { Redirect, RouteComponentProps } from 'react-router-dom';
 import * as Crypto from 'crypto';
 

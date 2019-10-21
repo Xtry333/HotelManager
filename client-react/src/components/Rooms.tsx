@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Route, Link, Redirect, RouteComponentProps } from "react-router-dom";
-import { Get } from './Server';
+import { Get } from '../Server';
 import { RoomView } from '../dtos/Room.dto';
 
 export interface RoomProps { room: number } 

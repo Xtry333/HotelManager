@@ -54,28 +54,47 @@ class Room extends React.Component<RoomProps & RouteComponentProps, RoomState> {
     }
 }
 
-function RoomList(props: any) {
-    //console.log(props)
-    return (
-        <ul className='Rooms-list'>
-            {props.children}
-        </ul>
-    );
+// function RoomList(props: any) {
+//     //console.log(props)
+//     return (
+//         <ul className='Rooms-list'>
+//             {props.children}
+//         </ul>
+//     );
+// }
+
+interface RoomListProps { rooms: RoomView[] }
+interface RoomListState { }
+
+class RoomList extends React.Component<RoomListProps & RouteComponentProps, RoomListState> {
+    render() {
+        const rooms = this.props.rooms.map(room => <RoomListItem key={(room as RoomView).roomID} room={room} />);
+        return (
+            <ul className='Rooms-list'>
+                {rooms}
+            </ul>
+        );
+    }
 }
 
-function RoomItem(props: any) {
-    const room = props.room;
-    return (
-        <li className='Rooms-list-item'>
-            <Link to={`room/${room.roomID}`}>
-                <div className='label'>
-                    {room.roomNumber}, {room.floorCaption}
-                    <div className='Room-color-badge' style={{ background: room.floorColor }}></div>
-                </div>
-                <img src={room.defaultImageLink} alt='' />
-            </Link>
-        </li>
-    );
+interface RoomListItemProps { room: RoomView }
+interface RoomListItemState { }
+
+class RoomListItem extends React.Component<RoomListItemProps, RoomListItemState> {
+    render() {
+        const room = this.props.room;
+        return (
+            <li className='Rooms-list-item'>
+                <Link to={`room/${room.roomID}`}>
+                    <div className='label'>
+                        {room.roomNumber}, {room.floorCaption}
+                        <div className='Room-color-badge' style={{ background: room.floorColor }}></div>
+                    </div>
+                    <img src={room.defaultImageLink} alt='' />
+                </Link>
+            </li>
+        );
+    }
 }
 
 export interface RoomsProps { };
@@ -106,12 +125,11 @@ class Rooms extends React.Component<RoomsProps & RouteComponentProps, RoomsState
     }
 
     render() {
-        const rooms = this.state.rooms.map(room => <RoomItem key={(room as RoomView).roomID} room={room} />);
         return (
             <div className='Rooms'>
                 <header className="Rooms-header">Rooms Management</header>
                 <div className='Rooms-content'>
-                    <Route path='/rooms/' exact render={p => <RoomList {...p} >{rooms}</RoomList>} />
+                    <Route path='/rooms/' exact render={p => <RoomList {...p} rooms={this.state.rooms} />} />
                     <Route path='/room/:id' render={p => <Room roomId={p.match.params.id} {...p} />} />
                 </div>
             </div>

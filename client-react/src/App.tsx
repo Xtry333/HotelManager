@@ -1,13 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import { HashRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import Nav from './components/Navigation';
 import { Login, Logout } from './components/Login';
 //import Future from './components/Future';
 import Home from './components/Home';
 import Rooms from './components/Rooms';
 import Guests from './components/Guests';
-//import Reservations from './components/Reservations';
+import Reservations from './components/Reservations';
 //import Confirmation from './components/Confirmation';
 
 import './styles/style.less';
@@ -45,7 +45,7 @@ class App extends React.Component<{}, AppState> {
                                 <Route path='/' exact component={Home} />
                                 {/* <Route path='/future/' component={Future} /> */}
                                 <Route path='/room*' component={Rooms} />
-                                {/* <Route path='/reservation*' component={Reservations} /> */}
+                                <Route path='/reservation*' component={Reservations} />
                                 <Route path='/guests/' component={Guests} />
                             </div>
                         </div>

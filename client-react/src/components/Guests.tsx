@@ -132,7 +132,7 @@ class Guests extends React.Component<GuestsProps & RouteComponentProps, GuestsSt
         this.fetchGuests();
     }
 
-    async fetchGuests() {
+    fetchGuests = async () => {
         this.setState({guests: await Server.GetAllBy('guest', GuestDto, this.props.history)});
     }
 

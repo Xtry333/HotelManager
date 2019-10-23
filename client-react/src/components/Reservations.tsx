@@ -144,7 +144,7 @@ class Reservations extends React.Component<ReservationsProps & RouteComponentPro
         this.fetchReservations();
     }
 
-    async fetchReservations() {
+    fetchReservations = async () => {
         this.setState({ reservations: await Server.GetAllBy('reservation', ResSummaryView, this.props.history) });
     }
 

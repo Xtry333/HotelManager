@@ -111,7 +111,7 @@ class Rooms extends React.Component<RoomsProps & RouteComponentProps, RoomsState
         this.fetchRooms();
     }
 
-    async fetchRooms() {
+    fetchRooms = async () => {
         this.setState({ rooms: await Server.GetAllBy('room', RoomView, this.props.history) });
     }
 

@@ -59,6 +59,7 @@ module.exports = {
         watchContentBase: true,
         contentBase: path.resolve(__dirname, './public/'),
         compress: true,
+        publicPath: '/assets/',
         port: 9000
     },
 

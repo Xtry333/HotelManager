@@ -4,7 +4,7 @@ import { Get } from '../Server';
 
 import { ResSummaryView, Reservation as ReservationDto } from '../dtos/Reservation.dto';
 
-export interface ReservationProps { reservationId: number }
+export interface ReservationProps { reservationId: number, refresh: Function }
 export interface ReservationState { reservation: ResSummaryView, editMode: boolean }
 
 class Reservation extends React.Component<ReservationProps & RouteComponentProps, ReservationState> {
@@ -40,6 +40,7 @@ class Reservation extends React.Component<ReservationProps & RouteComponentProps
             console.log(`Wow, staph! ${resID}`);
             //await Delete(`reservation/${resId}`);
             //
+            this.props.refresh();
             this.props.history.push(`/reservations`);
             //this.setState({redirectTo: '/reservations'});
         }
@@ -161,7 +162,7 @@ class Reservations extends React.Component<ReservationsProps, ReservationsState>
                 <header className="Reservations-header">Reservations Management</header>
                 <div className='Reservations-content'>
                     <Route path='/reservations/' exact render={p => <ReservationList {...p} reservations={this.state.reservations} />} />
-                    <Route path='/reservation*/:id' render={p => <Reservation reservationId={p.match.params.id} {...p} />} />
+                    <Route path='/reservation*/:id' render={p => <Reservation reservationId={p.match.params.id} {...p} refresh={this.getReservations} />} />
                 </div>
             </div>
         );

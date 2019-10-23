@@ -134,7 +134,7 @@ class ReservationListItem extends React.Component<ReservationListItemProps, Rese
 interface ReservationsProps { }
 interface ReservationsState { searchquery: string, reservations: ResSummaryView[] }
 
-class Reservations extends React.Component<ReservationsProps, ReservationsState> {
+class Reservations extends React.Component<ReservationsProps & RouteComponentProps, ReservationsState> {
     constructor() {
         super(undefined, undefined);
         this.state = { searchquery: '', reservations: [] };
@@ -145,7 +145,7 @@ class Reservations extends React.Component<ReservationsProps, ReservationsState>
     }
 
     async fetchReservations() {
-        this.setState({ reservations: await Server.GetAllByDTO(ResSummaryView) });
+        this.setState({ reservations: await Server.GetAllBy('reservation', ResSummaryView, this.props.history) });
     }
 
     render() {

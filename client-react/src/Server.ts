@@ -47,10 +47,10 @@ export function Delete(url: string, config?: AxiosRequestConfig, history?: Route
     }
 }
 
-export async function GetAllByDTO<T extends Dto>(obj: { new(): T; }, history?: RouteComponentProps["history"]) {
+export async function GetAllBy<T extends Dto>(url: string, obj: { new(): T; }, history?: RouteComponentProps["history"]) {
     try {
         const expectedDtoName = (new obj).dtoName;
-        const response = await Get(expectedDtoName, {}, history);
+        const response = await Get(url, {}, history);
         const resArray: T[] = [];
         for (const dto of response.data) {
             if (dto.dtoName === expectedDtoName) {

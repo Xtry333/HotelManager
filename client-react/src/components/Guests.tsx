@@ -122,7 +122,7 @@ class GuestListItem extends React.Component<GuestListItemProps, GuestListItemSta
 export interface GuestsProps { room: number }
 export interface GuestsState { guests: GuestDto[] }
 
-class Guests extends React.Component<GuestsProps, GuestsState> {
+class Guests extends React.Component<GuestsProps & RouteComponentProps, GuestsState> {
     constructor() {
         super(undefined, undefined);
         this.state = { guests: [] };
@@ -133,7 +133,7 @@ class Guests extends React.Component<GuestsProps, GuestsState> {
     }
 
     async fetchGuests() {
-        this.setState({guests: await Server.GetAllByDTO(GuestDto)});
+        this.setState({guests: await Server.GetAllBy('guest', GuestDto, this.props.history)});
     }
 
     render() {

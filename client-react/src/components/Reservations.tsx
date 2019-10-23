@@ -153,7 +153,9 @@ class Reservations extends React.Component<ReservationsProps & RouteComponentPro
             <div className='Reservations'>
                 <header className="Reservations-header">Reservations Management</header>
                 <div className='Reservations-content'>
-                    <Route path='/reservations/' exact render={p => <ReservationList {...p} reservations={this.state.reservations} />} />
+                    <Route path='/reservations/' exact render={p =>
+                        <ReservationList {...p} reservations={this.state.reservations} />
+                    } />
                     <Route path='/reservation*/:id' render={p =>
                         <Reservation reservationId={p.match.params.id} {...p} refresh={this.fetchReservations} />
                     } />

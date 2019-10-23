@@ -120,8 +120,12 @@ class Rooms extends React.Component<RoomsProps & RouteComponentProps, RoomsState
             <div className='Rooms'>
                 <header className="Rooms-header">Rooms Management</header>
                 <div className='Rooms-content'>
-                    <Route path='/rooms/' exact render={p => <RoomList {...p} rooms={this.state.rooms} />} />
-                    <Route path='/room/:id' render={p => <Room roomId={p.match.params.id} {...p} refresh={this.fetchRooms}/>} />
+                    <Route path='/rooms/' exact render={p =>
+                        <RoomList {...p} rooms={this.state.rooms} />
+                    } />
+                    <Route path='/room/:id' render={p =>
+                        <Room roomId={p.match.params.id} {...p} refresh={this.fetchRooms} />
+                    } />
                 </div>
             </div>
         );

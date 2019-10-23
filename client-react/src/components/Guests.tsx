@@ -57,24 +57,24 @@ interface GuestListProps { guests: GuestDto[] }
 interface GuestListState { }
 
 class GuestList extends React.Component<GuestListProps, GuestListState> {
-    render () {
-    const guests = this.props.guests.map(guest => <GuestListItem key={guest.id} guest={guest} />);
-    return (
-        <table className='Guests-list'>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Lastname</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                </tr>
-            </thead>
-            <tbody>
-                {guests}
-            </tbody>
-        </table>
-    );
+    render() {
+        const guests = this.props.guests.map(guest => <GuestListItem key={guest.id} guest={guest} />);
+        return (
+            <table className='Guests-list'>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Lastname</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {guests}
+                </tbody>
+            </table>
+        );
     }
 }
 
@@ -133,7 +133,7 @@ class Guests extends React.Component<GuestsProps & RouteComponentProps, GuestsSt
     }
 
     fetchGuests = async () => {
-        this.setState({guests: await Server.GetAllBy('guest', GuestDto, this.props.history)});
+        this.setState({ guests: await Server.GetAllBy('guest', GuestDto, this.props.history) });
     }
 
     render() {
@@ -141,8 +141,12 @@ class Guests extends React.Component<GuestsProps & RouteComponentProps, GuestsSt
             <div className='Guests'>
                 <header className="Guests-header">Guests Management</header>
                 <div className='Guests-content'>
-                    <Route path='/guests/' exact render={p => <GuestList {...p} guests={this.state.guests} />} />
-                    <Route path='/guests/:id' render={p => <Guest guestId={p.match.params.id} {...p} refresh={this.fetchGuests} />} />
+                    <Route path='/guests/' exact render={p =>
+                        <GuestList {...p} guests={this.state.guests} />
+                    } />
+                    <Route path='/guests/:id' render={p =>
+                        <Guest guestId={p.match.params.id} {...p} refresh={this.fetchGuests} />
+                    } />
                 </div>
             </div>
         );

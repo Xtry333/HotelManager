@@ -17,6 +17,10 @@ export interface AppState { token: string, user: any };
 class App extends React.Component<{}, AppState> {
     state = { token: '', user: '' }
 
+    componentDidMount() {
+        document.title = 'Hotel Manager App';
+    }
+
     isUserLogged = () => {
         try {
             const user = JSON.parse(localStorage.getItem('user'));

@@ -20,7 +20,7 @@ module.exports = {
 
     output: {
         filename: 'main.js',
-        path: path.join(__dirname, './dist'),
+        path: path.join(__dirname, './public/js'),
     },
 
     module: {
@@ -57,8 +57,7 @@ module.exports = {
 
     devServer: {
         watchContentBase: true,
-        contentBase: path.resolve(__dirname, '.'),
-        historyApiFallback: true,
+        contentBase: path.resolve(__dirname, './public/'),
         compress: true,
         port: 9000
     },
@@ -68,8 +67,8 @@ module.exports = {
     // assume a corresponding global variable exists and use that instead.
     // This is important because it allows us to avoid bundling all of our
     // dependencies, which allows browsers to cache those libraries between builds.
-    externals: {
-        "react": "React",
-        "react-dom": "ReactDOM"
-    }
+    // externals: {
+    //     "react": "React",
+    //     "react-dom": "ReactDOM"
+    // }
 };

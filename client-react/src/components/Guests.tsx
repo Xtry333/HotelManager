@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Route, Link, Redirect } from "react-router-dom";
-import {Guest as GuestDto} from '../dtos/Guest.dto'
+import { Guest as GuestDto } from '../dtos/Guest.dto'
 import { Get } from '../Server';
 
-export interface GuestProps { guestId: number } 
+export interface GuestProps { guestId: number }
 export interface GuestState { guest: GuestDto, editMode: boolean }
 
 class Guest extends React.Component<GuestProps, GuestState> {
@@ -52,45 +52,73 @@ class Guest extends React.Component<GuestProps, GuestState> {
     }
 }
 
-function GuestList(props: any) {
+interface GuestListProps { guests: GuestDto[] }
+interface GuestListState { }
+
+class GuestList extends React.Component<GuestListProps, GuestListState> {
+    render () {
+    const guests = this.props.guests.map(guest => <GuestListItem key={guest.id} guest={guest} />);
     return (
         <table className='Guests-list'>
             <thead>
-                <tr><th>ID</th><th>Name</th><th>Lastname</th></tr>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Lastname</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                </tr>
             </thead>
             <tbody>
-                {props.children}
+                {guests}
             </tbody>
         </table>
     );
+    }
 }
 
-function GuestItem(props: any) {
-    const guest = props.guest;
-    return (
-        <tr className='Guest-list-item'>
-            <td>
-                <Link to={`guests/${guest.id}`}>
-                    <div className='label'>
-                        {guest.id}
+
+interface GuestListItemProps { guest: GuestDto }
+interface GuestListItemState { }
+
+class GuestListItem extends React.Component<GuestListItemProps, GuestListItemState> {
+    render() {
+        const guest = this.props.guest;
+        return (
+            <tr className='Guest-list-item'>
+                <td>
+                    <Link to={`guests/${guest.id}`}>
+                        <div className='label'>
+                            {guest.id}
+                        </div>
+                    </Link>
+                </td>
+                <td>
+                    <div className=''>
+                        {guest.firstname}
                     </div>
-                </Link>
-            </td>
-            <td>
-                <div className=''>
-                    {guest.firstname}
-                </div>
-            </td>
-            <td>
-                <div className=''>
-                    {guest.lastname}
-                </div>
-            </td>
-        </tr>
-    );
+                </td>
+                <td>
+                    <div className=''>
+                        {guest.lastname}
+                    </div>
+                </td>
+                <td>
+                    <div className=''>
+                        {guest.email}
+                    </div>
+                </td>
+                <td>
+                    <div className=''>
+                        {guest.phoneNumber}
+                    </div>
+                </td>
+            </tr>
+        );
+    }
 }
 
-export interface GuestsProps { room: number } 
+export interface GuestsProps { room: number }
 export interface GuestsState { guests: GuestDto[] }
 
 class Guests extends React.Component<GuestsProps, GuestsState> {
@@ -116,15 +144,11 @@ class Guests extends React.Component<GuestsProps, GuestsState> {
     }
 
     render() {
-        // if (this.state.singout) {
-        //     return (<Redirect to='/logout' />);
-        // }
-        const guests = this.state.guests.map(guest => <GuestItem key={guest.id} guest={guest} />);
         return (
             <div className='Guests'>
                 <header className="Guests-header">Guests Management</header>
                 <div className='Guests-content'>
-                    <Route path='/guests/' exact render={p => <GuestList {...p} >{guests}</GuestList>} />
+                    <Route path='/guests/' exact render={p => <GuestList {...p} guests={this.state.guests} />} />
                     <Route path='/guests/:id' render={p => <Guest guestId={p.match.params.id} {...p} />} />
                 </div>
             </div>

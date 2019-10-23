@@ -7,11 +7,11 @@ import { ResourceError } from '../dtos/Error';
 import { Guest } from '../dtos/Guest.dto';
 
 export async function getAll() {
-    const rows = await Db.querySelectAll(Reservation);
+    const rows = await Db.querySelectAll(ResSummaryView);
     if (rows.length > -1) {
         return rows;
     } else {
-        throw new ResourceError('Could not get Rooms listing.', rows, 500);
+        throw new ResourceError('Could not get Reservations listing.', rows, 500);
     }
 }
 

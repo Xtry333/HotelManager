@@ -26,3 +26,19 @@ export function Get(url: string, config?: AxiosRequestConfig, history?: RouteCom
         }
     }
 }
+
+export function Delete(url: string, config?: AxiosRequestConfig, history?: RouteComponentProps["history"]) {
+    try {
+        console.info(`Deleting ${url}.`);
+        const token = localStorage.getItem('token');
+        const response = instance.delete(url, { ...config, headers: { 'Auth-Token': token } });
+        return response;
+    } catch (error) {
+        console.error(error.response);
+        if (error.response && error.response.status === 401 && history) {
+            history.push('/logout');
+        } else {
+            throw error;
+        }
+    }
+}

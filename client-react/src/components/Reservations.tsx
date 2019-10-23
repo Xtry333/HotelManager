@@ -1,8 +1,9 @@
 import * as React from 'react';
 import { Route, Link, Redirect, RouteComponentProps } from "react-router-dom";
-import { Get } from '../Server';
+import { Get, Delete } from '../Server';
 
 import { ResSummaryView, Reservation as ReservationDto } from '../dtos/Reservation.dto';
+import { ResourceError } from '../dtos/Error';
 
 export interface ReservationProps { reservationId: number, refresh: Function }
 export interface ReservationState { reservation: ResSummaryView, editMode: boolean }
@@ -32,14 +33,13 @@ class Reservation extends React.Component<ReservationProps & RouteComponentProps
         // }
     }
 
-    deleteRes() {
+    async deleteRes() {
         const resID = this.state.reservation.resID;
         const guestName = `${this.state.reservation.guestFirstname} ${this.state.reservation.guestLastname}`;
         const confirmation = window.confirm(`Are you sure you want to delete reservation ${resID} for ${guestName}?`);
         if (confirmation) {
             console.log(`Wow, staph! ${resID}`);
-            //await Delete(`reservation/${resId}`);
-            //
+            await Delete(`reservation/${resID}`);
             this.props.refresh();
             this.props.history.push(`/reservations`);
             //this.setState({redirectTo: '/reservations'});
@@ -75,12 +75,12 @@ class Reservation extends React.Component<ReservationProps & RouteComponentProps
         return (<div />);
     }
 }
-interface ReservationListProps { reservations: ReservationDto[] }
+interface ReservationListProps { reservations: ResSummaryView[] }
 interface ReservationListState { }
 
 class ReservationList extends React.Component<ReservationListProps & RouteComponentProps, ReservationListState> {
     render() {
-        const reservations = this.props.reservations.map(reservation => <ReservationListItem key={reservation.id} reservation={reservation} />);
+        const reservations = this.props.reservations.map(reservation => <ReservationListItem key={reservation.resID} reservation={reservation} />);
         return (
             <table className='Guests-list'>
                 <thead>
@@ -94,7 +94,7 @@ class ReservationList extends React.Component<ReservationListProps & RouteCompon
     }
 }
 
-interface ReservationListItemProps { reservation: ReservationDto }
+interface ReservationListItemProps { reservation: ResSummaryView }
 interface ReservationListItemState { }
 
 class ReservationListItem extends React.Component<ReservationListItemProps, ReservationListItemState> {
@@ -103,26 +103,26 @@ class ReservationListItem extends React.Component<ReservationListItemProps, Rese
         return (
             <tr className='Reservation-list-item'>
                 <td>
-                    <Link to={`reservation/${reservation.id}`}>
+                    <Link to={`reservation/${reservation.resID}`}>
                         <div className='label'>
-                            {reservation.id}
+                            {reservation.resID}
                         </div>
                     </Link>
                 </td>
                 <td>
                     <div className=''>
-                        {reservation.start}
+                        {reservation.resStart}
                     </div>
                 </td>
                 <td>
                     <div className=''>
-                        {reservation.end}
+                        {reservation.resEnd}
                     </div>
                 </td>
                 <td>
-                    <Link to={`room/${reservation.room}`}>
+                    <Link to={`room/${reservation.roomID}`}>
                         <div className='label'>
-                            {reservation.room}
+                            {reservation.roomID}
                         </div>
                     </Link>
                 </td>
@@ -132,7 +132,7 @@ class ReservationListItem extends React.Component<ReservationListItemProps, Rese
 }
 
 interface ReservationsProps { }
-interface ReservationsState { searchquery: string, reservations: ReservationDto[] }
+interface ReservationsState { searchquery: string, reservations: ResSummaryView[] }
 
 class Reservations extends React.Component<ReservationsProps, ReservationsState> {
     constructor() {
@@ -148,8 +148,19 @@ class Reservations extends React.Component<ReservationsProps, ReservationsState>
         try {
             const response = await Get(`reservation`);
             console.log(response);
-            this.setState({ reservations: response.data });
+            const resArray: ResSummaryView[] = [];
+            const expectedDtoName = (new ResSummaryView).dtoName;
+            for (const dto of response.data) {
+                if (dto.dtoName === expectedDtoName) {
+                    resArray.push(dto);
+                } else {
+                    throw new ResourceError('Response from server does not match expected DTO.', response);
+                }
+            }
+            this.setState({ reservations: resArray });
+
         } catch (error) {
+            console.error(error);
             if (error.response && error.response.status === 401) {
                 //this.setState({ singout: true });
             }

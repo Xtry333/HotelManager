@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Route, Link, Redirect, RouteComponentProps } from "react-router-dom";
-import { Get, Delete } from '../Server';
+import * as Server from '../Server';
 
 import { ResSummaryView, Reservation as ReservationDto } from '../dtos/Reservation.dto';
 import { ResourceError } from '../dtos/Error';
@@ -19,18 +19,18 @@ class Reservation extends React.Component<ReservationProps & RouteComponentProps
     }
 
     fetchData() {
-        // try {
-        const id = this.props.reservationId;
-        Get(`reservation/${id}`).then(results => {
-            this.setState({ reservation: results.data });
-        }).catch(error => {
-            if (error.response && error.response.status === 401) {
-                //this.setState({ singout: true });
-            }
-        });
-        // } catch (error) {
+        try {
+            const id = this.props.reservationId;
+            Server.Get(`reservation/${id}`).then(results => {
+                this.setState({ reservation: results.data });
+            }).catch(error => {
+                if (error.response && error.response.status === 401) {
+                    //this.setState({ singout: true });
+                }
+            });
+        } catch (error) {
 
-        // }
+        }
     }
 
     async deleteRes() {
@@ -39,7 +39,7 @@ class Reservation extends React.Component<ReservationProps & RouteComponentProps
         const confirmation = window.confirm(`Are you sure you want to delete reservation ${resID} for ${guestName}?`);
         if (confirmation) {
             console.log(`Wow, staph! ${resID}`);
-            await Delete(`reservation/${resID}`);
+            await Server.Delete(`reservation/${resID}`);
             this.props.refresh();
             this.props.history.push(`/reservations`);
             //this.setState({redirectTo: '/reservations'});
@@ -138,33 +138,14 @@ class Reservations extends React.Component<ReservationsProps, ReservationsState>
     constructor() {
         super(undefined, undefined);
         this.state = { searchquery: '', reservations: [] };
-
     }
+
     componentDidMount() {
-        this.getReservations();
+        this.fetchReservations();
     }
 
-    getReservations = async () => {
-        try {
-            const response = await Get(`reservation`);
-            console.log(response);
-            const resArray: ResSummaryView[] = [];
-            const expectedDtoName = (new ResSummaryView).dtoName;
-            for (const dto of response.data) {
-                if (dto.dtoName === expectedDtoName) {
-                    resArray.push(dto);
-                } else {
-                    throw new ResourceError('Response from server does not match expected DTO.', response);
-                }
-            }
-            this.setState({ reservations: resArray });
-
-        } catch (error) {
-            console.error(error);
-            if (error.response && error.response.status === 401) {
-                //this.setState({ singout: true });
-            }
-        }
+    async fetchReservations() {
+        this.setState({ reservations: await Server.GetAllByDTO(ResSummaryView) });
     }
 
     render() {
@@ -173,7 +154,9 @@ class Reservations extends React.Component<ReservationsProps, ReservationsState>
                 <header className="Reservations-header">Reservations Management</header>
                 <div className='Reservations-content'>
                     <Route path='/reservations/' exact render={p => <ReservationList {...p} reservations={this.state.reservations} />} />
-                    <Route path='/reservation*/:id' render={p => <Reservation reservationId={p.match.params.id} {...p} refresh={this.getReservations} />} />
+                    <Route path='/reservation*/:id' render={p =>
+                        <Reservation reservationId={p.match.params.id} {...p} refresh={this.fetchReservations} />
+                    } />
                 </div>
             </div>
         );

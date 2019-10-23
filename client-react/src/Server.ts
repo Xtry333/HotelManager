@@ -1,8 +1,12 @@
 import Axios, { AxiosRequestConfig } from 'axios';
 import { RouteComponentProps } from 'react-router-dom';
 
+import * as config from './app.config';
+import { Dto } from './dtos/Dto';
+import { ResourceError } from './dtos/Error';
+
 const instance = Axios.create({
-    baseURL: 'http://localhost:3001/api/',
+    baseURL: config.apiHostAddres,
     timeout: 5000,
     headers: {
         'Access-Control-Allow-Origin': '*',
@@ -40,5 +44,27 @@ export function Delete(url: string, config?: AxiosRequestConfig, history?: Route
         } else {
             throw error;
         }
+    }
+}
+
+export async function GetAllByDTO<T extends Dto>(obj: { new(): T; }, history?: RouteComponentProps["history"]) {
+    try {
+        const expectedDtoName = (new obj).dtoName;
+        const response = await Get(expectedDtoName, {}, history);
+        const resArray: T[] = [];
+        for (const dto of response.data) {
+            if (dto.dtoName === expectedDtoName) {
+                resArray.push(dto);
+            } else {
+                throw new ResourceError('Response from server does not match expected DTO.', response);
+            }
+        }
+        return resArray;
+
+    } catch (error) {
+        if (error.response && error.response.status === 401) {
+            //this.setState({ singout: true });
+        }
+        console.error(error);
     }
 }

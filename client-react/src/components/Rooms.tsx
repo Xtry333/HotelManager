@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Route, Link, Redirect, RouteComponentProps } from "react-router-dom";
-import { Get } from '../Server';
+import * as Server from '../Server';
 import { RoomView } from '../dtos/Room.dto';
 
 import '../styles/Rooms.less';
 
-export interface RoomProps { roomId: number }
+export interface RoomProps { roomId: number, refresh: Function }
 export interface RoomState { room: RoomView, editMode: boolean }
 
 class Room extends React.Component<RoomProps & RouteComponentProps, RoomState> {
@@ -14,11 +14,10 @@ class Room extends React.Component<RoomProps & RouteComponentProps, RoomState> {
         this.state = { room: null, editMode: false };
     }
 
-
     async componentDidMount() {
         try {
             const id = this.props.roomId;
-            const results = await Get(`room/${id}`, undefined, this.props.history);
+            const results = await Server.Get(`room/${id}`, undefined, this.props.history);
             this.setState({ room: results.data });
         } catch (error) {
             if (error.response && error.response.status === 401) {
@@ -109,21 +108,11 @@ class Rooms extends React.Component<RoomsProps & RouteComponentProps, RoomsState
     }
 
     componentDidMount() {
-        this.getRooms();
+        this.fetchRooms();
     }
 
-    getRooms = async () => {
-        try {
-            const response = await Get(`room`);
-            console.log(response);
-            this.setState({ rooms: response.data });
-        } catch (error) {
-            console.error(error);
-            if (error.response && error.response.status === 401) {
-                this.props.history.push('/logout');
-                //this.setState({ singout: true });
-            }
-        }
+    async fetchRooms() {
+        this.setState({ rooms: await Server.GetAllByDTO(RoomView) });
     }
 
     render() {
@@ -132,7 +121,7 @@ class Rooms extends React.Component<RoomsProps & RouteComponentProps, RoomsState
                 <header className="Rooms-header">Rooms Management</header>
                 <div className='Rooms-content'>
                     <Route path='/rooms/' exact render={p => <RoomList {...p} rooms={this.state.rooms} />} />
-                    <Route path='/room/:id' render={p => <Room roomId={p.match.params.id} {...p} />} />
+                    <Route path='/room/:id' render={p => <Room roomId={p.match.params.id} {...p} refresh={this.fetchRooms}/>} />
                 </div>
             </div>
         );

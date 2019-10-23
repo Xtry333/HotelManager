@@ -1,26 +1,27 @@
 import * as React from 'react';
-import { Route, Link, Redirect } from "react-router-dom";
+import { Route, Link, Redirect, RouteComponentProps } from "react-router-dom";
 import { Guest as GuestDto } from '../dtos/Guest.dto'
-import { Get } from '../Server';
+import * as Server from '../Server';
 
-export interface GuestProps { guestId: number }
+export interface GuestProps { guestId: number, refresh: Function }
 export interface GuestState { guest: GuestDto, editMode: boolean }
 
-class Guest extends React.Component<GuestProps, GuestState> {
+class Guest extends React.Component<GuestProps & RouteComponentProps, GuestState> {
     constructor() {
         super(undefined, undefined);
         this.state = { guest: null, editMode: false };
     }
 
-    async componentDidMount() {
+    componentDidMount() {
+        this.fetchGuest(this.props.guestId);
+    }
+
+    async fetchGuest(id: number) {
         try {
-            const id = this.props.guestId;
-            const results = await Get(`guest/${id}`);
+            const results = await Server.Get(`guest/${id}`, {}, this.props.history);
             this.setState({ guest: results.data });
         } catch (error) {
-            if (error.response && error.response.status === 401) {
-                //this.setState({ singout: true });
-            }
+            console.error(error);
         }
     }
 
@@ -128,19 +129,11 @@ class Guests extends React.Component<GuestsProps, GuestsState> {
     }
 
     componentDidMount() {
-        this.getGuests();
+        this.fetchGuests();
     }
 
-    getGuests = async () => {
-        try {
-            const response = await Get(`guest`);
-            console.log(response);
-            this.setState({ guests: response.data });
-        } catch (error) {
-            if (error.response && error.response.status === 401) {
-                //this.setState({ singout: true });
-            }
-        }
+    async fetchGuests() {
+        this.setState({guests: await Server.GetAllByDTO(GuestDto)});
     }
 
     render() {
@@ -149,7 +142,7 @@ class Guests extends React.Component<GuestsProps, GuestsState> {
                 <header className="Guests-header">Guests Management</header>
                 <div className='Guests-content'>
                     <Route path='/guests/' exact render={p => <GuestList {...p} guests={this.state.guests} />} />
-                    <Route path='/guests/:id' render={p => <Guest guestId={p.match.params.id} {...p} />} />
+                    <Route path='/guests/:id' render={p => <Guest guestId={p.match.params.id} {...p} refresh={this.fetchGuests} />} />
                 </div>
             </div>
         );

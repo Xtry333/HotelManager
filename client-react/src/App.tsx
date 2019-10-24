@@ -7,7 +7,7 @@ import { Login, Logout } from './components/Login';
 import Home from './components/Home';
 import Rooms from './components/Rooms';
 import Guests from './components/Guests';
-import Reservations from './components/Reservations';
+import { Reservations } from './components/Reservations';
 //import Confirmation from './components/Confirmation';
 
 //import './styles/style.less';

@@ -9,7 +9,7 @@ import { ResourceError } from '../dtos/Error';
 export interface ReservationProps { reservationId: number, refresh: Function }
 export interface ReservationState { reservation: ResSummaryView, editMode: boolean }
 
-class Reservation extends React.Component<ReservationProps & RouteComponentProps, ReservationState> {
+export class Reservation extends React.Component<ReservationProps & RouteComponentProps, ReservationState> {
     constructor() {
         super(undefined, undefined);
         this.state = { reservation: null, editMode: false };
@@ -97,7 +97,10 @@ class ReservationList extends React.Component<ReservationListProps & RouteCompon
 
         return (
             <div>
-                <input type='text' onChange={this.props.onSearchChange} value={this.props.searchquery} />
+                <div className='ui icon input'>
+                    <input type='text' onChange={this.props.onSearchChange} value={this.props.searchquery} placeholder="Search..." />
+                    <i className="search icon"></i>
+                </div>
                 <table className='Guests-list ui table'>
                     <thead className='ui table header'>
                         <tr>
@@ -128,7 +131,7 @@ class ReservationListItem extends React.Component<ReservationListItemProps, Rese
             <tr className='Reservation-list-item'>
                 <td>
                     <Link to={`reservation/${reservation.resID}`}>
-                        <div className='label'>
+                        <div className='label circular ui button'>
                             {reservation.resID}
                         </div>
                     </Link>
@@ -155,7 +158,7 @@ class ReservationListItem extends React.Component<ReservationListItemProps, Rese
                 </td>
                 <td>
                     <Link to={`room/${reservation.roomID}`}>
-                        <div className='label button'>
+                        <div className='label circular ui button'>
                             {reservation.roomID}
                         </div>
                     </Link>
@@ -168,7 +171,7 @@ class ReservationListItem extends React.Component<ReservationListItemProps, Rese
 interface ReservationsProps { }
 interface ReservationsState { reservations: ResSummaryView[], searchquery: string }
 
-class Reservations extends React.Component<ReservationsProps & RouteComponentProps, ReservationsState> {
+export class Reservations extends React.Component<ReservationsProps & RouteComponentProps, ReservationsState> {
     constructor() {
         super(undefined, undefined);
         this.state = { reservations: [], searchquery: '' };
@@ -188,7 +191,7 @@ class Reservations extends React.Component<ReservationsProps & RouteComponentPro
 
     render() {
         return (
-            <div className='Reservations'>
+            <div className='Reservations ui container'>
                 <header className="Reservations-header">Reservations Management</header>
                 <div className='Reservations-content'>
                     <Route path='/reservations/' exact render={p =>
@@ -202,5 +205,3 @@ class Reservations extends React.Component<ReservationsProps & RouteComponentPro
         );
     }
 }
-
-export default Reservations;

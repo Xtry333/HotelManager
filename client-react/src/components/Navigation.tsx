@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import '../styles/Navigation.less';
+//import '../styles/Navigation.less';
 
 export default class Navigation extends React.Component {
     render() {

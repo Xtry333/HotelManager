@@ -10,7 +10,7 @@ import Guests from './components/Guests';
 import Reservations from './components/Reservations';
 //import Confirmation from './components/Confirmation';
 
-import './styles/style.less';
+//import './styles/style.less';
 
 export interface AppState { token: string, user: any };
 

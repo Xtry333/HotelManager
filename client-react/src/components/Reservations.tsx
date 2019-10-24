@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Route, Link, Redirect, RouteComponentProps } from "react-router-dom";
 import * as Server from '../Server';
+import * as moment from 'moment';
 
 import { ResSummaryView, Reservation as ReservationDto } from '../dtos/Reservation.dto';
 import { ResourceError } from '../dtos/Error';
@@ -75,21 +76,44 @@ class Reservation extends React.Component<ReservationProps & RouteComponentProps
         return (<div />);
     }
 }
-interface ReservationListProps { reservations: ResSummaryView[] }
+interface ReservationListProps { reservations: ResSummaryView[], searchquery: string, onSearchChange: (event: React.ChangeEvent<HTMLInputElement>) => void }
 interface ReservationListState { }
 
 class ReservationList extends React.Component<ReservationListProps & RouteComponentProps, ReservationListState> {
+    constructor() {
+        super(undefined, undefined);
+        this.state = { searchquery: '' };
+    }
+
     render() {
-        const reservations = this.props.reservations.map(reservation => <ReservationListItem key={reservation.resID} reservation={reservation} />);
+        //const reservations = this.props.reservations.map(reservation => <ReservationListItem key={reservation.resID} reservation={reservation} />);
+        const reservations: JSX.Element[] = [];
+        const query = this.props.searchquery.toLocaleLowerCase();
+        for (const r of this.props.reservations) {
+            if (r.guestFirstname.toLocaleLowerCase().includes(query) || r.guestLastname.toLocaleLowerCase().includes(query)) {
+                reservations.push(<ReservationListItem key={r.resID} reservation={r} />);
+            }
+        }
+
         return (
-            <table className='Guests-list'>
-                <thead>
-                    <tr><th>ID</th><th>Start</th><th>End</th><th>Room</th></tr>
-                </thead>
-                <tbody>
-                    {reservations}
-                </tbody>
-            </table>
+            <div>
+                <input type='text' onChange={this.props.onSearchChange} value={this.props.searchquery} />
+                <table className='Guests-list ui table'>
+                    <thead className='ui table header'>
+                        <tr>
+                            <th>ID</th>
+                            <th>Guest Name</th>
+                            <th>Guest Lastname</th>
+                            <th>Start</th>
+                            <th>End</th>
+                            <th>Room</th>
+                        </tr>
+                    </thead>
+                    <tbody className=''>
+                        {reservations}
+                    </tbody>
+                </table>
+            </div>
         );
     }
 }
@@ -111,17 +135,27 @@ class ReservationListItem extends React.Component<ReservationListItemProps, Rese
                 </td>
                 <td>
                     <div className=''>
-                        {reservation.resStart}
+                        {reservation.guestFirstname}
                     </div>
                 </td>
                 <td>
                     <div className=''>
-                        {reservation.resEnd}
+                        {reservation.guestLastname}
+                    </div>
+                </td>
+                <td>
+                    <div className=''>
+                        {moment(reservation.resStart).format('YYYY-MM-DD')}
+                    </div>
+                </td>
+                <td>
+                    <div className=''>
+                        {moment(reservation.resEnd).format('YYYY-MM-DD')}
                     </div>
                 </td>
                 <td>
                     <Link to={`room/${reservation.roomID}`}>
-                        <div className='label'>
+                        <div className='label button'>
                             {reservation.roomID}
                         </div>
                     </Link>
@@ -132,12 +166,12 @@ class ReservationListItem extends React.Component<ReservationListItemProps, Rese
 }
 
 interface ReservationsProps { }
-interface ReservationsState { searchquery: string, reservations: ResSummaryView[] }
+interface ReservationsState { reservations: ResSummaryView[], searchquery: string }
 
 class Reservations extends React.Component<ReservationsProps & RouteComponentProps, ReservationsState> {
     constructor() {
         super(undefined, undefined);
-        this.state = { searchquery: '', reservations: [] };
+        this.state = { reservations: [], searchquery: '' };
     }
 
     componentDidMount() {
@@ -148,13 +182,17 @@ class Reservations extends React.Component<ReservationsProps & RouteComponentPro
         this.setState({ reservations: await Server.GetAllBy('reservation', ResSummaryView, this.props.history) });
     }
 
+    onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ searchquery: event.target.value });
+    }
+
     render() {
         return (
             <div className='Reservations'>
                 <header className="Reservations-header">Reservations Management</header>
                 <div className='Reservations-content'>
                     <Route path='/reservations/' exact render={p =>
-                        <ReservationList {...p} reservations={this.state.reservations} />
+                        <ReservationList {...p} reservations={this.state.reservations} searchquery={this.state.searchquery} onSearchChange={this.onSearchChange} />
                     } />
                     <Route path='/reservation*/:id' render={p =>
                         <Reservation reservationId={p.match.params.id} {...p} refresh={this.fetchReservations} />

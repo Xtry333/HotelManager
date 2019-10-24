@@ -3,7 +3,7 @@ import { Route, Link, Redirect, RouteComponentProps } from "react-router-dom";
 import * as Server from '../Server';
 import { RoomView } from '../dtos/Room.dto';
 
-import '../styles/Rooms.less';
+//import '../styles/Rooms.less';
 
 export interface RoomProps { roomId: number, refresh: Function }
 export interface RoomState { room: RoomView, editMode: boolean }

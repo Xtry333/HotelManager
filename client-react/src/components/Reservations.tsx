@@ -64,7 +64,7 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
                 //let index = 0;
                 //const images = room.meta.images.map(v => <img key={v.id} src={v.imageLink} alt={`Zdjęcie ${index}`} />);
                 return (
-                    <div className="Guest-single">
+                    <div className="ui segment">
                         {reservation.guestFirstname}, {reservation.guestLastname}, {reservation.guestPhoneNumber}
 
                         <button className="App-button" onClick={e => { this.setState({ editMode: true }) }}>Edit</button>
@@ -102,7 +102,7 @@ class ReservationList extends React.Component<ReservationListProps & RouteCompon
                     <i className="search icon"></i>
                 </div>
                 <table className='Guests-list ui table'>
-                    <thead className='ui table header'>
+                    <thead className='ui header'>
                         <tr>
                             <th>ID</th>
                             <th>Guest Name</th>
@@ -191,8 +191,8 @@ export class Reservations extends React.Component<ReservationsProps & RouteCompo
 
     render() {
         return (
-            <div className='Reservations ui container'>
-                <header className="Reservations-header">Reservations Management</header>
+            <div className='Reservations ui segment'>
+                <header className="Reservations-header ui header centered">Reservations Management</header>
                 <div className='Reservations-content'>
                     <Route path='/reservations/' exact render={p =>
                         <ReservationList {...p} reservations={this.state.reservations} searchquery={this.state.searchquery} onSearchChange={this.onSearchChange} />

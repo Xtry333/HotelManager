@@ -18,10 +18,10 @@ export const isUserLogged = () => {
 }
 
 export interface LoginProps { }
-export interface LoginState { loginError: boolean, username: string, password: string }
+export interface LoginState { loginError: string, username: string, password: string }
 
 export class Login extends React.Component<LoginProps & RouteComponentProps, LoginState> {
-    state = { loginError: false, username: '', password: '' };
+    state = { loginError: '', username: '', password: '' };
 
     onSubmit = (event: React.FormEvent) => {
         event.preventDefault();
@@ -35,10 +35,14 @@ export class Login extends React.Component<LoginProps & RouteComponentProps, Log
                 localStorage.setItem('token', token);
                 this.props.history.push('/');
             } else {
-                this.setState({ loginError: true });
+                this.setState({ loginError: 'Invalid password' });
             }
         }).catch(error => {
-            console.error(error);
+            if (error.response.status === 406) {
+                this.setState({ loginError: 'Invalid password' });
+
+            }
+            console.error(error.response.status);
         });
     }
 
@@ -49,31 +53,40 @@ export class Login extends React.Component<LoginProps & RouteComponentProps, Log
     onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const name = event.target.name;
         const value = event.target.value;
-        if (name === 'username') { this.setState({ [name]: value }); }
-        if (name === 'password') { this.setState({ [name]: value }); }
+        if (name === 'username') { this.setState({ username: value }); }
+        if (name === 'password') { this.setState({ password: value }); }
     }
 
     render() {
         if (isUserLogged()) {
-            return (<Redirect to='/'/>);
+            return (<Redirect to='/' />);
         }
         return (
-            <div className='Login'>
-                <header className='Login-header'>
-                    <h2>Hello</h2>
-                    <p>Please login</p>
-                </header>
-                <div>
-                    <form className='Login-form' method='post' onSubmit={this.onSubmit}>
-                        <div className='Login-input'>
-                            <input name='username' type='text' placeholder='Username' value={this.state.username} onChange={this.onChange} />
-                        </div>
-                        <div className='Login-input'>
-                            <input name='password' className={this.state.loginError ? 'invalid' : ''} type='password' placeholder='Password' value={this.state.password} onChange={this.onChange} />
-                        </div>
-                        <button type='submit' disabled={!this.validateForm()}>Login</button>
-                        <div className='Login-error'>
-                            {this.state.loginError}
+            <div className='ui middle aligned center aligned grid'>
+                <div className='six wide column'>
+                    <header className='ui header segment'>
+                        <h2>Hello</h2>
+                        <p>Please login</p>
+                    </header>
+                    <form className='ui large form' method='post' onSubmit={this.onSubmit}>
+                        <div className='ui stacked segment'>
+                            <div className="field">
+                                <div className='ui left icon input'>
+                                    <input name='username' type='text' placeholder='Username' value={this.state.username} onChange={this.onChange} />
+                                    <i className="user icon"></i>
+                                </div>
+                            </div>
+                            <div className="field">
+                                <div className='ui left icon input'>
+                                    <input name='password' className={this.state.loginError ? ' error' : ''} type='password' placeholder='Password' value={this.state.password} onChange={this.onChange} />
+                                    <i className="lock icon"></i>
+                                </div>
+                                {this.state.loginError ? (<div className='ui error red basic label pointing up fluid'>
+                                {this.state.loginError}
+                            </div>) : (<div/>)}
+                            </div>
+                            <button type='submit' className='ui fluid large gray submit button' disabled={!this.validateForm()}>Login</button>
+                            
                         </div>
                     </form>
                 </div>

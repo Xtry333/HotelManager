@@ -43,9 +43,9 @@ class App extends React.Component<{}, AppState> {
                     <Route path='/login' component={Login} />
                     <Route path='/logout' component={Logout} />
                     <Route render={props => (this.isUserLogged() ? (
-                        <div className='App'>
+                        <div className='App ui grid'>
                             <Nav />
-                            <div className='App-content'>
+                            <div className='App-content thirteen wide stretched column'>
                                 <Route path='/' exact component={Home} />
                                 {/* <Route path='/future/' component={Future} /> */}
                                 <Route path='/room*' component={Rooms} />

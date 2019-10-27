@@ -114,8 +114,7 @@ export class Logout extends React.Component<{}, {}> {
     }
 }
 
-export function SystemLogout(his: any) {
-    console.log('123');
+export function SystemLogout() {
     try {
         const user = JSON.parse(localStorage.getItem('user'));
         const token = localStorage.getItem('token');

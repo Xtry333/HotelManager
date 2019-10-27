@@ -17,7 +17,7 @@ export default class Navigation extends React.Component<{ className?: string, st
                         <NavLink activeClassName='active' className='Nav-link item' to='/guests'>Guest Management</NavLink>
                         <NavLink activeClassName='active' className='Nav-link item' to='/reservations'>Reservations</NavLink>
                         {/* <Link className='Nav-link item' to='#' onClick={e => SystemLogout}>Logout</Link> */}
-                        <a className='Nav-link item' onClick={e => {SystemLogout(this.props.history)}}>Logout</a>
+                        <a className='Nav-link item' onClick={SystemLogout}>Logout</a>
                     </nav>
                 </div>
             </div>

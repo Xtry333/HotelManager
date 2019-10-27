@@ -33,7 +33,9 @@ export class Login extends React.Component<LoginProps & RouteComponentProps, Log
                 const token = res.data.token;
                 localStorage.setItem('user', JSON.stringify(user));
                 localStorage.setItem('token', token);
+                const oldLoc = this.props.location;
                 this.props.history.push('/');
+                this.props.history.push(oldLoc);
             } else {
                 this.setState({ loginError: 'Invalid password' });
             }
@@ -63,10 +65,10 @@ export class Login extends React.Component<LoginProps & RouteComponentProps, Log
         }
         return (
             <div className='ui middle aligned center aligned grid'>
-                <div className='six wide column'>
-                    <header className='ui header segment'>
-                        <h2>Hello</h2>
-                        <p>Please login</p>
+                <div className='six wide column' style={{ marginTop: '55px' }}>
+                    <header className='ui segment'>
+                        <h2 className='ui header'>Hello</h2>
+                        <p>Please login to use this App.</p>
                     </header>
                     <form className='ui large form' method='post' onSubmit={this.onSubmit}>
                         <div className='ui stacked segment'>
@@ -82,11 +84,11 @@ export class Login extends React.Component<LoginProps & RouteComponentProps, Log
                                     <i className="lock icon"></i>
                                 </div>
                                 {this.state.loginError ? (<div className='ui error red basic label pointing up fluid'>
-                                {this.state.loginError}
-                            </div>) : (<div/>)}
+                                    {this.state.loginError}
+                                </div>) : (<div />)}
                             </div>
                             <button type='submit' className='ui fluid large gray submit button' disabled={!this.validateForm()}>Login</button>
-                            
+
                         </div>
                     </form>
                 </div>
@@ -109,5 +111,23 @@ export class Logout extends React.Component<{}, {}> {
             }
         } catch (error) { }
         return (<Redirect to='/login' />);
+    }
+}
+
+export function SystemLogout(his: any) {
+    console.log('123');
+    try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const token = localStorage.getItem('token');
+        if (user) {
+            localStorage.removeItem('user');
+            localStorage.removeItem('token');
+            if (token) {
+                Server.delete('/token', { data: { token } });
+            }
+        }
+        window.location.reload();
+    } catch (error) {
+        console.error(error);
     }
 }

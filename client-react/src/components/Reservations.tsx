@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Route, Link, Redirect, RouteComponentProps } from "react-router-dom";
+import { Route, Link, Redirect, Switch, RouteComponentProps } from "react-router-dom";
 import * as Server from '../Server';
 import * as moment from 'moment';
 
@@ -48,34 +48,72 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
     }
 
     render() {
-        if (this.state.reservation) {
-            const reservation = this.state.reservation;
-            //if (this.state.singout) { return (<Redirect to='/logout' />); }
-            //if (this.state.redirectTo) { return (<Redirect to={this.state.redirectTo} />); }
-            if (this.state.editMode) {
-                const list = Object.keys(reservation).map((k, i) => <input value={JSON.stringify((reservation as any)[k])} key={k} />);
-                console.log(list);
-                return (
-                    <div className="Guest-single">
-                        {list}
-                    </div>
-                );
-            } else {
-                //let index = 0;
-                //const images = room.meta.images.map(v => <img key={v.id} src={v.imageLink} alt={`Zdjęcie ${index}`} />);
-                return (
-                    <div className="ui segment">
-                        {reservation.guestFirstname}, {reservation.guestLastname}, {reservation.guestPhoneNumber}
+        const reservation = this.state.reservation;
+        if (reservation) {
+            return (
+                <div>
+                    <header>
 
-                        <button className="App-button" onClick={e => { this.setState({ editMode: true }) }}>Edit</button>
-                        <button className="App-button" onClick={e => { this.deleteRes() }}>Delete</button>
+                    </header>
+                    <div>
+                        <Link to={`/guests/${reservation.guestID}`}>
+                            {reservation.guestFirstname} {reservation.guestLastname}
+                        </Link>
                     </div>
-                );
-            }
+                    {reservation.guestFirstname}, {reservation.guestLastname}, {reservation.guestPhoneNumber}
+
+                    <button className="App-button ui orange button" onClick={e => { this.props.history.push(`/reservations/edit/${reservation.resID}`) }}>Edit</button>
+                    <button className="App-button ui red button" onClick={e => { this.deleteRes() }}>Delete</button>
+                </div>
+            );
         }
         return (<div />);
     }
 }
+
+export interface EditReservationProps { reservationId: number, refresh: Function, editRes: boolean }
+export interface EditReservationState { reservation: ResSummaryView }
+
+class EditReservation extends React.Component<EditReservationProps & RouteComponentProps, EditReservationState> {
+    constructor() {
+        super(undefined, undefined);
+        this.state = { reservation: null };
+    }
+
+    componentDidMount() {
+        console.log(this.props);
+        this.fetchData();
+    }
+
+    fetchData() {
+        try {
+            const id = this.props.reservationId;
+            Server.Get(`reservation/${id}`).then(results => {
+                this.setState({ reservation: results.data });
+            }).catch(error => {
+                if (error.response && error.response.status === 401) {
+                    //this.setState({ singout: true });
+                }
+            });
+        } catch (error) {
+
+        }
+    }
+
+    render() {
+        const reservation = this.state.reservation;
+        if (reservation) {
+            const list = Object.keys(reservation).map((k, i) => <input value={JSON.stringify((reservation as any)[k])} key={k} />);
+            return (
+                <div>
+                    {list}
+                </div>
+            );
+        }
+        return (<div />);
+    }
+}
+
 interface ReservationListProps { reservations: ResSummaryView[], searchquery: string, onSearchChange: (event: React.ChangeEvent<HTMLInputElement>) => void }
 interface ReservationListState { }
 
@@ -90,7 +128,7 @@ class ReservationList extends React.Component<ReservationListProps & RouteCompon
         const reservations: JSX.Element[] = [];
         const query = this.props.searchquery.toLocaleLowerCase();
         for (const r of this.props.reservations) {
-            if (r.guestFirstname.toLocaleLowerCase().includes(query) || r.guestLastname.toLocaleLowerCase().includes(query)) {
+            if (!query || r.guestFirstname.toLocaleLowerCase().includes(query) || r.guestLastname.toLocaleLowerCase().includes(query) || `${r.guestFirstname} ${r.guestLastname}`.toLocaleLowerCase().includes(query)) {
                 reservations.push(<ReservationListItem key={r.resID} reservation={r} />);
             }
         }
@@ -107,6 +145,7 @@ class ReservationList extends React.Component<ReservationListProps & RouteCompon
                             <th>ID</th>
                             <th>Guest Name</th>
                             <th>Guest Lastname</th>
+                            <th>People</th>
                             <th>Start</th>
                             <th>End</th>
                             <th>Room</th>
@@ -130,34 +169,34 @@ class ReservationListItem extends React.Component<ReservationListItemProps, Rese
         return (
             <tr className='Reservation-list-item'>
                 <td>
-                    <Link to={`reservation/${reservation.resID}`}>
+                    <Link to={`reservations/${reservation.resID}`}>
                         <div className='label circular ui button'>
                             {reservation.resID}
                         </div>
                     </Link>
                 </td>
                 <td>
-                    <div className=''>
+                    <Link to={`guests/${reservation.guestID}`}>
                         {reservation.guestFirstname}
-                    </div>
+                    </Link>
                 </td>
                 <td>
-                    <div className=''>
+                    <Link to={`guests/${reservation.guestID}`}>
                         {reservation.guestLastname}
-                    </div>
+                    </Link>
                 </td>
                 <td>
-                    <div className=''>
-                        {moment(reservation.resStart).format('YYYY-MM-DD')}
-                    </div>
+                    <i className='users icon' />
+                    {reservation.numberOfPeople}
                 </td>
                 <td>
-                    <div className=''>
-                        {moment(reservation.resEnd).format('YYYY-MM-DD')}
-                    </div>
+                    {moment(reservation.resStart).format('YYYY-MM-DD')}
                 </td>
                 <td>
-                    <Link to={`room/${reservation.roomID}`}>
+                    {moment(reservation.resEnd).format('YYYY-MM-DD')}
+                </td>
+                <td>
+                    <Link to={`rooms/${reservation.roomID}`}>
                         <div className='label circular ui button'>
                             {reservation.roomID}
                         </div>
@@ -191,15 +230,20 @@ export class Reservations extends React.Component<ReservationsProps & RouteCompo
 
     render() {
         return (
-            <div className='Reservations ui segment'>
+            <div className='Reservations'>
                 <header className="Reservations-header ui header centered">Reservations Management</header>
                 <div className='Reservations-content'>
-                    <Route path='/reservations/' exact render={p =>
-                        <ReservationList {...p} reservations={this.state.reservations} searchquery={this.state.searchquery} onSearchChange={this.onSearchChange} />
-                    } />
-                    <Route path='/reservation*/:id' render={p =>
-                        <Reservation reservationId={p.match.params.id} {...p} refresh={this.fetchReservations} />
-                    } />
+                    <Switch>
+                        <Route path='/reservations/' exact render={p =>
+                            <ReservationList {...p} reservations={this.state.reservations} searchquery={this.state.searchquery} onSearchChange={this.onSearchChange} />
+                        } />
+                        <Route path='/reservations/edit/:id' render={p =>
+                            <EditReservation reservationId={p.match.params.id} {...p} refresh={this.fetchReservations} editRes />
+                        } />
+                        <Route path='/reservations/:id' render={p =>
+                            <Reservation reservationId={p.match.params.id} {...p} refresh={this.fetchReservations} />
+                        } />
+                    </Switch>
                 </div>
             </div>
         );

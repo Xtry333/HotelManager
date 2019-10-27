@@ -60,8 +60,8 @@ class GuestList extends React.Component<GuestListProps, GuestListState> {
     render() {
         const guests = this.props.guests.map(guest => <GuestListItem key={guest.id} guest={guest} />);
         return (
-            <table className='Guests-list'>
-                <thead>
+            <table className='Guests-list ui table'>
+                <thead className='ui header'>
                     <tr>
                         <th>ID</th>
                         <th>Name</th>
@@ -89,7 +89,7 @@ class GuestListItem extends React.Component<GuestListItemProps, GuestListItemSta
             <tr className='Guest-list-item'>
                 <td>
                     <Link to={`guests/${guest.id}`}>
-                        <div className='label'>
+                        <div className='label ui circular button'>
                             {guest.id}
                         </div>
                     </Link>
@@ -138,8 +138,8 @@ class Guests extends React.Component<GuestsProps & RouteComponentProps, GuestsSt
 
     render() {
         return (
-            <div className='Guests'>
-                <header className="Guests-header">Guests Management</header>
+            <div className='Guests ui segment'>
+                <header className="Guests-header ui header centered">Guests Management</header>
                 <div className='Guests-content'>
                     <Route path='/guests/' exact render={p =>
                         <GuestList {...p} guests={this.state.guests} />

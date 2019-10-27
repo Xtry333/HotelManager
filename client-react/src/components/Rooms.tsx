@@ -55,15 +55,6 @@ class Room extends React.Component<RoomProps & RouteComponentProps, RoomState> {
     }
 }
 
-// function RoomList(props: any) {
-//     //console.log(props)
-//     return (
-//         <ul className='Rooms-list'>
-//             {props.children}
-//         </ul>
-//     );
-// }
-
 interface RoomListProps { rooms: RoomView[] }
 interface RoomListState { }
 
@@ -71,9 +62,9 @@ class RoomList extends React.Component<RoomListProps & RouteComponentProps, Room
     render() {
         const rooms = this.props.rooms.map(room => <RoomListItem key={(room as RoomView).roomID} room={room} />);
         return (
-            <ul className='Rooms-list'>
+            <div className='ui link centered cards'>
                 {rooms}
-            </ul>
+            </div>
         );
     }
 }
@@ -85,15 +76,25 @@ class RoomListItem extends React.Component<RoomListItemProps, RoomListItemState>
     render() {
         const room = this.props.room;
         return (
-            <li className='Rooms-list-item'>
-                <Link to={`room/${room.roomID}`}>
-                    <div className='label'>
-                        {room.roomNumber}, {room.floorCaption}
-                        <div className='Room-color-badge' style={{ background: room.floorColor }}></div>
-                    </div>
+            <Link to={`rooms/${room.roomID}`} className='card'>
+                <div className='content'>
+                    <span className='ui centered header'>Room {room.floorNumber}{room.roomNumber}</span>
+                </div>
+                <div className="image">
                     <img src={room.defaultImageLink} alt='' />
-                </Link>
-            </li>
+                </div>
+                <div className='extra content'>
+                    <i className="bed icon" />
+                    <span className=''>{room.spots}</span>
+
+                    <span className='right floated'>
+                        {room.floorCaption}
+                        &nbsp;
+                        <i className="tag icon" style={{ color: room.floorColor }} />
+                    </span>
+                </div>
+
+            </Link>
         );
     }
 }
@@ -117,13 +118,13 @@ class Rooms extends React.Component<RoomsProps & RouteComponentProps, RoomsState
 
     render() {
         return (
-            <div className='Rooms'>
-                <header className="Rooms-header">Rooms Management</header>
+            <div className='Rooms ui basic segment'>
+                <header className="ui centered header">Rooms Management</header>
                 <div className='Rooms-content'>
                     <Route path='/rooms/' exact render={p =>
                         <RoomList {...p} rooms={this.state.rooms} />
                     } />
-                    <Route path='/room/:id' render={p =>
+                    <Route path='/rooms/:id' render={p =>
                         <Room roomId={p.match.params.id} {...p} refresh={this.fetchRooms} />
                     } />
                 </div>

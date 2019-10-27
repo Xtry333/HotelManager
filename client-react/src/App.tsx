@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { HashRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import { HashRouter as Router, Route, Switch, Redirect, RouteComponentProps } from 'react-router-dom';
 import Nav from './components/Navigation';
 import { Login, Logout } from './components/Login';
 //import Future from './components/Future';
@@ -43,17 +43,17 @@ class App extends React.Component<{}, AppState> {
                     <Route path='/login' component={Login} />
                     <Route path='/logout' component={Logout} />
                     <Route render={props => (this.isUserLogged() ? (
-                        <div className='App ui grid'>
-                            <Nav />
-                            <div className='App-content thirteen wide stretched column'>
+                        <div className='App ui basic segment' style={{ left: '250px', maxWidth: '75vw' }}>
+                            <Nav className='ui left rail' style={{ width: '200px', marginTop: '7%' }} {...props}/>
+                            <div className='App-content ui segment'>
                                 <Route path='/' exact component={Home} />
                                 {/* <Route path='/future/' component={Future} /> */}
-                                <Route path='/room*' component={Rooms} />
-                                <Route path='/reservation*' component={Reservations} />
+                                <Route path='/room*/' component={Rooms} />
+                                <Route path='/reservation*/' component={Reservations} />
                                 <Route path='/guests/' component={Guests} />
                             </div>
                         </div>
-                    ) : (<Redirect to='/login' />))} />
+                    ) : (<Login {...props} />))} />
                 </Switch>
             </Router>
         );

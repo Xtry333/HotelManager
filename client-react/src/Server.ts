@@ -4,6 +4,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import * as config from './app.config';
 import { Dto } from './dtos/Dto';
 import { ResourceError } from './dtos/Error';
+import { SystemLogout } from './components/Login';
 
 const instance = Axios.create({
     baseURL: config.apiHostAddres,
@@ -15,7 +16,7 @@ const instance = Axios.create({
 
 export default instance;
 
-export function Get(url: string, config?: AxiosRequestConfig, history?: RouteComponentProps["history"]) {
+export function Get(url: string, config?: AxiosRequestConfig) {
     try {
         console.info(`Getting ${url}.`);
         const token = localStorage.getItem('token');
@@ -23,15 +24,31 @@ export function Get(url: string, config?: AxiosRequestConfig, history?: RouteCom
         return response;
     } catch (error) {
         console.error(error.response);
-        if (error.response && error.response.status === 401 && history) {
-            history.push('/logout');
+        if (error.response && error.response.status === 401) {
+            SystemLogout();
         } else {
             throw error;
         }
     }
 }
 
-export function Delete(url: string, config?: AxiosRequestConfig, history?: RouteComponentProps["history"]) {
+export function Post(url: string, data: any, config?: AxiosRequestConfig) {
+    try {
+        console.info(`Posting to ${url}.`);
+        const token = localStorage.getItem('token');
+        const response = instance.post(url, data, { ...config, headers: { 'Auth-Token': token } });
+        return response;
+    } catch (error) {
+        console.error(error.response);
+        if (error.response && error.response.status === 401) {
+            SystemLogout();
+        } else {
+            throw error;
+        }
+    }
+}
+
+export function Delete(url: string, config?: AxiosRequestConfig) {
     try {
         console.info(`Deleting ${url}.`);
         const token = localStorage.getItem('token');
@@ -39,18 +56,18 @@ export function Delete(url: string, config?: AxiosRequestConfig, history?: Route
         return response;
     } catch (error) {
         console.error(error.response);
-        if (error.response && error.response.status === 401 && history) {
-            history.push('/logout');
+        if (error.response && error.response.status === 401) {
+            SystemLogout();
         } else {
             throw error;
         }
     }
 }
 
-export async function GetAllBy<T extends Dto>(url: string, obj: { new(): T; }, history?: RouteComponentProps["history"]) {
+export async function GetAllBy<T extends Dto>(url: string, obj: { new(): T; }) {
     try {
         const expectedDtoName = (new obj).dtoName;
-        const response = await Get(url, {}, history);
+        const response = await Get(url, {});
         const resArray: T[] = [];
         for (const dto of response.data) {
             if (dto.dtoName === expectedDtoName) {

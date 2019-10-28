@@ -45,14 +45,16 @@ class App extends React.Component<{}, AppState> {
                     <Route path='/logout' component={Logout} />
                     <Route render={props => (this.isUserLogged() ? (
                         <div className='App ui basic segment' style={{ left: '250px', maxWidth: '75vw' }}>
-                            <Nav className='ui left rail' style={{ width: '200px', marginTop: '7%' }} {...props}/>
+                            <Nav className='ui left rail' style={{ width: '200px', marginTop: '7%' }} {...props} />
                             <div className='App-content ui segment'>
-                                <Route path='/' exact component={Home} />
-                                {/* <Route path='/future/' component={Future} /> */}
-                                <Route path='/room*/' component={Rooms} />
-                                <Route path='/reservation*/' component={Reservations} />
-                                <Route path='/guests/' component={Guests} />
-                                <Route path='*' component={NotFound} />
+                                <Switch>
+                                    <Route path='/' exact component={Home} />
+                                    {/* <Route path='/future/' component={Future} /> */}
+                                    <Route path='/room*/' component={Rooms} />
+                                    <Route path='/reservation*/' component={Reservations} />
+                                    <Route path='/guests/' component={Guests} />
+                                    <Route path='*' component={NotFound} />
+                                </Switch>
                             </div>
                         </div>
                     ) : (<Login {...props} />))} />

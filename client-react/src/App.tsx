@@ -8,6 +8,7 @@ import Home from './components/Home';
 import Rooms from './components/Rooms';
 import Guests from './components/Guests';
 import { Reservations } from './components/Reservations';
+import { NotFound } from './components/NotFound';
 //import Confirmation from './components/Confirmation';
 
 //import './styles/style.less';
@@ -54,6 +55,7 @@ class App extends React.Component<{}, AppState> {
                             </div>
                         </div>
                     ) : (<Login {...props} />))} />
+                    <Route path='*' component={NotFound} />
                 </Switch>
             </Router>
         );

@@ -150,7 +150,9 @@ class EditReservation extends React.Component<EditReservationProps & RouteCompon
     }
 
     onSave = () => {
-
+        const res = this.state.reservation;
+        Server.Post(`reservation/${res.resID}`, {reservation: res});
+        this.props.history.goBack();
     }
 
     render() {
@@ -166,7 +168,11 @@ class EditReservation extends React.Component<EditReservationProps & RouteCompon
                         <input name='resStart' type='date' onChange={this.onChange}
                             value={moment(reservation.resStart).format('YYYY-MM-DD')} />
                     </div>
-                    <button>
+                    <div>
+                        <input name='resEnd' type='date' onChange={this.onChange}
+                            value={moment(reservation.resEnd).format('YYYY-MM-DD')} />
+                    </div>
+                    <button onClick={this.onSave}>
                         Save
                     </button>
                 </div>

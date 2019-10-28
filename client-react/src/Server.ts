@@ -34,7 +34,7 @@ export function Get(url: string, config?: AxiosRequestConfig) {
 
 export function Post(url: string, data: any, config?: AxiosRequestConfig) {
     try {
-        console.info(`Posting to ${url}.`);
+        console.info(`About to post to ${url} object ${JSON.stringify(data)}`);
         const token = localStorage.getItem('token');
         const response = instance.post(url, data, { ...config, headers: { 'Auth-Token': token } });
         return response;

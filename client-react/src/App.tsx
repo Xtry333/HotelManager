@@ -52,10 +52,10 @@ class App extends React.Component<{}, AppState> {
                                 <Route path='/room*/' component={Rooms} />
                                 <Route path='/reservation*/' component={Reservations} />
                                 <Route path='/guests/' component={Guests} />
+                                <Route path='*' component={NotFound} />
                             </div>
                         </div>
                     ) : (<Login {...props} />))} />
-                    <Route path='*' component={NotFound} />
                 </Switch>
             </Router>
         );

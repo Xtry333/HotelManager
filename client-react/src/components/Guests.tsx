@@ -3,6 +3,27 @@ import { Route, Link, Redirect, RouteComponentProps } from "react-router-dom";
 import { Guest as GuestDto } from '../dtos/Guest.dto'
 import * as Server from '../Server';
 
+interface SingleGuestViewProps { guest: GuestDto }
+export function SingleGuestView({ guest }: SingleGuestViewProps) {
+    return (
+        <div>
+            <header className='ui header'>
+                <Link to={`/guests/${guest.id}`}>
+                    {guest.firstname} {guest.lastname}
+                </Link>
+            </header>
+            <div>
+                <i className='mobile alternate icon' />
+                <span>{guest.phoneNumber}</span>
+            </div>
+            {(guest.email) ? (<div>
+                <i className='inbox icon' />
+                <span>{guest.email}</span>
+            </div>) : (<div />)}
+        </div>
+    );
+}
+
 export interface GuestProps { guestId: number, refresh: Function }
 export interface GuestState { guest: GuestDto, editMode: boolean }
 
@@ -42,7 +63,7 @@ class Guest extends React.Component<GuestProps & RouteComponentProps, GuestState
                 //const images = room.meta.images.map(v => <img key={v.id} src={v.imageLink} alt={`Zdjęcie ${index}`} />);
                 return (
                     <div className="Guest-single">
-                        {guest.firstname}, {guest.lastname}, {guest.phoneNumber}
+                        <SingleGuestView guest={guest} />
 
                         <button className="App-button" onClick={e => { this.setState({ editMode: true }) }}>Edit</button>
                     </div>
@@ -138,7 +159,7 @@ class Guests extends React.Component<GuestsProps & RouteComponentProps, GuestsSt
 
     render() {
         return (
-            <div className='Guests ui segment'>
+            <div className='Guests'>
                 <header className="Guests-header ui header centered">Guests Management</header>
                 <div className='Guests-content'>
                     <Route path='/guests/' exact render={p =>

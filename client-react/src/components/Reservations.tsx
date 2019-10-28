@@ -5,32 +5,34 @@ import * as moment from 'moment';
 
 import { ResSummaryView, Reservation as ReservationDto } from '../dtos/Reservation.dto';
 import { ResourceError } from '../dtos/Error';
+import { Guest as GuestDto } from '../dtos/Guest.dto';
+import { SingleGuestView } from './Guests';
 
 export interface ReservationProps { reservationId: number, refresh: Function }
-export interface ReservationState { reservation: ResSummaryView, editMode: boolean }
+export interface ReservationState { reservation: ResSummaryView, editMode: boolean, guest: GuestDto }
 
 export class Reservation extends React.Component<ReservationProps & RouteComponentProps, ReservationState> {
     constructor() {
         super(undefined, undefined);
-        this.state = { reservation: null, editMode: false };
+        this.state = { reservation: null, guest: null, editMode: false };
     }
 
     componentDidMount() {
         this.fetchData();
     }
 
-    fetchData() {
+    async fetchData() {
         try {
-            const id = this.props.reservationId;
-            Server.Get(`reservation/${id}`).then(results => {
+            const resId = this.props.reservationId;
+            await Server.Get(`reservation/${resId}`).then(results => {
                 this.setState({ reservation: results.data });
-            }).catch(error => {
-                if (error.response && error.response.status === 401) {
-                    //this.setState({ singout: true });
-                }
+            });
+            const guestId = this.state.reservation.guestID;
+            await Server.Get(`guest/${guestId}`).then(results => {
+                this.setState({ guest: results.data });
             });
         } catch (error) {
-
+            console.error(error);
         }
     }
 
@@ -49,21 +51,20 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
 
     render() {
         const reservation = this.state.reservation;
-        if (reservation) {
+        const guest = this.state.guest;
+        if (reservation && guest) {
             return (
                 <div>
-                    <header>
-
-                    </header>
-                    <div>
-                        <Link to={`/guests/${reservation.guestID}`}>
-                            {reservation.guestFirstname} {reservation.guestLastname}
-                        </Link>
+                    <div className='ui step'>
+                        <h5 className='ui header'>
+                            Reservation for:
+                        </h5>
+                        <SingleGuestView guest={guest} />
                     </div>
-                    {reservation.guestFirstname}, {reservation.guestLastname}, {reservation.guestPhoneNumber}
-
-                    <button className="App-button ui orange button" onClick={e => { this.props.history.push(`/reservations/edit/${reservation.resID}`) }}>Edit</button>
-                    <button className="App-button ui red button" onClick={e => { this.deleteRes() }}>Delete</button>
+                    <div className='ui buttons group'>
+                        <button className="App-button ui orange button" onClick={e => { this.props.history.push(`/reservations/edit/${reservation.resID}`) }}>Edit</button>
+                        <button className="App-button ui red button" onClick={e => { this.deleteRes() }}>Delete</button>
+                    </div>
                 </div>
             );
         }

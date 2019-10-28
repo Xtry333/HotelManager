@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { NavLink, Link, RouteComponentProps } from 'react-router-dom';
-import '../styles/Navigation.less';
 import { SystemLogout } from './Login';
+
+import '../styles/Navigation.less';
 
 export default class Navigation extends React.Component<{ className?: string, style?: React.CSSProperties } & RouteComponentProps, {}> {
     render() {

@@ -3,22 +3,22 @@ import { Route, Link, Redirect, RouteComponentProps } from "react-router-dom";
 import { Guest as GuestDto } from '../dtos/Guest.dto'
 import * as Server from '../Server';
 
-interface SingleGuestViewProps { guest: GuestDto }
-export function SingleGuestView({ guest }: SingleGuestViewProps) {
+interface SingleGuestViewProps { guest: GuestDto, className?: string }
+export function SingleGuestView({ guest, className }: SingleGuestViewProps) {
     return (
-        <div>
+        <div className={className}>
             <header className='ui header'>
                 <Link to={`/guests/${guest.id}`}>
                     {guest.firstname} {guest.lastname}
                 </Link>
             </header>
-            <div>
+            {(guest.phoneNumber) ? (<div>
                 <i className='mobile alternate icon' />
-                <span>{guest.phoneNumber}</span>
-            </div>
+                <a href={`tel:${guest.phoneNumber}`}>{guest.phoneNumber}</a>
+            </div>) : (<div />)}
             {(guest.email) ? (<div>
                 <i className='inbox icon' />
-                <span>{guest.email}</span>
+                <a href={`mailto:${guest.email}`}>{guest.email}</a>
             </div>) : (<div />)}
         </div>
     );
@@ -160,7 +160,8 @@ class Guests extends React.Component<GuestsProps & RouteComponentProps, GuestsSt
     render() {
         return (
             <div className='Guests'>
-                <header className="Guests-header ui header centered">Guests Management</header>
+                {/* <header className="Guests-header ui header centered">Guests Management</header> */}
+                <div className="ui horizontal divider">Guests Management</div>
                 <div className='Guests-content'>
                     <Route path='/guests/' exact render={p =>
                         <GuestList {...p} guests={this.state.guests} />

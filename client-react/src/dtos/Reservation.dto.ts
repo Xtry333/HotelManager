@@ -28,12 +28,12 @@ export class ResSummaryView implements Dto {
 	guestPhoneNumber: string;
 	numberOfPeople: number;
 	pricePerDay: number;
-	resAdded: Date;
-	resStart: Date;
-	resEnd: Date;
+	resAdded: Date | string;
+	resStart: Date | string;
+	resEnd: Date | string;
 	depoAmount: number;
-	depoAdded: Date;
+	depoAdded: Date | string;
 	paymAmount: number;
-	paymAdded: Date;
+	paymAdded: Date | string;
 	additionalResInfo: string;
 }

@@ -7,14 +7,16 @@ import { ResSummaryView, Reservation as ReservationDto } from '../dtos/Reservati
 import { ResourceError } from '../dtos/Error';
 import { Guest as GuestDto } from '../dtos/Guest.dto';
 import { SingleGuestView } from './Guests';
+import { RoomView, Room } from '../dtos/Room.dto';
+import DateTime from './DateTime';
 
 export interface ReservationProps { reservationId: number, refresh: Function }
-export interface ReservationState { reservation: ResSummaryView, editMode: boolean, guest: GuestDto }
+export interface ReservationState { reservation: ResSummaryView, editMode: boolean, guest: GuestDto, room: RoomView }
 
 export class Reservation extends React.Component<ReservationProps & RouteComponentProps, ReservationState> {
     constructor() {
         super(undefined, undefined);
-        this.state = { reservation: null, guest: null, editMode: false };
+        this.state = { reservation: null, guest: null, room: null, editMode: false };
     }
 
     componentDidMount() {
@@ -28,8 +30,12 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
                 this.setState({ reservation: results.data });
             });
             const guestId = this.state.reservation.guestID;
-            await Server.Get(`guest/${guestId}`).then(results => {
+            Server.Get(`guest/${guestId}`).then(results => {
                 this.setState({ guest: results.data });
+            });
+            const roomId = this.state.reservation.roomID;
+            Server.Get(`room/${roomId}`).then(results => {
+                this.setState({ room: results.data });
             });
         } catch (error) {
             console.error(error);
@@ -52,16 +58,51 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
     render() {
         const reservation = this.state.reservation;
         const guest = this.state.guest;
-        if (reservation && guest) {
+        const room = this.state.room;
+        if (reservation && guest && room) {
             return (
                 <div>
-                    <div className='ui step'>
-                        <h5 className='ui header'>
-                            Reservation for:
-                        </h5>
-                        <SingleGuestView guest={guest} />
+                    <div className="ui horizontal divider">Guest</div>
+                    <div className='ui'>
+                        <SingleGuestView guest={guest} className='ui basic segment' />
                     </div>
-                    <div className='ui buttons group'>
+                    <div className="ui horizontal divider">Details</div>
+                    <div className='ui'>
+                        <div>
+                            <label>Created: </label>
+                            <time dateTime={reservation.resAdded.toString()}>
+                                {`${moment(reservation.resAdded).format('YYYY-MM-DD hh:mm')} `}
+                                {`(${moment(reservation.resAdded).from()})`}
+                            </time>
+                        </div>
+                        <div>
+                            <label>Check-in: </label>
+                            <time dateTime={reservation.resStart.toString()}>
+                                {`${moment(reservation.resStart).format('YYYY-MM-DD, dddd')} `}
+                                {`(${moment(reservation.resStart).from()})`}
+                            </time>
+                        </div>
+                        <div>
+                            <label>Check-out: </label>
+                            <time dateTime={reservation.resEnd.toString()}>
+                                {`${moment(reservation.resEnd).format('YYYY-MM-DD, dddd')} `}
+                                {`(${moment(reservation.resEnd).from()})`}
+                            </time>
+                        </div>
+                        <div>
+                            <label>Nights: </label>
+                            <span>
+                                {Math.floor((new Date(reservation.resEnd).getTime() -
+                                    new Date(reservation.resStart).getTime()) / (1000 * 60 * 60 * 24))}
+                            </span>
+                        </div>
+                        <div>
+                            <i className='users icon' />
+                            {reservation.numberOfPeople}/{room.spots}
+                        </div>
+                    </div>
+                    <div className="ui hidden horizontal divider"></div>
+                    <div className='ui separate buttons'>
                         <button className="App-button ui orange button" onClick={e => { this.props.history.push(`/reservations/edit/${reservation.resID}`) }}>Edit</button>
                         <button className="App-button ui red button" onClick={e => { this.deleteRes() }}>Delete</button>
                     </div>
@@ -82,14 +123,13 @@ class EditReservation extends React.Component<EditReservationProps & RouteCompon
     }
 
     componentDidMount() {
-        console.log(this.props);
         this.fetchData();
     }
 
     fetchData() {
         try {
             const id = this.props.reservationId;
-            Server.Get(`reservation/${id}`).then(results => {
+            Server.Get(`reservation/${id}`, {}, this.props.history).then(results => {
                 this.setState({ reservation: results.data });
             }).catch(error => {
                 if (error.response && error.response.status === 401) {
@@ -101,13 +141,34 @@ class EditReservation extends React.Component<EditReservationProps & RouteCompon
         }
     }
 
+    onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const name = event.target.name;
+        const value = event.target.value;
+        const res: any = Object.assign({}, this.state.reservation);
+        res[name] = value;
+        this.setState({ reservation: res });
+    }
+
+    onSave = () => {
+        
+    }
+
     render() {
         const reservation = this.state.reservation;
         if (reservation) {
-            const list = Object.keys(reservation).map((k, i) => <input value={JSON.stringify((reservation as any)[k])} key={k} />);
+            //const list = Object.keys(reservation).map((k, i) => <input value={JSON.stringify((reservation as any)[k])} key={i} />);
             return (
                 <div>
-                    {list}
+                    <div>
+                        <input name='pricePerDay' type='number' onChange={this.onChange} value={reservation.pricePerDay} />
+                    </div>
+                    <div>
+                        <input name='resStart' type='date' onChange={this.onChange}
+                            value={moment(reservation.resStart).format('YYYY-MM-DD')} />
+                    </div>
+                    <button>
+                        Save
+                    </button>
                 </div>
             );
         }
@@ -232,7 +293,11 @@ export class Reservations extends React.Component<ReservationsProps & RouteCompo
     render() {
         return (
             <div className='Reservations'>
-                <header className="Reservations-header ui header centered">Reservations Management</header>
+                <header className="Reservations-header ui header centered">
+                    <h2>
+                        Reservations Management
+                    </h2>
+                </header>
                 <div className='Reservations-content'>
                     <Switch>
                         <Route path='/reservations/' exact render={p =>

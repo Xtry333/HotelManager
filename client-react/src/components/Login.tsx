@@ -88,7 +88,6 @@ export class Login extends React.Component<LoginProps & RouteComponentProps, Log
                                 </div>) : (<div />)}
                             </div>
                             <button type='submit' className='ui fluid large gray submit button' disabled={!this.validateForm()}>Login</button>
-
                         </div>
                     </form>
                 </div>

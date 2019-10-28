@@ -17,7 +17,7 @@ class Room extends React.Component<RoomProps & RouteComponentProps, RoomState> {
     async componentDidMount() {
         try {
             const id = this.props.roomId;
-            const results = await Server.Get(`room/${id}`, undefined, this.props.history);
+            const results = await Server.Get(`room/${id}`);
             this.setState({ room: results.data });
         } catch (error) {
             if (error.response && error.response.status === 401) {
@@ -113,7 +113,7 @@ class Rooms extends React.Component<RoomsProps & RouteComponentProps, RoomsState
     }
 
     fetchRooms = async () => {
-        this.setState({ rooms: await Server.GetAllBy('room', RoomView, this.props.history) });
+        this.setState({ rooms: await Server.GetAllBy('room', RoomView) });
     }
 
     render() {

@@ -129,7 +129,7 @@ class EditReservation extends React.Component<EditReservationProps & RouteCompon
     fetchData() {
         try {
             const id = this.props.reservationId;
-            Server.Get(`reservation/${id}`, {}, this.props.history).then(results => {
+            Server.Get(`reservation/${id}`, {}).then(results => {
                 this.setState({ reservation: results.data });
             }).catch(error => {
                 if (error.response && error.response.status === 401) {
@@ -150,7 +150,7 @@ class EditReservation extends React.Component<EditReservationProps & RouteCompon
     }
 
     onSave = () => {
-        
+
     }
 
     render() {
@@ -283,7 +283,7 @@ export class Reservations extends React.Component<ReservationsProps & RouteCompo
     }
 
     fetchReservations = async () => {
-        this.setState({ reservations: await Server.GetAllBy('reservation', ResSummaryView, this.props.history) });
+        this.setState({ reservations: await Server.GetAllBy('reservation', ResSummaryView) });
     }
 
     onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {

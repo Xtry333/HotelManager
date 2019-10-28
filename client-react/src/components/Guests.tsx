@@ -39,7 +39,7 @@ class Guest extends React.Component<GuestProps & RouteComponentProps, GuestState
 
     async fetchGuest(id: number) {
         try {
-            const results = await Server.Get(`guest/${id}`, {}, this.props.history);
+            const results = await Server.Get(`guest/${id}`);
             this.setState({ guest: results.data });
         } catch (error) {
             console.error(error);
@@ -154,7 +154,7 @@ class Guests extends React.Component<GuestsProps & RouteComponentProps, GuestsSt
     }
 
     fetchGuests = async () => {
-        this.setState({ guests: await Server.GetAllBy('guest', GuestDto, this.props.history) });
+        this.setState({ guests: await Server.GetAllBy('guest', GuestDto) });
     }
 
     render() {

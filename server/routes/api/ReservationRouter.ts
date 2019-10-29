@@ -3,7 +3,28 @@ import * as ResController from '../../controllers/ReservationController';
 
 const router = Router();
 
-/* GET reservations. */
+// GET all reservations summary view
+router.get('/summary/', async (req, res, next) => {
+    try {
+        const reservations = await ResController.getAllResSummaryView();
+        res.json(reservations);
+    } catch (error) {
+        res.status(error.status).json(error);
+    }
+});
+
+// GET reservation summary view for id
+router.get('/summary/:id', async (req, res, next) => {
+    try {
+        const id = parseInt(req.params.id);
+        const reservations = await ResController.getSummaryById(id);
+        res.json(reservations);
+    } catch (error) {
+        res.status(error.status).json(error);
+    }
+});
+
+/* GET all reservations. */
 router.get('/', async (req, res, next) => {
     try {
         const reservations = await ResController.getAll();
@@ -13,11 +34,11 @@ router.get('/', async (req, res, next) => {
     }
 });
 
-/* GET reservation summary with id. */
+/* GET reservation with id. */
 router.get('/:id', async (req, res, next) => {
     try {
         const id = parseInt(req.params.id);
-        const reservation = await ResController.getSummaryById(id);
+        const reservation = await ResController.getById(id);
         res.json(reservation);
     } catch (error) {
         res.status(error.status).json(error);
@@ -41,8 +62,8 @@ router.put('/:id', async (req, res, next) => {
     try {
         const id = parseInt(req.params.id);
         const resObject = req.body.reservation;
-        const reservation = await ResController.change(id, resObject);
-        res.status(201).json(reservation);
+        const reservation = await ResController.updateById(id, resObject);
+        res.status(200).json(reservation);
     } catch (error) {
         res.status(error.status).json(error);
     }

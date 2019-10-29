@@ -8,11 +8,11 @@ import { Guest } from '../dtos/Guest.dto';
 import moment from 'moment';
 
 export async function getAll() {
-    const rows = await Db.querySelectAll(ResSummaryView);
+    const rows = await Db.querySelectAll(Reservation);
     if (rows.length > -1) {
         return rows;
     } else {
-        throw new ResourceError('Could not get Reservations listing.', rows, 500);
+        throw new ResourceError('Could not get Reservation listing.', rows, 500);
     }
 }
 
@@ -27,6 +27,15 @@ export async function getById(id: number) {
     }
 }
 
+export async function getAllResSummaryView() {
+    const rows = await Db.querySelectAll(ResSummaryView);
+    if (rows.length > -1) {
+        return rows;
+    } else {
+        throw new ResourceError('Could not get ResSummaryView listing.', rows, 500);
+    }
+}
+
 export async function getSummaryById(id: number) {
     const rows = await Db.querySelectAll(ResSummaryView, { resID: id });
     if (rows.length < 1) {
@@ -36,7 +45,7 @@ export async function getSummaryById(id: number) {
     } else if (rows.length > 1) {
         throw new ResourceError(`Found more rows with one id.`, rows, 500);
     }
-    throw new ResourceError(`Reservation ID ${id} does not exist.`, rows, 404);
+    throw new ResourceError(`Reservation Summary ID ${id} does not exist.`, rows, 404);
 }
 
 export async function getSummaryByToken(token: string) {
@@ -89,7 +98,7 @@ export async function create(reservation: Reservation, guest?: Guest) {
     return reservation;
 }
 
-export async function change(id: number, reservation: Reservation) {
+export async function updateById(id: number, reservation: Reservation) {
     if (id && reservation) {
         const dateFormat = 'YYYY-MM-DD';
         const newObj: any = {};
@@ -99,7 +108,7 @@ export async function change(id: number, reservation: Reservation) {
         newObj.additionalResInfo = reservation.additionalResInfo || '';
         Db.queryUpdate(Reservation, newObj, { id: id });
     } else {
-        throw new ResourceError('Either reservation is missing key ids or something went wrong', reservation, 400);
+        throw new ResourceError('Either reservation is missing key fields or something went wrong', reservation, 400);
     }
 }
 

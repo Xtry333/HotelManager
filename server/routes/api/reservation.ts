@@ -36,6 +36,18 @@ router.post('/', async (req, res, next) => {
     }
 });
 
+/* PUT reservation */
+router.put('/:id', async (req, res, next) => {
+    try {
+        const id = parseInt(req.params.id);
+        const resObject = req.body.reservation;
+        const reservation = await ResController.change(id, resObject);
+        res.status(201).json(reservation);
+    } catch (error) {
+        res.status(error.status).json(error);
+    }
+});
+
 /* DELETE reservation. */
 router.delete('/:id', async (req, res, next) => {
     try {

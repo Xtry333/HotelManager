@@ -5,6 +5,7 @@ import randomstring from 'randomstring';
 import { Reservation, ResSummaryView } from '../dtos/Reservation.dto';
 import { ResourceError } from '../dtos/Error';
 import { Guest } from '../dtos/Guest.dto';
+import moment from 'moment';
 
 export async function getAll() {
     const rows = await Db.querySelectAll(ResSummaryView);
@@ -86,6 +87,20 @@ export async function create(reservation: Reservation, guest?: Guest) {
     reservation.id = resId;
 
     return reservation;
+}
+
+export async function change(id: number, reservation: Reservation) {
+    if (id && reservation) {
+        const dateFormat = 'YYYY-MM-DD';
+        const newObj: any = {};
+        newObj.pricePerDay = reservation.pricePerDay;
+        newObj.start = moment(reservation.start).format(dateFormat);
+        newObj.end = moment(reservation.end).format(dateFormat);
+        newObj.additionalResInfo = reservation.additionalResInfo;
+        Db.queryUpdate(Reservation, newObj, { id: id });
+    } else {
+        throw new ResourceError('Either reservation is missing key ids or something went wrong', reservation, 400);
+    }
 }
 
 export async function deleteById(id: number) {

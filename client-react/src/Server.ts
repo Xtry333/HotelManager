@@ -64,9 +64,9 @@ export function Delete(url: string, config?: AxiosRequestConfig) {
     }
 }
 
-export async function GetAllBy<T extends Dto>(url: string, obj: { new(): T; }) {
+export async function GetAllBy<T extends Dto>(url: string, expectedObject: { new(): T; }) {
     try {
-        const expectedDtoName = (new obj).dtoName;
+        const expectedDtoName = (new expectedObject).dtoName;
         const response = await Get(url, {});
         const resArray: T[] = [];
         for (const dto of response.data) {

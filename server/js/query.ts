@@ -2,7 +2,6 @@ import pool from '../js/sql';
 import { ResourceError } from '../dtos/Error';
 import { RowDataPacket } from 'mysql';
 import { Dto } from '../dtos/Dto';
-import { Reservation } from '../dtos/Reservation.dto';
 
 export async function query(query: string, args?: Array<string | number | boolean>) {
     try {

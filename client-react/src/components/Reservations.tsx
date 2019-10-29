@@ -151,7 +151,13 @@ class EditReservation extends React.Component<EditReservationProps & RouteCompon
 
     onSave = () => {
         const res = this.state.reservation;
-        Server.Post(`reservation/${res.resID}`, {reservation: res});
+        const dateFormat = 'YYYY-MM-DD';
+        const newObj: any = {};
+        newObj.pricePerDay = res.pricePerDay;
+        newObj.start = res.resStart;
+        newObj.end = res.resEnd;
+        newObj.additionalResInfo = res.additionalResInfo || '';
+        Server.Put(`reservation/${res.resID}`, {reservation: newObj});
         this.props.history.goBack();
     }
 

@@ -32,11 +32,11 @@ export function Get(url: string, config?: AxiosRequestConfig) {
     }
 }
 
-export function Post(url: string, data: any, config?: AxiosRequestConfig) {
+export function Put(url: string, data: any, config?: AxiosRequestConfig) {
     try {
-        console.info(`About to post to ${url} object ${JSON.stringify(data)}`);
+        console.info(`About to put to ${url} object ${JSON.stringify(data)}`);
         const token = localStorage.getItem('token');
-        const response = instance.post(url, data, { ...config, headers: { 'Auth-Token': token } });
+        const response = instance.put(url, data, { ...config, headers: { 'Auth-Token': token } });
         return response;
     } catch (error) {
         console.error(error.response);

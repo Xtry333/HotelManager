@@ -103,6 +103,8 @@ export async function queryUpdate<T extends Dto>(obj: { new(): T; }, valuesObj: 
         values.push(whereObj[key]);
     }
 
+    console.info(valuesObj);
+    console.info(whereObj);
     const preparedQuery = `UPDATE \`${tableName}\` SET ${setKeys.join(', ')} ${whereKeys.join('')}`;
     const result = await query(preparedQuery, values) as any;
     console.info(result);

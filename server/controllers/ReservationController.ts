@@ -96,7 +96,7 @@ export async function change(id: number, reservation: Reservation) {
         newObj.pricePerDay = reservation.pricePerDay;
         newObj.start = moment(reservation.start).format(dateFormat);
         newObj.end = moment(reservation.end).format(dateFormat);
-        newObj.additionalResInfo = reservation.additionalResInfo;
+        newObj.additionalResInfo = reservation.additionalResInfo || '';
         Db.queryUpdate(Reservation, newObj, { id: id });
     } else {
         throw new ResourceError('Either reservation is missing key ids or something went wrong', reservation, 400);

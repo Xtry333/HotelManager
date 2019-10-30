@@ -7,6 +7,9 @@ import { ResourceError } from '../dtos/Error';
 import { Guest } from '../dtos/Guest.dto';
 import moment from 'moment';
 
+const dateFormat = 'YYYY-MM-DD';
+const dateTimeFormat = 'YYYY-MM-DD hh:mm';
+
 export async function getAll() {
     const rows = await Db.querySelectAll(Reservation);
     if (rows.length > -1) {
@@ -89,7 +92,17 @@ export async function create(reservation: Reservation, guest?: Guest) {
         throw new ResourceError('Either reservation is missing key ids or something went wrong', reservation, 400);
     }
 
-    const resId = await Db.queryInsert(Reservation, { ...reservation });
+    const newObj: any = {};
+    newObj.token = reservation.token;
+    newObj.guest = reservation.guest;
+    newObj.pricePerDay = reservation.pricePerDay;
+    newObj.start = moment(reservation.start).format(dateFormat);
+    newObj.end = moment(reservation.end).format(dateFormat);
+    newObj.numberOfPeople = reservation.numberOfPeople;
+    newObj.additionalResInfo = reservation.additionalResInfo || '';
+    newObj.room = reservation.room;
+
+    const resId = await Db.queryInsert(Reservation, { ...newObj });
     //await Db.query('INSERT INTO `reservation` (`room`, `guest`, `numberOfPeople`, `pricePerDay`, `start`, `end`, `token`) VALUES (?, ?, ?, ?, ?, ?, ?)',
     //    [reservation.room.id, guest.id, reservation.numberOfPeople, reservation.pricePerDay, reservation.dateStart, reservation.dateEnd, token]);
 
@@ -100,12 +113,13 @@ export async function create(reservation: Reservation, guest?: Guest) {
 
 export async function updateById(id: number, reservation: Reservation) {
     if (id && reservation) {
-        const dateFormat = 'YYYY-MM-DD';
         const newObj: any = {};
         newObj.pricePerDay = reservation.pricePerDay;
         newObj.start = moment(reservation.start).format(dateFormat);
         newObj.end = moment(reservation.end).format(dateFormat);
+        newObj.numberOfPeople = reservation.numberOfPeople;
         newObj.additionalResInfo = reservation.additionalResInfo || '';
+        newObj.room = reservation.room;
         Db.queryUpdate(Reservation, newObj, { id: id });
     } else {
         throw new ResourceError('Either reservation is missing key fields or something went wrong', reservation, 400);

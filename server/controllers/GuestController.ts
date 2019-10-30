@@ -20,7 +20,14 @@ export async function getById(id: number): Promise<Guest | undefined> {
 export async function create(guest: Guest) {
     if (guest && guest.firstname && guest.lastname && guest.phoneNumber && guest.email) {
         // TODO: validate(guest.email, Email);
-        const guestId = await Db.queryInsert(Guest, {...guest});
+
+        const newObj: any = {};
+        newObj.firstname = guest.firstname;
+        newObj.lastname = guest.lastname;
+        newObj.phoneNumber = guest.phoneNumber;
+        newObj.email = guest.email;
+
+        const guestId = await Db.queryInsert(Guest, newObj);
         //await db.query('INSERT INTO `guest` (`firstname`, `lastname`, `phoneNumber`, `email`) VALUES (?, ?, ?, ?)', [guest.firstname, guest.lastname, guest.phoneNumber, guest.email]);
         guest.id = guestId;
         return guest;

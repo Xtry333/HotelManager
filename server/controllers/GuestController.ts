@@ -26,6 +26,7 @@ export async function create(guest: Guest) {
         newObj.lastname = guest.lastname;
         newObj.phoneNumber = guest.phoneNumber;
         newObj.email = guest.email;
+        newObj.city = guest.city;
 
         const guestId = await Db.queryInsert(Guest, newObj);
         //await db.query('INSERT INTO `guest` (`firstname`, `lastname`, `phoneNumber`, `email`) VALUES (?, ?, ?, ?)', [guest.firstname, guest.lastname, guest.phoneNumber, guest.email]);

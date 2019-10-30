@@ -149,7 +149,7 @@ class EditReservation extends React.Component<EditReservationProps & RouteCompon
         this.setState({ reservation: res });
     }
 
-    onSave = () => {
+    onSave = async () => {
         const res = this.state.reservation;
         // const dateFormat = 'YYYY-MM-DD';
         // const newObj: any = {};
@@ -157,7 +157,8 @@ class EditReservation extends React.Component<EditReservationProps & RouteCompon
         // newObj.start = res.start;
         // newObj.end = res.end;
         // newObj.additionalResInfo = res.additionalResInfo || '';
-        Server.Put(`reservation/${res.id}`, {reservation: res});
+        await Server.Put(`reservation/${res.id}`, { reservation: res });
+        this.props.refresh();
         this.props.history.goBack();
     }
 
@@ -168,20 +169,36 @@ class EditReservation extends React.Component<EditReservationProps & RouteCompon
             return (
                 <div>
                     <div>
-                        <input name='pricePerDay' type='number' onChange={this.onChange} value={reservation.pricePerDay} />
+                        <div className='ui input left icon'>
+                            <input name='pricePerDay' type='number' onChange={this.onChange} value={reservation.pricePerDay} />
+                            <i className='money icon' />
+                        </div>
                     </div>
                     <div>
-                        <input name='start' type='date' onChange={this.onChange}
-                            value={moment(reservation.start).format('YYYY-MM-DD')} />
+                        <div className='ui input left icon'>
+                            <input name='start' type='date' onChange={this.onChange}
+                                value={moment(reservation.start).format('YYYY-MM-DD')} />
+                            <i className='right arrow icon' />
+                        </div>
                     </div>
                     <div>
-                        <input name='end' type='date' onChange={this.onChange}
-                            value={moment(reservation.end).format('YYYY-MM-DD')} />
+                        <div className='ui input left icon'>
+                            <input name='end' type='date' onChange={this.onChange}
+                                value={moment(reservation.end).format('YYYY-MM-DD')} />
+                            <i className='suitcase icon' />
+                        </div>
                     </div>
-                    <button onClick={this.onSave}>
+                    <div>
+                        <div className='ui input left icon'>
+                            <input name='numberOfPeople' type='number' onChange={this.onChange}
+                                value={reservation.numberOfPeople} />
+                            <i className='users icon' />
+                        </div>
+                    </div>
+                    <button className='ui button' onClick={this.onSave}>
                         Save
                     </button>
-                </div>
+                </div >
             );
         }
         return (<div />);

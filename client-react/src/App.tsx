@@ -9,6 +9,7 @@ import Rooms from './components/Rooms';
 import Guests from './components/Guests';
 import { Reservations } from './components/Reservations';
 import { NotFound } from './components/NotFound';
+import { Maitenance } from './components/Maitenance';
 //import Confirmation from './components/Confirmation';
 
 //import './styles/style.less';
@@ -41,6 +42,7 @@ class App extends React.Component<{}, AppState> {
             <Router>
                 <Switch>
                     {/* <Route path='/confirmation/:id/:token' component={Confirmation} /> */}
+                    <Route path='/maitenance' component={Maitenance} />
                     <Route path='/login' component={Login} />
                     <Route path='/logout' component={Logout} />
                     <Route render={props => (this.isUserLogged() ? (

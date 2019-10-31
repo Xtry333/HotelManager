@@ -113,7 +113,7 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
     }
 }
 
-export interface EditReservationProps { reservationId: number, refresh: Function, editRes: boolean }
+export interface EditReservationProps { reservationId: number, refresh: Function, mode: string }
 export interface EditReservationState { reservation: ReservationDto }
 
 class EditReservation extends React.Component<EditReservationProps & RouteComponentProps, EditReservationState> {
@@ -123,7 +123,11 @@ class EditReservation extends React.Component<EditReservationProps & RouteCompon
     }
 
     componentDidMount() {
-        this.fetchData();
+        if (this.props.mode === 'edit') {
+            this.fetchData();
+        } else {
+            this.setState({ reservation: new ReservationDto() });
+        }
     }
 
     fetchData() {
@@ -226,10 +230,14 @@ class ReservationList extends React.Component<ReservationListProps & RouteCompon
 
         return (
             <div>
-                <div className='ui icon input'>
-                    <input type='text' onChange={this.props.onSearchChange} value={this.props.searchquery} placeholder="Search..." />
-                    <i className="search icon"></i>
+                <div className="ui input group">
+                    <button className="ui teal button" onClick={e => { this.props.history.push(`/reservations/create/`) }}>Create New</button>
+                    <div className='ui icon input'>
+                        <input type='text' onChange={this.props.onSearchChange} value={this.props.searchquery} placeholder="Search..." />
+                        <i className="search icon"></i>
+                    </div>
                 </div>
+
                 <table className='Guests-list ui table'>
                     <thead className='ui header'>
                         <tr>
@@ -333,7 +341,10 @@ export class Reservations extends React.Component<ReservationsProps & RouteCompo
                             <ReservationList {...p} reservations={this.state.reservations} searchquery={this.state.searchquery} onSearchChange={this.onSearchChange} />
                         } />
                         <Route path='/reservations/edit/:id' render={p =>
-                            <EditReservation reservationId={p.match.params.id} {...p} refresh={this.fetchReservations} editRes />
+                            <EditReservation reservationId={p.match.params.id} {...p} refresh={this.fetchReservations} mode='edit' />
+                        } />
+                        <Route path='/reservations/create/' render={p =>
+                            <EditReservation reservationId={p.match.params.id} {...p} refresh={this.fetchReservations} mode='create' />
                         } />
                         <Route path='/reservations/:id' render={p =>
                             <Reservation reservationId={p.match.params.id} {...p} refresh={this.fetchReservations} />

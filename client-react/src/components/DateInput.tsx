@@ -19,7 +19,7 @@ export default class DateInput extends React.Component<DateInputProps, {}> {
                 id={this.props.id}
                 type='date' onChange={this.props.onChange}
                 value={momento.format(format)}
-                readOnly={this.props.readOnly && !this.props.onChange}
+                readOnly={this.props.readOnly || !this.props.onChange}
                 name={this.props.name}
             />
         );

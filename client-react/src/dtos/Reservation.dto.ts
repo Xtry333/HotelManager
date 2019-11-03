@@ -8,9 +8,9 @@ export class Reservation implements Dto {
 	numberOfPeople: number;
 	pricePerDay: number;
 	token: string;
-	added: number;
-	start: number;
-	end: number;
+	added: string | Date;
+	start: string | Date;
+	end: string | Date;
 	deleted: boolean;
 	additionalResInfo: string;
 }

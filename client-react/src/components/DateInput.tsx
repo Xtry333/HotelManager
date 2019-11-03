@@ -1,16 +1,11 @@
 import * as React from 'react';
-import moment = require('moment');
+import * as moment from 'moment';
 
 export interface DateInputProps {
-    id?: string,
-    name?: string,
-    date: string | Date,
-    readOnly?: boolean,
-    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void,
-    className?: string
-};
+    date: string | Date
+}
 
-export default class DateInput extends React.Component<DateInputProps, {}> {
+export default class DateInput extends React.Component<DateInputProps & React.InputHTMLAttributes<HTMLInputElement>, {}> {
     render() {
         const momento = moment(this.props.date);
         const format = 'YYYY-MM-DD';
@@ -19,7 +14,7 @@ export default class DateInput extends React.Component<DateInputProps, {}> {
                 id={this.props.id}
                 type='date' onChange={this.props.onChange}
                 value={momento.format(format)}
-                readOnly={this.props.readOnly || !this.props.onChange}
+                readOnly={this.props.readOnly || (!this.props.onChange && this.props.readOnly)}
                 name={this.props.name}
             />
         );

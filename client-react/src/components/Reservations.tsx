@@ -8,10 +8,10 @@ import { ResourceError } from '../dtos/Error';
 import { Guest as GuestDto } from '../dtos/Guest.dto';
 import { SingleGuestView } from './Guests';
 import { RoomView, Room } from '../dtos/Room.dto';
-import DateTime from './DateTime';
+import DateInput from './DateInput';
 
-export interface ReservationProps { reservationId: number, refresh: Function }
-export interface ReservationState { reservation: ReservationDto, editMode: boolean, guest: GuestDto, room: RoomView }
+export interface ReservationProps { reservationId: number, refresh: Function, mode?: string }
+export interface ReservationState { reservation: ReservationDto, guest: GuestDto, room: RoomView, editMode: boolean }
 
 export class Reservation extends React.Component<ReservationProps & RouteComponentProps, ReservationState> {
     constructor() {
@@ -21,6 +21,7 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
 
     componentDidMount() {
         this.fetchData();
+        this.setState({ editMode: this.props.mode === 'edit' });
     }
 
     async fetchData() {
@@ -42,7 +43,23 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
         }
     }
 
-    async deleteRes() {
+    onChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const name = event.target.name;
+        const value = event.target.value;
+        const res: any = Object.assign({}, this.state.reservation);
+        res[name] = value;
+        this.setState({ reservation: res });
+    }
+
+    onReservationSave = async () => {
+        const res = this.state.reservation;
+        await Server.Put(`reservation/${res.id}`, { reservation: res });
+        this.setState({ editMode: false });
+        this.props.refresh();
+        this.props.history.goBack();
+    }
+
+    deleteRes = async () => {
         const resID = this.state.reservation.id;
         const guestName = `${this.state.guest.firstname} ${this.state.guest.lastname}`;
         const confirmation = window.confirm(`Are you sure you want to delete reservation ${resID} for ${guestName}?`);
@@ -51,7 +68,6 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
             await Server.Delete(`reservation/${resID}`);
             this.props.refresh();
             this.props.history.push(`/reservations`);
-            //this.setState({redirectTo: '/reservations'});
         }
     }
 
@@ -59,6 +75,7 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
         const reservation = this.state.reservation;
         const guest = this.state.guest;
         const room = this.state.room;
+        const editMode = this.state.editMode;
         if (reservation && guest && room) {
             return (
                 <div>
@@ -67,32 +84,40 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
                         <SingleGuestView guest={guest} className='ui basic segment' />
                     </div>
                     <div className="ui horizontal divider">Details</div>
-                    <div className='ui'>
-                        <div>
-                            <label>Created: </label>
-                            <time dateTime={reservation.added.toString()}>
-                                {`${moment(reservation.added).format('YYYY-MM-DD hh:mm')} `}
-                                {`(${moment(reservation.added).from()})`}
-                            </time>
+                    <div className='ui form'>
+                        <div className='field'>
+                            <div className="ui right labeled input">
+                                <label htmlFor="resAdded" className="ui label date-label">Created: </label>
+                                <DateInput id='resAdded' className='ui date input' name='added' date={this.state.reservation.added} readOnly={true} />
+                                <div className="ui basic label date-label">
+                                    {`${moment(this.state.reservation.added).format('dddd')}, ${moment(this.state.reservation.added).from()}`}
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <label>Check-in: </label>
-                            <time dateTime={reservation.start.toString()}>
-                                {`${moment(reservation.start).format('YYYY-MM-DD, dddd')} `}
-                                {`(${moment(reservation.start).from()})`}
-                            </time>
-                        </div>
-                        <div>
-                            <label>Check-out: </label>
-                            <time dateTime={reservation.end.toString()}>
-                                {`${moment(reservation.end).format('YYYY-MM-DD, dddd')} `}
-                                {`(${moment(reservation.end).from()})`}
-                            </time>
+                        <div className="inline fields">
+                            <div className='field'>
+                                <div className="ui right labeled input">
+                                    <label htmlFor="resStart" className="ui label date-label">Check-in: </label>
+                                    <DateInput id='resStart' className='ui date input' name='start' date={this.state.reservation.start} readOnly={!editMode} onChange={this.onChange} />
+                                    <div className="ui basic label date-label">
+                                        {`${moment(this.state.reservation.start).format('dddd')}, ${moment(this.state.reservation.start).from()}`}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='field'>
+                                <div className="ui right labeled input">
+                                    <label htmlFor="resEnd" className="ui label date-label">Check-out: </label>
+                                    <DateInput id='resEnd' className='ui date input' name='end' date={this.state.reservation.end} readOnly={!editMode} onChange={this.onChange} />
+                                    <div className="ui basic label date-label">
+                                        {`${moment(this.state.reservation.end).format('dddd')}, ${moment(this.state.reservation.end).from()}`}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div>
                             <label>Nights: </label>
                             <span>
-                                {Math.floor((new Date(reservation.end).getTime() -
+                                {Math.ceil((new Date(reservation.end).getTime() -
                                     new Date(reservation.start).getTime()) / (1000 * 60 * 60 * 24))}
                             </span>
                         </div>
@@ -100,12 +125,35 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
                             <i className='users icon' />
                             {reservation.numberOfPeople}/{room.spots}
                         </div>
+                        <div className='ui form'>
+                            <div className='ui left corner labeled textarea'>
+                                <textarea name='additionalResInfo' className='ui textarea' onChange={this.onChange} readOnly={!editMode} value={reservation.additionalResInfo} />
+                                <div className="ui left corner label">
+                                    <i className='info icon' />
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div className="ui hidden horizontal divider"></div>
-                    <div className='ui separate buttons'>
-                        <button className="App-button ui orange button" onClick={e => { this.props.history.push(`/reservations/edit/${reservation.id}`) }}>Edit</button>
-                        <button className="App-button ui red button" onClick={e => { this.deleteRes() }}>Delete</button>
-                    </div>
+                    {editMode ?
+                        (<div className="ui separate buttons">
+                            <button className="ui green basic button"
+                                onClick={this.onReservationSave}>Save</button>
+                            <button className="ui orange basic button"
+                                onClick={e => {
+                                    this.props.history.push(`/reservations/${reservation.id}`);
+                                    this.setState({ editMode: false })
+                                }}>Cancel</button>
+                            <button className="ui red basic button"
+                                onClick={this.deleteRes}>Delete</button>
+                        </div>
+                        ) : (<div className="ui separate buttons">
+                            <button className="ui orange basic button"
+                                onClick={e => {
+                                    this.props.history.push(`/reservations/edit/${reservation.id}`);
+                                    this.setState({ editMode: true });
+                                }}>Edit</button>
+                        </div>)}
                 </div>
             );
         }
@@ -113,39 +161,37 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
     }
 }
 
-export interface EditReservationProps { reservationId: number, refresh: Function, mode: string }
-export interface EditReservationState { reservation: ReservationDto }
+export interface CreateReservationViewProps { refresh: Function }
+export interface CreateReservationViewState { reservation: ReservationDto, guest: GuestDto }
 
-class EditReservation extends React.Component<EditReservationProps & RouteComponentProps, EditReservationState> {
+class CreateReservationView extends React.Component<CreateReservationViewProps & RouteComponentProps, CreateReservationViewState> {
     constructor() {
         super(undefined, undefined);
-        this.state = { reservation: null };
+        this.state = { reservation: null, guest: null };
     }
 
     componentDidMount() {
-        if (this.props.mode === 'edit') {
-            this.fetchData();
-        } else {
-            this.setState({ reservation: new ReservationDto() });
-        }
+        const reservation = new ReservationDto();
+        reservation.numberOfPeople = 1;
+        this.setState({ reservation });
     }
 
     fetchData() {
         try {
-            const id = this.props.reservationId;
-            Server.Get(`reservation/${id}`, {}).then(results => {
-                this.setState({ reservation: results.data });
-            }).catch(error => {
-                if (error.response && error.response.status === 401) {
-                    //this.setState({ singout: true });
-                }
-            });
+            // const id = this.props.reservationId;
+            // Server.Get(`reservation/${id}`, {}).then(results => {
+            //     this.setState({ reservation: results.data });
+            // }).catch(error => {
+            //     if (error.response && error.response.status === 401) {
+            //         //this.setState({ singout: true });
+            //     }
+            // });
         } catch (error) {
 
         }
     }
 
-    onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    onReservationInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const name = event.target.name;
         const value = event.target.value;
         const res: any = Object.assign({}, this.state.reservation);
@@ -169,40 +215,50 @@ class EditReservation extends React.Component<EditReservationProps & RouteCompon
     render() {
         const reservation = this.state.reservation;
         if (reservation) {
-            //const list = Object.keys(reservation).map((k, i) => <input value={JSON.stringify((reservation as any)[k])} key={i} />);
             return (
                 <div>
-                    <div>
-                        <div className='ui input left icon'>
-                            <input name='pricePerDay' type='number' onChange={this.onChange} value={reservation.pricePerDay} />
-                            <i className='money icon' />
+                    <div className="ui form">
+                        <h4 className="ui dividing header">Create Reservation</h4>
+                        <div className="two fields">
+                            <div className="field">
+                                <label htmlFor="resStart" className="ui">Check In</label>
+                                <div className='ui input left icon'>
+                                    <input id="resStart" name='start' type='date' onChange={this.onReservationInputChange}
+                                        value={moment(reservation.start).format('YYYY-MM-DD')} />
+                                    <i className='right arrow icon' />
+                                </div>
+                            </div>
+                            <div className="field">
+                                <label htmlFor="resEnd" className="ui">Check Out</label>
+                                <div className='ui input left icon'>
+                                    <input id="resEnd" name='end' type='date' onChange={this.onReservationInputChange}
+                                        value={moment(reservation.end).format('YYYY-MM-DD')} />
+                                    <i className='suitcase icon' />
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div>
-                        <div className='ui input left icon'>
-                            <input name='start' type='date' onChange={this.onChange}
-                                value={moment(reservation.start).format('YYYY-MM-DD')} />
-                            <i className='right arrow icon' />
+                        <div className="two fields">
+                            <div className="field">
+                                <label htmlFor="numberOfPeople" className="ui">Number Of People</label>
+                                <div className='ui input left icon'>
+                                    <input id="numberOfPeople" name='numberOfPeople' type='number' onChange={this.onReservationInputChange}
+                                        value={reservation.numberOfPeople} min="1" />
+                                    <i className='users icon' />
+                                </div>
+                            </div>
+                            <div className="field">
+                                <label htmlFor="pricePerDay" className="ui">Price per Day</label>
+                                <div className='ui input left icon'>
+                                    <input id="pricePerDay" name='pricePerDay' type='number' onChange={this.onReservationInputChange} value={reservation.pricePerDay} />
+                                    <i className='money icon' />
+                                </div>
+                            </div>
                         </div>
+                        <button className='ui button' onClick={this.onSave}>
+                            Save
+                        </button>
                     </div>
-                    <div>
-                        <div className='ui input left icon'>
-                            <input name='end' type='date' onChange={this.onChange}
-                                value={moment(reservation.end).format('YYYY-MM-DD')} />
-                            <i className='suitcase icon' />
-                        </div>
-                    </div>
-                    <div>
-                        <div className='ui input left icon'>
-                            <input name='numberOfPeople' type='number' onChange={this.onChange}
-                                value={reservation.numberOfPeople} />
-                            <i className='users icon' />
-                        </div>
-                    </div>
-                    <button className='ui button' onClick={this.onSave}>
-                        Save
-                    </button>
-                </div >
+                </div>
             );
         }
         return (<div />);
@@ -341,10 +397,10 @@ export class Reservations extends React.Component<ReservationsProps & RouteCompo
                             <ReservationList {...p} reservations={this.state.reservations} searchquery={this.state.searchquery} onSearchChange={this.onSearchChange} />
                         } />
                         <Route path='/reservations/edit/:id' render={p =>
-                            <EditReservation reservationId={p.match.params.id} {...p} refresh={this.fetchReservations} mode='edit' />
+                            <Reservation reservationId={p.match.params.id} {...p} refresh={this.fetchReservations} mode='edit' />
                         } />
                         <Route path='/reservations/create/' render={p =>
-                            <EditReservation reservationId={p.match.params.id} {...p} refresh={this.fetchReservations} mode='create' />
+                            <CreateReservationView {...p} refresh={this.fetchReservations} />
                         } />
                         <Route path='/reservations/:id' render={p =>
                             <Reservation reservationId={p.match.params.id} {...p} refresh={this.fetchReservations} />

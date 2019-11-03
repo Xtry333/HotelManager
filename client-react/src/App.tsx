@@ -12,7 +12,7 @@ import { NotFound } from './components/NotFound';
 import { Maitenance } from './components/Maitenance';
 //import Confirmation from './components/Confirmation';
 
-//import './styles/style.less';
+import './styles/style.less';
 
 export interface AppState { token: string, user: any };
 

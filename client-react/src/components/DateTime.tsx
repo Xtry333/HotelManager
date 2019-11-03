@@ -2,7 +2,8 @@ import * as React from 'react';
 import moment = require('moment');
 
 export interface DateInputProps {
-    name: string,
+    id?: string,
+    name?: string,
     date: string | Date,
     readOnly?: boolean,
     onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void,
@@ -15,6 +16,7 @@ export default class DateInput extends React.Component<DateInputProps, {}> {
         const format = 'YYYY-MM-DD';
         return (
             <input className={this.props.className}
+                id={this.props.id}
                 type='date' onChange={this.props.onChange}
                 value={momento.format(format)}
                 readOnly={this.props.readOnly && !this.props.onChange}

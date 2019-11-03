@@ -48,6 +48,22 @@ export function Put(url: string, data: any, config?: AxiosRequestConfig) {
     }
 }
 
+export function Post(url: string, data: any, config?: AxiosRequestConfig) {
+    try {
+        console.info(`About to post to ${url} object ${JSON.stringify(data)}`);
+        const token = localStorage.getItem('token');
+        const response = instance.post(url, data, { ...config, headers: { 'Auth-Token': token } });
+        return response;
+    } catch (error) {
+        console.error(error.response);
+        if (error.response && error.response.status === 401) {
+            SystemLogout();
+        } else {
+            throw error;
+        }
+    }
+}
+
 export function Delete(url: string, config?: AxiosRequestConfig) {
     try {
         console.info(`Deleting ${url}.`);

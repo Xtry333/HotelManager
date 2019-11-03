@@ -1,18 +1,25 @@
 import * as React from 'react';
 import moment = require('moment');
 
-export default class DateTime extends React.Component<{dateTime: string | Date, format?: string, editable?:boolean, onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void}, {}> {
+export interface DateInputProps {
+    name: string,
+    date: string | Date,
+    readOnly?: boolean,
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void,
+    className?: string
+};
+
+export default class DateInput extends React.Component<DateInputProps, {}> {
     render() {
-        const momento = moment(this.props.dateTime);
-        const format = this.props.format || 'YYYY-MM-DD hh:mm';
-        return this.props.editable ? (
-            <time dateTime={momento.toString()}>
-                {momento.format(format)}
-                {this.props.children}
-            </time>
-        ) : (
-            <input type='date' onChange={this.props.onChange} value={momento.toString()}>
-            </input>
+        const momento = moment(this.props.date);
+        const format = 'YYYY-MM-DD';
+        return (
+            <input className={this.props.className}
+                type='date' onChange={this.props.onChange}
+                value={momento.format(format)}
+                readOnly={this.props.readOnly && !this.props.onChange}
+                name={this.props.name}
+            />
         );
     }
 }

@@ -65,13 +65,15 @@ export async function queryInsert<T extends Dto>(obj: { new(): T; }, valuesObj: 
     if (!valuesObj || Object.keys(valuesObj).length === 0)
         throw new ResourceError(`Cannot insert, no values defined.`, valuesObj, 500);
     for (const key in valuesObj) {
-        if (names.length > 0) {
-            names.push(', ');
-            placeholders.push(', ');
+        if (valuesObj[key] != null) {
+            if (names.length > 0) {
+                names.push(', ');
+                placeholders.push(', ');
+            }
+            values.push(valuesObj[key]);
+            names.push(`\`${key}\``);
+            placeholders.push('?');
         }
-        values.push(valuesObj[key]);
-        names.push(`\`${key}\``);
-        placeholders.push('?');
     }
 
     const preparedQuery = `INSERT INTO \`${tableName}\` (${names.join('')}) VALUES (${placeholders.join('')})`;
@@ -88,7 +90,7 @@ export async function queryUpdate<T extends Dto>(obj: { new(): T; }, valuesObj: 
     if (!valuesObj || Object.keys(valuesObj).length === 0)
         throw new ResourceError(`Cannot update, no values defined.`, valuesObj, 500);
     if (!whereObj || Object.keys(whereObj).length === 0)
-            throw new ResourceError(`Cannot update, no values defined.`, whereObj, 500);
+        throw new ResourceError(`Cannot update, no values defined.`, whereObj, 500);
     for (const key in valuesObj) {
         setKeys.push(`\`${key}\` = ?`);
         values.push(valuesObj[key]);

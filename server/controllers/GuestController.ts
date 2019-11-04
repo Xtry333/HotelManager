@@ -18,6 +18,7 @@ export async function getById(id: number): Promise<Guest | undefined> {
 }
 
 export async function create(guest: Guest) {
+    console.log(guest);
     if (guest && guest.firstname && guest.lastname && guest.phoneNumber && guest.email) {
         // TODO: validate(guest.email, Email);
 
@@ -27,6 +28,8 @@ export async function create(guest: Guest) {
         newObj.phoneNumber = guest.phoneNumber;
         newObj.email = guest.email;
         newObj.city = guest.city;
+        newObj.streetName = guest.streetName;
+        newObj.pesel = guest.pesel;
 
         const guestId = await Db.queryInsert(Guest, newObj);
         //await db.query('INSERT INTO `guest` (`firstname`, `lastname`, `phoneNumber`, `email`) VALUES (?, ?, ?, ?)', [guest.firstname, guest.lastname, guest.phoneNumber, guest.email]);
@@ -35,4 +38,11 @@ export async function create(guest: Guest) {
     } else {
         throw new ResourceError('Could not create guest. Check syntax.', guest, 400);
     }
+}
+
+export async function deleteById(id: number) {
+    if (id) {
+        await Db.query('DELETE FROM `guest` WHERE `id` = ?', [id]);
+    }
+    throw new ResourceError(`Reservation ID ${id} does not exist.`, undefined, 404);
 }

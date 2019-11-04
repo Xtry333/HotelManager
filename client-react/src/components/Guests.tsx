@@ -1,30 +1,34 @@
 import * as React from 'react';
-import { Route, Link, Redirect, RouteComponentProps } from "react-router-dom";
+import { Route, Link, Redirect, RouteComponentProps, Switch } from "react-router-dom";
 import { Guest as GuestDto } from '../dtos/Guest.dto'
 import * as Server from '../Server';
 
 interface SingleGuestViewProps { guest: GuestDto, className?: string }
 export function SingleGuestView({ guest, className }: SingleGuestViewProps) {
-    return (
-        <div className={className}>
-            <header className='ui header'>
-                <Link to={`/guests/${guest.id}`}>
-                    {guest.firstname} {guest.lastname}
-                </Link>
-            </header>
-            {(guest.phoneNumber) ? (<div>
-                <i className='mobile alternate icon' />
-                <a href={`tel:${guest.phoneNumber}`}>{guest.phoneNumber}</a>
-            </div>) : (<div />)}
-            {(guest.email) ? (<div>
-                <i className='inbox icon' />
-                <a href={`mailto:${guest.email}`}>{guest.email}</a>
-            </div>) : (<div />)}
-        </div>
-    );
+    if (guest) {
+        return (
+            <div className={className}>
+                <header className='ui header'>
+                    <Link to={`/guests/${guest.id}`}>
+                        {guest.firstname} {guest.lastname}
+                    </Link>
+                </header>
+                {(guest.phoneNumber) ? (<div>
+                    <i className='mobile alternate icon' />
+                    <a href={`tel:${guest.phoneNumber}`}>{guest.phoneNumber}</a>
+                </div>) : (<div />)}
+                {(guest.email) ? (<div>
+                    <i className='inbox icon' />
+                    <a href={`mailto:${guest.email}`}>{guest.email}</a>
+                </div>) : (<div />)}
+            </div>
+        );
+    } else {
+        return <div className={className} />;
+    }
 }
 
-export interface GuestProps { guestId: number, refresh: Function }
+export interface GuestProps { guestId: number, refresh: Function, mode?: string }
 export interface GuestState { guest: GuestDto, editMode: boolean }
 
 class Guest extends React.Component<GuestProps & RouteComponentProps, GuestState> {
@@ -35,6 +39,7 @@ class Guest extends React.Component<GuestProps & RouteComponentProps, GuestState
 
     componentDidMount() {
         this.fetchGuest(this.props.guestId);
+        this.setState({ editMode: this.props.mode === 'edit' });
     }
 
     async fetchGuest(id: number) {
@@ -46,29 +51,58 @@ class Guest extends React.Component<GuestProps & RouteComponentProps, GuestState
         }
     }
 
-    render() {
-        if (this.state.guest) {
-            const guest = this.state.guest;
-            //if (this.state.singout) { return (<Redirect to='/logout' />); }
-            if (this.state.editMode) {
-                const list = Object.keys(guest).map((k, i) => <input value={JSON.stringify((guest as any)[k])} key={k} />);
-                console.log(list);
-                return (
-                    <div className="Guest-single">
-                        {list}
-                    </div>
-                );
-            } else {
-                //let index = 0;
-                //const images = room.meta.images.map(v => <img key={v.id} src={v.imageLink} alt={`Zdjęcie ${index}`} />);
-                return (
-                    <div className="Guest-single">
-                        <SingleGuestView guest={guest} />
+    onGuestEditSave = async () => {
+        const guest = this.state.guest;
+        await Server.Put(`guest/${guest.id}`, { guest: guest });
+        this.setState({ editMode: false });
+        this.props.refresh();
+        this.props.history.goBack();
+    }
 
-                        <button className="App-button" onClick={e => { this.setState({ editMode: true }) }}>Edit</button>
-                    </div>
-                );
-            }
+    deleteRes = async () => {
+        const guestID = this.state.guest.id;
+        const guestName = `${this.state.guest.firstname} ${this.state.guest.lastname}`;
+        const confirmation = window.confirm(`Are you sure you want to delete ${guestName} from database?`);
+        if (confirmation) {
+            await Server.Delete(`guest/${guestID}`);
+            this.props.refresh();
+            this.props.history.push(`/guests`);
+        }
+    }
+
+    render() {
+        const guest = this.state.guest;
+        const editMode = this.state.editMode;
+        if (guest) {
+            return (
+                <div className="Guest-single">
+                    <SingleGuestView guest={guest} />
+
+                    {editMode ?
+                        (<div className="ui buttons">
+                            <button className="ui green basic button"
+                                onClick={this.onGuestEditSave}>Save</button>
+                            <button className="ui orange basic button"
+                                onClick={e => {
+                                    this.props.history.push(`/guests/${guest.id}`);
+                                    this.setState({ editMode: false })
+                                }}>Cancel</button>
+                            <button className="ui red basic button"
+                                onClick={this.deleteRes}>Delete</button>
+                        </div>
+                        ) : (<div className="ui buttons">
+                            <button className="ui teal basic button"
+                                onClick={e => {
+                                    this.props.history.push(`/reservations/create/${guest.id}`);
+                                }}>Create Reservation</button>
+                            <button className="ui orange basic button"
+                                onClick={e => {
+                                    this.props.history.push(`/guests/edit/${guest.id}`);
+                                    this.setState({ editMode: true });
+                                }}>Edit</button>
+                        </div>)}
+                </div>
+            );
         }
         return (<div />);
     }
@@ -163,12 +197,17 @@ class Guests extends React.Component<GuestsProps & RouteComponentProps, GuestsSt
                 {/* <header className="Guests-header ui header centered">Guests Management</header> */}
                 <div className="ui horizontal divider">Guests Management</div>
                 <div className='Guests-content'>
-                    <Route path='/guests/' exact render={p =>
-                        <GuestList {...p} guests={this.state.guests} />
-                    } />
-                    <Route path='/guests/:id' render={p =>
-                        <Guest guestId={p.match.params.id} {...p} refresh={this.fetchGuests} />
-                    } />
+                    <Switch>
+                        <Route path='/guests/' exact render={p =>
+                            <GuestList {...p} guests={this.state.guests} />
+                        } />
+                        <Route path='/guests/edit/:id' render={p =>
+                            <Guest guestId={p.match.params.id} {...p} refresh={this.fetchGuests} mode='edit' />
+                        } />
+                        <Route path='/guests/:id' render={p =>
+                            <Guest guestId={p.match.params.id} {...p} refresh={this.fetchGuests} />
+                        } />
+                    </Switch>
                 </div>
             </div>
         );

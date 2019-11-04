@@ -74,11 +74,13 @@ export async function create(reservation: Reservation, guest?: Guest) {
     if (!reservation) throw new ResourceError('Reservation not specified.', undefined, 400);
     reservation.token = token;
 
-    if (!reservation.guest && guest) {
-        const created = await GuestController.create(guest);
-        reservation.guest = created.id;
-    } else {
-        throw new ResourceError('Reservation is missing guest ID and new guest not been specified.', reservation, 400);
+    if (!reservation.guest) {
+        if (guest) {
+            const created = await GuestController.create(guest);
+            reservation.guest = created.id;
+        } else {
+            throw new ResourceError('Reservation is missing guest ID and new guest not been specified.', reservation, 400);
+        }
     }
 
     if (reservation.room) {
@@ -90,12 +92,12 @@ export async function create(reservation: Reservation, guest?: Guest) {
     const newObj: any = {};
     newObj.token = reservation.token;
     newObj.guest = reservation.guest;
+    newObj.room = reservation.room;
     newObj.pricePerDay = reservation.pricePerDay;
     newObj.start = moment(reservation.start).format(dateFormat);
     newObj.end = moment(reservation.end).format(dateFormat);
     newObj.numberOfPeople = reservation.numberOfPeople;
     newObj.additionalResInfo = reservation.additionalResInfo || '';
-    newObj.room = reservation.room;
 
     const resId = await Db.queryInsert(Reservation, { ...newObj });
     //await Db.query('INSERT INTO `reservation` (`room`, `guest`, `numberOfPeople`, `pricePerDay`, `start`, `end`, `token`) VALUES (?, ?, ?, ?, ?, ?, ?)',

@@ -42,6 +42,7 @@ export async function create(guest: Guest) {
 export async function deleteById(id: number) {
     if (id) {
         await Db.query('DELETE FROM `guest` WHERE `id` = ?', [id]);
+        return true
     } else {
         throw new ResourceError(`Reservation ID ${id} does not exist.`, undefined, 404);
     }

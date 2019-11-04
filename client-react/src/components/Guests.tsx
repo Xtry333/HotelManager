@@ -64,10 +64,15 @@ class Guest extends React.Component<GuestProps & RouteComponentProps, GuestState
         const guestID = this.state.guest.id;
         const guestName = `${this.state.guest.firstname} ${this.state.guest.lastname}`;
         const confirmation = window.confirm(`Are you sure you want to delete ${guestName} from database?`);
-        if (confirmation) {
-            await Server.Delete(`guest/${guestID}`);
-            this.props.refresh();
-            this.props.history.push(`/guests`);
+        try {
+            if (confirmation) {
+                await Server.Delete(`guest/${guestID}`);
+                this.props.refresh();
+                this.props.history.push(`/guests`);
+            }
+        } catch (error) {
+            console.error(error);
+            window.alert(`Can not delete ${guestName}. Perhaps referenced somewhere.`);
         }
     }
 

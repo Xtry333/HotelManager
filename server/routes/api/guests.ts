@@ -38,8 +38,8 @@ router.post('/', async (req, res, next) => {
 router.delete('/:id', async (req, res, next) => {
     try {
         const id = parseInt(req.params.id);
-        await GuestController.deleteById(id);
-        res.status(200);
+        const results = await GuestController.deleteById(id);
+        res.status(200).json(results);
     } catch (error) {
         res.status(error.status).json(error);
     }

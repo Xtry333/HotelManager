@@ -73,8 +73,8 @@ router.put('/:id', async (req, res, next) => {
 router.delete('/:id', async (req, res, next) => {
     try {
         const id = parseInt(req.params.id);
-        const reservation = await ResController.deleteById(id);
-        res.status(200).json(reservation);
+        const results = await ResController.deleteById(id);
+        res.status(200).json(results);
     } catch (error) {
         res.status(error.status).json(error);
     }

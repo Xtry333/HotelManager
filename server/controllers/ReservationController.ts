@@ -124,12 +124,15 @@ export async function updateById(id: number, reservation: Reservation) {
 }
 
 export async function deleteById(id: number) {
-    const reservation = await getById(id);
-    if (reservation) {
-        if (!reservation.deleted) {
-            await Db.query('UPDATE `reservation` SET `deleted` = 1 WHERE `id` = ?', [id]);
-            return reservation;
-        }
+    if (id) {
+        // const reservation = await getById(id);
+        // if (reservation) {
+        //     if (!reservation.deleted) {
+        await Db.query('UPDATE `reservation` SET `deleted` = 1 WHERE `id` = ?', [id]);
+        //         return reservation;
+        //     }
+        // }
+    } else {
+        throw new ResourceError(`Reservation ID ${id} does not exist.`, undefined, 404);
     }
-    throw new ResourceError(`Reservation ID ${id} does not exist.`, reservation, 404);
 }

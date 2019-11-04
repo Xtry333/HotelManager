@@ -3,7 +3,7 @@ import { Route, Link, Redirect, RouteComponentProps, Switch } from "react-router
 import { Guest as GuestDto } from '../dtos/Guest.dto'
 import * as Server from '../Server';
 import { NotFound } from './NotFound';
-import { CreateGuestView } from './Guests/CreateGuest';
+import { CreateGuestView, CreateGuestDiv } from './Guests/CreateGuest';
 
 interface SingleGuestViewProps { guest: GuestDto, className?: string }
 export function SingleGuestView({ guest, className }: SingleGuestViewProps) {
@@ -15,13 +15,17 @@ export function SingleGuestView({ guest, className }: SingleGuestViewProps) {
                         {guest.firstname} {guest.lastname}
                     </Link>
                 </header>
-                {(guest.phoneNumber) ? (<div>
+                <div>
                     <i className='mobile alternate icon' />
                     <a href={`tel:${guest.phoneNumber}`}>{guest.phoneNumber}</a>
-                </div>) : (<div />)}
-                {(guest.email) ? (<div>
+                </div>
+                <div>
                     <i className='inbox icon' />
                     <a href={`mailto:${guest.email}`}>{guest.email}</a>
+                </div>
+                {(guest.city) ? (<div>
+                    <i className='map marker alternate icon' />
+                    <span>{guest.city}</span>
                 </div>) : (<div />)}
             </div>
         );
@@ -53,12 +57,21 @@ class Guest extends React.Component<GuestProps & RouteComponentProps, GuestState
         }
     }
 
-    onGuestEditSave = async () => {
+    onGuestInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const name = event.target.name;
+        const value = event.target.value;
+        const guest: any = Object.assign({}, this.state.guest);
+        guest[name] = value;
+        this.setState({ guest: guest });
+    }
+
+    onGuestEditSave = async (event: any) => {
+        event.preventDefault();
         const guest = this.state.guest;
         await Server.Put(`guest/${guest.id}`, { guest: guest });
         this.setState({ editMode: false });
         this.props.refresh();
-        this.props.history.goBack();
+        this.props.history.push(`/guests/${guest.id}`);
     }
 
     deleteRes = async () => {
@@ -83,21 +96,23 @@ class Guest extends React.Component<GuestProps & RouteComponentProps, GuestState
         if (guest) {
             return (
                 <div className="Guest-single">
-                    <SingleGuestView guest={guest} />
-
                     {editMode ?
-                        (<div className="ui buttons">
-                            <button className="ui green basic button"
-                                onClick={this.onGuestEditSave}>Save</button>
-                            <button className="ui orange basic button"
-                                onClick={e => {
-                                    this.props.history.push(`/guests/${guest.id}`);
-                                    this.setState({ editMode: false })
-                                }}>Cancel</button>
-                            <button className="ui red basic button"
-                                onClick={this.deleteRes}>Delete</button>
-                        </div>
-                        ) : (<div className="ui buttons">
+                        (<form className="ui form" onSubmit={this.onGuestEditSave}>
+                            <CreateGuestDiv guest={guest} onInputChange={this.onGuestInputChange} >
+                                <div className="ui">
+                                    <button className="ui green basic button">Save</button>
+                                    <button className="ui orange basic button"
+                                        onClick={e => {
+                                            this.props.history.push(`/guests/${guest.id}`);
+                                            this.setState({ editMode: false })
+                                        }}>Cancel</button>
+                                    <button className="ui red basic button"
+                                        onClick={this.deleteRes}>Delete</button>
+                                </div>
+                            </CreateGuestDiv>
+                        </form>
+                        ) : (<div>
+                            <SingleGuestView guest={guest} />
                             <button className="ui teal basic button"
                                 onClick={e => {
                                     this.props.history.push(`/reservations/create/${guest.id}`);
@@ -214,11 +229,8 @@ class Guests extends React.Component<GuestsProps & RouteComponentProps, GuestsSt
     render() {
         return (
             <div className='Guests'>
-                {/* <header className="Guests-header ui header centered">Guests Management</header> */}
                 <header className="ui header centered">
-                    <h2>
-                        Guests Management
-                    </h2>
+                    <h2>Guests Management</h2>
                 </header>
                 <div className="ui divider" />
 

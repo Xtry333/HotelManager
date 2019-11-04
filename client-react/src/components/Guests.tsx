@@ -43,7 +43,7 @@ class Guest extends React.Component<GuestProps & RouteComponentProps, GuestState
         this.setState({ editMode: this.props.mode === 'edit' });
     }
 
-    async fetchGuest(id: number) {
+    fetchGuest = async (id: number) => {
         try {
             const results = await Server.Get(`guest/${id}`);
             this.setState({ guest: results.data });
@@ -109,27 +109,36 @@ class Guest extends React.Component<GuestProps & RouteComponentProps, GuestState
     }
 }
 
-interface GuestListProps { guests: GuestDto[] }
+interface GuestListProps { guests: GuestDto[], searchquery: string, onSearchChange: (event: React.ChangeEvent<HTMLInputElement>) => void }
 interface GuestListState { }
 
-class GuestList extends React.Component<GuestListProps, GuestListState> {
+class GuestList extends React.Component<GuestListProps & RouteComponentProps, GuestListState> {
     render() {
         const guests = this.props.guests.map(guest => <GuestListItem key={guest.id} guest={guest} />);
         return (
-            <table className='Guests-list ui table'>
-                <thead className='ui header'>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Lastname</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {guests}
-                </tbody>
-            </table>
+            <div>
+                <div className="ui input group">
+                    <button className="ui teal button" onClick={e => { this.props.history.push(`/guests/create/`) }}>Create New</button>
+                    <div className='ui icon input'>
+                        <input type='text' onChange={this.props.onSearchChange} value={this.props.searchquery} placeholder="Search..." />
+                        <i className="search icon"></i>
+                    </div>
+                </div>
+                <table className='Guests-list ui table'>
+                    <thead className='ui header'>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Lastname</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {guests}
+                    </tbody>
+                </table>
+            </div>
         );
     }
 }
@@ -176,12 +185,12 @@ class GuestListItem extends React.Component<GuestListItemProps, GuestListItemSta
 }
 
 export interface GuestsProps { room: number }
-export interface GuestsState { guests: GuestDto[] }
+export interface GuestsState { guests: GuestDto[], searchquery: string }
 
 class Guests extends React.Component<GuestsProps & RouteComponentProps, GuestsState> {
     constructor() {
         super(undefined, undefined);
-        this.state = { guests: [] };
+        this.state = { guests: [], searchquery: '' };
     }
 
     componentDidMount() {
@@ -192,15 +201,20 @@ class Guests extends React.Component<GuestsProps & RouteComponentProps, GuestsSt
         this.setState({ guests: await Server.GetAllBy('guest', GuestDto) });
     }
 
+    onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        this.setState({ searchquery: event.target.value });
+    }
+
     render() {
         return (
             <div className='Guests'>
                 {/* <header className="Guests-header ui header centered">Guests Management</header> */}
                 <div className="ui horizontal divider">Guests Management</div>
+
                 <div className='Guests-content'>
                     <Switch>
                         <Route path='/guests/' exact render={p =>
-                            <GuestList {...p} guests={this.state.guests} />
+                            <GuestList {...p} guests={this.state.guests} onSearchChange={this.onSearchChange} searchquery={this.state.searchquery} />
                         } />
                         <Route path='/guests/edit/:id' render={p =>
                             <Guest guestId={p.match.params.id} {...p} refresh={this.fetchGuests} mode='edit' />

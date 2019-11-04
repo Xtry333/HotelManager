@@ -11,9 +11,9 @@
   "author": "Xtry333",
   "license": "ISC",
   "devDependencies": {
-    "@types/react": "^16.9.9",
-    "@types/react-dom": "^16.9.2",
-    "@types/react-router-dom": "^5.1.0",
+    "@types/react": "^16.9.11",
+    "@types/react-dom": "^16.9.3",
+    "@types/react-router-dom": "^5.1.2",
     "css-loader": "^3.2.0",
     "less": "^3.10.3",
     "less-loader": "^5.0.0",
@@ -23,7 +23,7 @@
     "ts-loader": "^6.2.1",
     "typescript": "^3.6.4",
     "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.9",
+    "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.9.0",
     "write-file-webpack-plugin": "^4.5.1"
   },

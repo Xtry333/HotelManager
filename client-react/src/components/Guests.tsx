@@ -3,6 +3,7 @@ import { Route, Link, Redirect, RouteComponentProps, Switch } from "react-router
 import { Guest as GuestDto } from '../dtos/Guest.dto'
 import * as Server from '../Server';
 import { NotFound } from './NotFound';
+import { CreateGuestView } from './Guests/CreateGuest';
 
 interface SingleGuestViewProps { guest: GuestDto, className?: string }
 export function SingleGuestView({ guest, className }: SingleGuestViewProps) {
@@ -214,7 +215,12 @@ class Guests extends React.Component<GuestsProps & RouteComponentProps, GuestsSt
         return (
             <div className='Guests'>
                 {/* <header className="Guests-header ui header centered">Guests Management</header> */}
-                <div className="ui horizontal divider">Guests Management</div>
+                <header className="ui header centered">
+                    <h2>
+                        Guests Management
+                    </h2>
+                </header>
+                <div className="ui divider" />
 
                 <div className='Guests-content'>
                     <Switch>
@@ -225,7 +231,7 @@ class Guests extends React.Component<GuestsProps & RouteComponentProps, GuestsSt
                             <Guest guestId={p.match.params.id} {...p} refresh={this.fetchGuests} mode='edit' />
                         } />
                         <Route path='/guests/create/' render={p =>
-                            <NotFound {...p} />
+                            <CreateGuestView {...p} refresh={this.fetchGuests} />
                         } />
                         <Route path='/guests/:id' render={p =>
                             <Guest guestId={p.match.params.id} {...p} refresh={this.fetchGuests} />

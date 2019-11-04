@@ -9,6 +9,7 @@ import { Guest as GuestDto } from '../dtos/Guest.dto';
 import { SingleGuestView } from './Guests';
 import { RoomView, Room } from '../dtos/Room.dto';
 import DateInput from './DateInput';
+import { CreateGuestDiv } from './Guests/CreateGuest';
 
 export interface ReservationProps { reservationId: number, refresh: Function, mode?: string }
 export interface ReservationState { reservation: ReservationDto, guest: GuestDto, room: RoomView, editMode: boolean }
@@ -64,7 +65,6 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
         const guestName = `${this.state.guest.firstname} ${this.state.guest.lastname}`;
         const confirmation = window.confirm(`Are you sure you want to delete reservation ${resID} for ${guestName}?`);
         if (confirmation) {
-            console.log(`Wow, staph! ${resID}`);
             await Server.Delete(`reservation/${resID}`);
             this.props.refresh();
             this.props.history.push(`/reservations`);
@@ -225,52 +225,7 @@ class CreateReservationView extends React.Component<CreateReservationViewProps &
             return (
                 <div>
                     <form className="ui form" onSubmit={this.onSubmit}>
-                        {!this.props.guestId ? (<div>
-                            <h4 className="ui dividing header">Create Guest</h4>
-                            <label>Name</label>
-                            <div className="three fields">
-                                <div className="field">
-                                    <input type="text" name="firstname" placeholder="First Name" value={guest.firstname} onChange={this.onGuestInputChange} />
-                                </div>
-                                <div className="field">
-                                    <input type="text" name="lastname" placeholder="Last Name" value={guest.lastname} onChange={this.onGuestInputChange} />
-                                </div>
-                            </div>
-                            <label>Contact</label>
-                            <div className="three fields">
-                                <div className="field">
-                                    <div className="ui input left icon">
-                                        <i className='mobile alternate icon' />
-                                        <input type="tel" name="phoneNumber" placeholder="Phone Number" value={guest.phoneNumber} onChange={this.onGuestInputChange} />
-                                    </div>
-                                </div>
-                                <div className="field">
-                                    <div className="ui input left icon">
-                                        <i className='mail icon' />
-                                        <input type="email" name="email" placeholder="Email Address" value={guest.email} required onChange={this.onGuestInputChange} />
-                                    </div>
-                                </div>
-                            </div>
-                            <label>Address</label>
-                            <div className="three fields">
-                                <div className="field">
-                                    <input type="text" name="city" placeholder="City" value={guest.city} onChange={this.onGuestInputChange} />
-                                </div>
-                                <div className="field">
-                                    <input type="text" name="streetName" placeholder="Street" value={guest.streetName} onChange={this.onGuestInputChange} />
-                                </div>
-                            </div>
-                            <label>Pesel</label>
-                            <div className="three fields">
-                                <div className="field">
-                                    <input type="number" name="pesel" placeholder="Pesel" value={guest.pesel} onChange={this.onGuestInputChange} />
-                                </div>
-                            </div>
-                            <label>Additional Guest Info</label>
-                            <div className="field">
-                                <textarea name="additionalGuestInfo" value={guest.additionalGuestInfo} onChange={this.onGuestInputChange} />
-                            </div>
-                        </div>) : (<SingleGuestView guest={this.state.guest} />)}
+                        {!this.props.guestId ? (<CreateGuestDiv guest={guest} onInputChange={this.onGuestInputChange} />) : (<SingleGuestView guest={this.state.guest} />)}
                         <h4 className="ui dividing header">Create Reservation</h4>
                         <div className="two fields">
                             <div className="field">
@@ -300,8 +255,9 @@ class CreateReservationView extends React.Component<CreateReservationViewProps &
                             <div className="field">
                                 <label htmlFor="pricePerDay" className="ui">Price per Day</label>
                                 <div className='ui input left icon'>
-                                    <input id="pricePerDay" name='pricePerDay' type='number'
-                                        onChange={this.onReservationInputChange} value={reservation.pricePerDay} required />
+                                    <input id="pricePerDay" name='pricePerDay' type='number' min={0}
+                                        onChange={this.onReservationInputChange}
+                                        value={reservation.pricePerDay || 0} required />
                                     <i className='money icon' />
                                 </div>
                             </div>
@@ -309,15 +265,15 @@ class CreateReservationView extends React.Component<CreateReservationViewProps &
                         <div className="field">
                             <label htmlFor="roomId" className="ui">Room ID</label>
                             <div className='ui input left icon'>
-                                <input id="roomId" name='room' type='number'
-                                    onChange={this.onReservationInputChange} value={reservation.room} />
+                                <input id="roomId" name='room' type='number' min={0}
+                                    onChange={this.onReservationInputChange} value={reservation.room || 0} />
                                 <i className='home icon' />
                             </div>
                         </div>
                         <label>Additional Reservation Info</label>
-                            <div className="field">
-                                <textarea name="additionalResInfo" value={reservation.additionalResInfo} onChange={this.onReservationInputChange} />
-                            </div>
+                        <div className="field">
+                            <textarea name="additionalResInfo" value={reservation.additionalResInfo} onChange={this.onReservationInputChange} />
+                        </div>
                         <button className='ui teal button' type="submit">Create</button>
                     </form>
                 </div>
@@ -453,6 +409,7 @@ export class Reservations extends React.Component<ReservationsProps & RouteCompo
                         Reservations Management
                     </h2>
                 </header>
+                <div className="ui divider" />
                 <div className='Reservations-content'>
                     <Switch>
                         <Route path='/reservations/' exact render={p =>

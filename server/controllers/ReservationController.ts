@@ -74,22 +74,17 @@ export async function create(reservation: Reservation, guest?: Guest) {
     if (!reservation) throw new ResourceError('Reservation not specified.', undefined, 400);
     reservation.token = token;
 
-    if (guest) {
-        //await Db.queryInsert(Guest, {...guest});
+    if (!reservation.guest && guest) {
         const created = await GuestController.create(guest);
         reservation.guest = created.id;
     } else {
-        if (reservation.guest) {
-            //const guestID = await GuestController.getById(reservation.guest);
-        } else {
-            throw new ResourceError('Guest not specified.', reservation, 400);
-        }
+        throw new ResourceError('Reservation is missing guest ID and new guest not been specified.', reservation, 400);
     }
 
     if (reservation.room) {
         //const roomID = await RoomController.getById(reservation.room);
     } else {
-        throw new ResourceError('Either reservation is missing key ids or something went wrong', reservation, 400);
+        throw new ResourceError('Reservation is missing room ID.', reservation, 400);
     }
 
     const newObj: any = {};

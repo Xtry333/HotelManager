@@ -12,7 +12,7 @@ export class CreateGuestDiv extends React.Component<CreateGuestDivProps & React.
 
     validatePesel = (e: any) => {
         const value = e.target.value;
-        if (value.toString().length != 11) {
+        if (value.toString().length != 11 && value.toString().length > 0) {
             e.target.closest('div').classList.add("error");
         } else {
             e.target.closest('div').classList.remove("error");

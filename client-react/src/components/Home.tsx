@@ -10,7 +10,7 @@ class Home extends React.Component<RouteComponentProps> {
                 <header className="ui centered header">
                     <h2>Hello {user.firstname}</h2>
                     <p>Choose your path</p>
-                    <div className="ui buttons">
+                    <div className="">
                         <button className="ui teal button" onClick={e => this.props.history.push(`/guests/create/`)}>
                             Create Guest
                         </button>

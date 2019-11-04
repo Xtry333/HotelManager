@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Route, Link, Redirect, RouteComponentProps, Switch } from "react-router-dom";
 import { Guest as GuestDto } from '../dtos/Guest.dto'
 import * as Server from '../Server';
+import { NotFound } from './NotFound';
 
 interface SingleGuestViewProps { guest: GuestDto, className?: string }
 export function SingleGuestView({ guest, className }: SingleGuestViewProps) {
@@ -203,6 +204,9 @@ class Guests extends React.Component<GuestsProps & RouteComponentProps, GuestsSt
                         } />
                         <Route path='/guests/edit/:id' render={p =>
                             <Guest guestId={p.match.params.id} {...p} refresh={this.fetchGuests} mode='edit' />
+                        } />
+                        <Route path='/guests/create/' render={p =>
+                            <NotFound {...p} />
                         } />
                         <Route path='/guests/:id' render={p =>
                             <Guest guestId={p.match.params.id} {...p} refresh={this.fetchGuests} />

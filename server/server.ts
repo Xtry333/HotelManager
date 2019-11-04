@@ -11,7 +11,8 @@ import { HttpError } from 'http-errors';
 /**
  * Get port from environment and store in Express.
  */
-const port = normalizePort('3001');
+const port = normalizePort('3002');
+
 app.set('port', port);
 
 /**
@@ -83,4 +84,5 @@ function onListening() {
             : 'port ' + addr.port;
         debug('Listening on ' + bind);
     }
+    console.debug(addr);
 }

@@ -15,7 +15,7 @@ export default pool;
 
 /*
 CREATE DATABASE hotelmanagerdb CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'manager'@'localhost' IDENTIFIED BY 'DbKtF3sZyNe7DNvQ';
+CREATE USER 'manager'@'localhost' IDENTIFIED BY 'password';
 GRANT ALL PRIVILEGES ON hotelmanagerdb . * TO 'manager'@'localhost';
 USE hotelmanagerdb;
 */

@@ -34,6 +34,18 @@ router.post('/', async (req, res, next) => {
     }
 });
 
+/* PUT guest */
+router.put('/:id', async (req, res, next) => {
+    try {
+        const id = parseInt(req.params.id);
+        const guestObject = req.body.guest;
+        const guest = await GuestController.updateById(id, guestObject);
+        res.status(200).json(guest);
+    } catch (error) {
+        res.status(error.status).json(error);
+    }
+});
+
 /* DELETE guest. */
 router.delete('/:id', async (req, res, next) => {
     try {

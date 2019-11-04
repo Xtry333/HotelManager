@@ -32,12 +32,11 @@ export function Get(url: string, config?: AxiosRequestConfig) {
     }
 }
 
-export function Put(url: string, data: any, config?: AxiosRequestConfig) {
+export async function Put(url: string, data: any, config?: AxiosRequestConfig) {
     try {
         console.info(`About to put to ${url} object ${JSON.stringify(data)}`);
         const token = localStorage.getItem('token');
-        const response = instance.put(url, data, { ...config, headers: { 'Auth-Token': token } });
-        return response;
+        return await instance.put(url, data, { ...config, headers: { 'Auth-Token': token } });
     } catch (error) {
         console.error(error.response);
         if (error.response && error.response.status === 401) {
@@ -48,12 +47,11 @@ export function Put(url: string, data: any, config?: AxiosRequestConfig) {
     }
 }
 
-export function Post(url: string, data: any, config?: AxiosRequestConfig) {
+export async function Post(url: string, data: any, config?: AxiosRequestConfig) {
     try {
         console.info(`About to post to ${url} object ${JSON.stringify(data)}`);
         const token = localStorage.getItem('token');
-        const response = instance.post(url, data, { ...config, headers: { 'Auth-Token': token } });
-        return response;
+        return await instance.post(url, data, { ...config, headers: { 'Auth-Token': token } });
     } catch (error) {
         console.error(error.response);
         if (error.response && error.response.status === 401) {
@@ -64,12 +62,11 @@ export function Post(url: string, data: any, config?: AxiosRequestConfig) {
     }
 }
 
-export function Delete(url: string, config?: AxiosRequestConfig) {
+export async function Delete(url: string, config?: AxiosRequestConfig) {
     try {
         console.info(`Deleting ${url}.`);
         const token = localStorage.getItem('token');
-        const response = instance.delete(url, { ...config, headers: { 'Auth-Token': token } });
-        return response;
+        return await instance.delete(url, { ...config, headers: { 'Auth-Token': token } });
     } catch (error) {
         console.error(error.response);
         if (error.response && error.response.status === 401) {

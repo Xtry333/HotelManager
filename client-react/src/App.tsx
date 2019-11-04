@@ -52,8 +52,8 @@ class App extends React.Component<{}, AppState> {
                                 <Switch>
                                     <Route path='/' exact component={Home} />
                                     {/* <Route path='/future/' component={Future} /> */}
-                                    <Route path='/room*/' component={Rooms} />
-                                    <Route path='/reservation*/' component={Reservations} />
+                                    <Route path='/rooms/' component={Rooms} />
+                                    <Route path='/reservations/' component={Reservations} />
                                     <Route path='/guests/' component={Guests} />
                                     <Route path='*' component={NotFound} />
                                 </Switch>

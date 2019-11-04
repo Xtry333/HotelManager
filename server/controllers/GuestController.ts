@@ -32,7 +32,6 @@ export async function create(guest: Guest) {
         newObj.pesel = guest.pesel;
 
         const guestId = await Db.queryInsert(Guest, newObj);
-        //await db.query('INSERT INTO `guest` (`firstname`, `lastname`, `phoneNumber`, `email`) VALUES (?, ?, ?, ?)', [guest.firstname, guest.lastname, guest.phoneNumber, guest.email]);
         guest.id = guestId;
         return guest;
     } else {

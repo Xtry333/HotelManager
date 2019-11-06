@@ -10,6 +10,7 @@ import { SingleGuestView } from './Guests';
 import { RoomView, Room } from '../dtos/Room.dto';
 import DateInput from './DateInput';
 import { CreateGuestDiv } from './Guests/CreateGuest';
+import { TopHeader } from './TopHeader';
 
 export interface ReservationProps { reservationId: number, refresh: Function, mode?: string }
 export interface ReservationState { reservation: ReservationDto, guest: GuestDto, room: RoomView, editMode: boolean }
@@ -404,11 +405,7 @@ export class Reservations extends React.Component<ReservationsProps & RouteCompo
     render() {
         return (
             <div className='Reservations'>
-                <header className="Reservations-header ui header centered">
-                    <h2>
-                        Reservations Management
-                    </h2>
-                </header>
+                <TopHeader {...this.props}>Reservations Management</TopHeader>
                 <div className="ui divider" />
                 <div className='Reservations-content'>
                     <Switch>

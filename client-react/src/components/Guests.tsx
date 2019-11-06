@@ -4,6 +4,7 @@ import { Guest as GuestDto } from '../dtos/Guest.dto'
 import * as Server from '../Server';
 import { NotFound } from './NotFound';
 import { CreateGuestView, CreateGuestDiv } from './Guests/CreateGuest';
+import { TopHeader } from './TopHeader';
 
 interface SingleGuestViewProps { guest: GuestDto, className?: string }
 export function SingleGuestView({ guest, className }: SingleGuestViewProps) {
@@ -112,16 +113,37 @@ class Guest extends React.Component<GuestProps & RouteComponentProps, GuestState
                             </CreateGuestDiv>
                         </form>
                         ) : (<div>
-                            <SingleGuestView guest={guest} />
-                            <button className="ui teal basic button"
-                                onClick={e => {
-                                    this.props.history.push(`/reservations/create/${guest.id}`);
-                                }}>Create Reservation</button>
-                            <button className="ui orange basic button"
-                                onClick={e => {
-                                    this.props.history.push(`/guests/edit/${guest.id}`);
-                                    this.setState({ editMode: true });
-                                }}>Edit</button>
+                            <div className="ui two column grid">
+                                <div className="center aligned column">
+                                    <div className="ui horizontal divider">Info</div>
+                                    <SingleGuestView guest={guest} />
+                                </div>
+
+                                <div className="center aligned column">
+                                    <div className="ui horizontal divider">Details</div>
+                                    <div>
+                                        <span>Pesel: </span> <span>{guest.pesel}</span>
+                                    </div>
+                                    <br />
+                                    <div>
+                                        <span>City: </span> <span>{guest.city}</span>
+                                    </div>
+                                    <div>
+                                        <span>Street: </span> <span>{guest.streetName}</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button className="ui teal basic button"
+                                        onClick={e => {
+                                            this.props.history.push(`/reservations/create/${guest.id}`);
+                                        }}>Create Reservation</button>
+                                    <button className="ui orange basic button"
+                                        onClick={e => {
+                                            this.props.history.push(`/guests/edit/${guest.id}`);
+                                            this.setState({ editMode: true });
+                                        }}>Edit</button>
+                                </div>
+                            </div>
                         </div>)}
                 </div>
             );
@@ -229,9 +251,7 @@ class Guests extends React.Component<GuestsProps & RouteComponentProps, GuestsSt
     render() {
         return (
             <div className='Guests'>
-                <header className="ui header centered">
-                    <h2>Guests Management</h2>
-                </header>
+                <TopHeader {...this.props}>Guests Management</TopHeader>
                 <div className="ui divider" />
 
                 <div className='Guests-content'>

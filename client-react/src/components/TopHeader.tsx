@@ -19,8 +19,11 @@ export class TopHeader extends React.Component<TopHeaderProps & RouteComponentPr
                         </header>
                     </div>
                     <div className="right aligned column">
-                        <button className="ui icon button">
+                        <button className="ui icon button" onClick={e => this.props.history.push(`/settings`)}>
                             <i className="cogs icon" />
+                        </button>
+                        <button className="ui icon button" onClick={e => this.props.history.push(`/user`)}>
+                            <i className="user icon" />
                         </button>
                     </div>
                 </div>

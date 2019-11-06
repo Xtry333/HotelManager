@@ -305,11 +305,17 @@ class ReservationList extends React.Component<ReservationListProps & RouteCompon
 
         return (
             <div>
-                <div className="ui input group">
-                    <button className="ui teal button" onClick={e => { this.props.history.push(`/reservations/create/`) }}>Create New</button>
-                    <div className='ui icon input'>
-                        <input type='text' onChange={this.props.onSearchChange} value={this.props.searchquery} placeholder="Search..." />
-                        <i className="search icon"></i>
+                <div className="ui four column grid">
+                    <div className="four wide left aligned column">
+                        <button className="ui teal fluid button"
+                            onClick={e => { this.props.history.push(`/reservations/create/`) }}>Create New</button>
+                    </div>
+                    <div className="eight wide center aligned column"></div>
+                    <div className="four wide right aligned column">
+                        <div className='ui icon fluid input'>
+                            <input type='text' onChange={this.props.onSearchChange} value={this.props.searchquery} placeholder="Search..." />
+                            <i className="search icon"></i>
+                        </div>
                     </div>
                 </div>
 

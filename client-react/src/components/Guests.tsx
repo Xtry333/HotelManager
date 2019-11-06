@@ -157,7 +157,7 @@ interface GuestListState { }
 
 class GuestList extends React.Component<GuestListProps & RouteComponentProps, GuestListState> {
     render() {
-        const guests = this.props.guests.map(guest => <GuestListItem key={guest.id} guest={guest} />);
+        const guests = this.props.guests.map(guest => <GuestListItem {...this.props} key={guest.id} guest={guest} />);
         return (
             <div>
                 <div className="ui input group">
@@ -190,11 +190,11 @@ class GuestList extends React.Component<GuestListProps & RouteComponentProps, Gu
 interface GuestListItemProps { guest: GuestDto }
 interface GuestListItemState { }
 
-class GuestListItem extends React.Component<GuestListItemProps, GuestListItemState> {
+class GuestListItem extends React.Component<GuestListItemProps & RouteComponentProps, GuestListItemState> {
     render() {
         const guest = this.props.guest;
         return (
-            <tr className='Guest-list-item'>
+            <tr className='Guest-list-item' onClick={e => this.props.history.push(`/guests/${guest.id}`)} style={{cursor: 'pointer'}}>
                 <td>
                     <Link to={`guests/${guest.id}`}>
                         <div className='label ui circular button'>

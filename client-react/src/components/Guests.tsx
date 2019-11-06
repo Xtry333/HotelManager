@@ -252,8 +252,6 @@ class Guests extends React.Component<GuestsProps & RouteComponentProps, GuestsSt
         return (
             <div className='Guests'>
                 <TopHeader {...this.props}>Guests Management</TopHeader>
-                <div className="ui divider" />
-
                 <div className='Guests-content'>
                     <Switch>
                         <Route path='/guests/' exact render={p =>

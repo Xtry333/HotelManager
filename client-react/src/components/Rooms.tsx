@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Route, Link, Redirect, RouteComponentProps } from "react-router-dom";
 import * as Server from '../Server';
 import { RoomView } from '../dtos/Room.dto';
+import { TopHeader } from './TopHeader';
 
 //import '../styles/Rooms.less';
 
@@ -118,8 +119,8 @@ class Rooms extends React.Component<RoomsProps & RouteComponentProps, RoomsState
 
     render() {
         return (
-            <div className='Rooms ui basic segment'>
-                <header className="ui centered header">Rooms Management</header>
+            <div className='Rooms'>
+                <TopHeader {...this.props}>Rooms Management</TopHeader>
                 <div className='Rooms-content'>
                     <Route path='/rooms/' exact render={p =>
                         <RoomList {...p} rooms={this.state.rooms} />

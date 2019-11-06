@@ -27,6 +27,7 @@ export class TopHeader extends React.Component<TopHeaderProps & RouteComponentPr
                         </button>
                     </div>
                 </div>
+                <div className="ui divider" />
             </div>
         );
     }

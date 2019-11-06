@@ -406,7 +406,6 @@ export class Reservations extends React.Component<ReservationsProps & RouteCompo
         return (
             <div className='Reservations'>
                 <TopHeader {...this.props}>Reservations Management</TopHeader>
-                <div className="ui divider" />
                 <div className='Reservations-content'>
                     <Switch>
                         <Route path='/reservations/' exact render={p =>

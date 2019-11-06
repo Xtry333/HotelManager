@@ -13,7 +13,7 @@ export class TopHeader extends React.Component<TopHeaderProps & RouteComponentPr
                             <i className="left arrow icon" />
                         </button>
                     </div>
-                    <div className="twelve wide column">
+                    <div className="ten wide column">
                         <header className="ui header centered">
                             <h2>{this.props.children}</h2>
                         </header>

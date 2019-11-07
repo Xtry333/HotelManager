@@ -49,7 +49,7 @@ interface GuestListItemState {}
 class GuestListItem extends React.Component<GuestListItemProps & RouteComponentProps, GuestListItemState> {
     render() {
         const guest = this.props.guest;
-        return (<tr className='Guest-list-item' onClick={e => this.props.history.push(`/guests/${guest.id}`)} style={{ cursor: 'pointer' }}>
+        return (<tr className='Guest-list-item pointer' onClick={e => this.props.history.push(`/guests/${guest.id}`)}>
             <td>
                 <Link to={`guests/${guest.id}`}>
                     <div className='label ui circular button'>

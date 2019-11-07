@@ -305,7 +305,7 @@ class ReservationList extends React.Component<ReservationListProps & RouteCompon
         const query = this.props.searchquery.toLocaleLowerCase();
         for (const r of this.props.reservations) {
             if (!query || r.guestFirstname.toLocaleLowerCase().includes(query) || r.guestLastname.toLocaleLowerCase().includes(query) || `${r.guestFirstname} ${r.guestLastname}`.toLocaleLowerCase().includes(query)) {
-                reservations.push(<ReservationListItem key={r.resID} resView={r} />);
+                reservations.push(<ReservationListItem {...this.props} key={r.resID} resView={r} />);
             }
         }
 
@@ -325,7 +325,7 @@ class ReservationList extends React.Component<ReservationListProps & RouteCompon
                     </div>
                 </div>
 
-                <table className='Guests-list ui table'>
+                <table className='Guests-list ui selectable table'>
                     <thead className='ui header'>
                         <tr>
                             <th>ID</th>
@@ -349,11 +349,11 @@ class ReservationList extends React.Component<ReservationListProps & RouteCompon
 interface ReservationListItemProps { resView: ResSummaryView }
 interface ReservationListItemState { }
 
-class ReservationListItem extends React.Component<ReservationListItemProps, ReservationListItemState> {
+class ReservationListItem extends React.Component<ReservationListItemProps & RouteComponentProps, ReservationListItemState> {
     render() {
         const resView = this.props.resView;
         return (
-            <tr className='Reservation-list-item'>
+            <tr className='Reservation-list-item pointer' onClick={e => this.props.history.push(`/reservations/${resView.resID}`)}>
                 <td>
                     <Link to={`reservations/${resView.resID}`}>
                         <div className='label circular ui button'>

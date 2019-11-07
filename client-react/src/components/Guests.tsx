@@ -4,6 +4,7 @@ import { Guest as GuestDto } from '../dtos/Guest.dto'
 import * as Server from '../Server';
 import { NotFound } from './NotFound';
 import { CreateGuestView, CreateGuestDiv } from './Guests/CreateGuest';
+import { TopHeader } from './TopHeader';
 
 interface SingleGuestViewProps { guest: GuestDto, className?: string }
 export function SingleGuestView({ guest, className }: SingleGuestViewProps) {
@@ -45,7 +46,13 @@ class Guest extends React.Component<GuestProps & RouteComponentProps, GuestState
 
     componentDidMount() {
         this.fetchGuest(this.props.guestId);
-        this.setState({ editMode: this.props.mode === 'edit' });
+    }
+
+    componentDidUpdate() {
+        const mode = this.props.mode === 'edit';
+        if (this.state.editMode !== mode) {
+            this.setState({ editMode: mode });
+        }
     }
 
     fetchGuest = async (id: number) => {
@@ -91,6 +98,7 @@ class Guest extends React.Component<GuestProps & RouteComponentProps, GuestState
     }
 
     render() {
+        console.info('render');
         const guest = this.state.guest;
         const editMode = this.state.editMode;
         if (guest) {
@@ -112,16 +120,37 @@ class Guest extends React.Component<GuestProps & RouteComponentProps, GuestState
                             </CreateGuestDiv>
                         </form>
                         ) : (<div>
-                            <SingleGuestView guest={guest} />
-                            <button className="ui teal basic button"
-                                onClick={e => {
-                                    this.props.history.push(`/reservations/create/${guest.id}`);
-                                }}>Create Reservation</button>
-                            <button className="ui orange basic button"
-                                onClick={e => {
-                                    this.props.history.push(`/guests/edit/${guest.id}`);
-                                    this.setState({ editMode: true });
-                                }}>Edit</button>
+                            <div className="ui two column grid">
+                                <div className="center aligned column">
+                                    <div className="ui horizontal divider">Info</div>
+                                    <SingleGuestView guest={guest} />
+                                </div>
+
+                                <div className="center aligned column">
+                                    <div className="ui horizontal divider">Details</div>
+                                    <div>
+                                        <span>Pesel: </span> <span>{guest.pesel}</span>
+                                    </div>
+                                    <br />
+                                    <div>
+                                        <span>City: </span> <span>{guest.city}</span>
+                                    </div>
+                                    <div>
+                                        <span>Street: </span> <span>{guest.streetName}</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button className="ui teal basic button"
+                                        onClick={e => {
+                                            this.props.history.push(`/reservations/create/${guest.id}`);
+                                        }}>Create Reservation</button>
+                                    <button className="ui orange basic button"
+                                        onClick={e => {
+                                            this.props.history.push(`/guests/edit/${guest.id}`);
+                                            this.setState({ editMode: true });
+                                        }}>Edit</button>
+                                </div>
+                            </div>
                         </div>)}
                 </div>
             );
@@ -135,7 +164,7 @@ interface GuestListState { }
 
 class GuestList extends React.Component<GuestListProps & RouteComponentProps, GuestListState> {
     render() {
-        const guests = this.props.guests.map(guest => <GuestListItem key={guest.id} guest={guest} />);
+        const guests = this.props.guests.map(guest => <GuestListItem {...this.props} key={guest.id} guest={guest} />);
         return (
             <div>
                 <div className="ui input group">
@@ -145,7 +174,7 @@ class GuestList extends React.Component<GuestListProps & RouteComponentProps, Gu
                         <i className="search icon"></i>
                     </div>
                 </div>
-                <table className='Guests-list ui table'>
+                <table className='Guests-list ui selectable table'>
                     <thead className='ui header'>
                         <tr>
                             <th>ID</th>
@@ -168,11 +197,11 @@ class GuestList extends React.Component<GuestListProps & RouteComponentProps, Gu
 interface GuestListItemProps { guest: GuestDto }
 interface GuestListItemState { }
 
-class GuestListItem extends React.Component<GuestListItemProps, GuestListItemState> {
+class GuestListItem extends React.Component<GuestListItemProps & RouteComponentProps, GuestListItemState> {
     render() {
         const guest = this.props.guest;
         return (
-            <tr className='Guest-list-item'>
+            <tr className='Guest-list-item' onClick={e => this.props.history.push(`/guests/${guest.id}`)} style={{cursor: 'pointer'}}>
                 <td>
                     <Link to={`guests/${guest.id}`}>
                         <div className='label ui circular button'>
@@ -229,11 +258,7 @@ class Guests extends React.Component<GuestsProps & RouteComponentProps, GuestsSt
     render() {
         return (
             <div className='Guests'>
-                <header className="ui header centered">
-                    <h2>Guests Management</h2>
-                </header>
-                <div className="ui divider" />
-
+                <TopHeader {...this.props}>Guests Management</TopHeader>
                 <div className='Guests-content'>
                     <Switch>
                         <Route path='/guests/' exact render={p =>

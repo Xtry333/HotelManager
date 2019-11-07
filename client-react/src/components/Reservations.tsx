@@ -10,6 +10,7 @@ import { SingleGuestView } from './Guests';
 import { RoomView, Room } from '../dtos/Room.dto';
 import DateInput from './DateInput';
 import { CreateGuestDiv } from './Guests/CreateGuest';
+import { TopHeader } from './TopHeader';
 
 export interface ReservationProps { reservationId: number, refresh: Function, mode?: string }
 export interface ReservationState { reservation: ReservationDto, guest: GuestDto, room: RoomView, editMode: boolean }
@@ -22,7 +23,13 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
 
     componentDidMount() {
         this.fetchData();
-        this.setState({ editMode: this.props.mode === 'edit' });
+    }
+
+    componentDidUpdate() {
+        const mode = this.props.mode === 'edit';
+        if (this.state.editMode !== mode) {
+            this.setState({ editMode: mode });
+        }
     }
 
     async fetchData() {
@@ -304,11 +311,17 @@ class ReservationList extends React.Component<ReservationListProps & RouteCompon
 
         return (
             <div>
-                <div className="ui input group">
-                    <button className="ui teal button" onClick={e => { this.props.history.push(`/reservations/create/`) }}>Create New</button>
-                    <div className='ui icon input'>
-                        <input type='text' onChange={this.props.onSearchChange} value={this.props.searchquery} placeholder="Search..." />
-                        <i className="search icon"></i>
+                <div className="ui four column grid">
+                    <div className="four wide left aligned column">
+                        <button className="ui teal fluid button"
+                            onClick={e => { this.props.history.push(`/reservations/create/`) }}>Create New</button>
+                    </div>
+                    <div className="eight wide center aligned column"></div>
+                    <div className="four wide right aligned column">
+                        <div className='ui icon fluid input'>
+                            <input type='text' onChange={this.props.onSearchChange} value={this.props.searchquery} placeholder="Search..." />
+                            <i className="search icon"></i>
+                        </div>
                     </div>
                 </div>
 
@@ -404,12 +417,7 @@ export class Reservations extends React.Component<ReservationsProps & RouteCompo
     render() {
         return (
             <div className='Reservations'>
-                <header className="Reservations-header ui header centered">
-                    <h2>
-                        Reservations Management
-                    </h2>
-                </header>
-                <div className="ui divider" />
+                <TopHeader {...this.props}>Reservations Management</TopHeader>
                 <div className='Reservations-content'>
                     <Switch>
                         <Route path='/reservations/' exact render={p =>

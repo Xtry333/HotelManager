@@ -2,10 +2,11 @@ import * as React from 'react';
 import { Route, Link, Redirect, RouteComponentProps } from "react-router-dom";
 import * as Server from '../Server';
 import { RoomView } from '../dtos/Room.dto';
+import { TopHeader } from './TopHeader';
 
 //import '../styles/Rooms.less';
 
-export interface RoomProps { roomId: number, refresh: Function }
+export interface RoomProps { roomId: number, refresh: Function, mode?: string }
 export interface RoomState { room: RoomView, editMode: boolean }
 
 class Room extends React.Component<RoomProps & RouteComponentProps, RoomState> {
@@ -23,6 +24,13 @@ class Room extends React.Component<RoomProps & RouteComponentProps, RoomState> {
             if (error.response && error.response.status === 401) {
                 this.props.history.push('/logout');
             }
+        }
+    }
+
+    componentDidUpdate() {
+        const mode = this.props.mode === 'edit';
+        if (this.state.editMode !== mode) {
+            this.setState({ editMode: mode });
         }
     }
 
@@ -118,11 +126,14 @@ class Rooms extends React.Component<RoomsProps & RouteComponentProps, RoomsState
 
     render() {
         return (
-            <div className='Rooms ui basic segment'>
-                <header className="ui centered header">Rooms Management</header>
+            <div className='Rooms'>
+                <TopHeader {...this.props}>Rooms Management</TopHeader>
                 <div className='Rooms-content'>
                     <Route path='/rooms/' exact render={p =>
                         <RoomList {...p} rooms={this.state.rooms} />
+                    } />
+                    <Route path='/rooms/edit/:id' render={p =>
+                        <Room roomId={p.match.params.id} {...p} refresh={this.fetchRooms} mode='edit' />
                     } />
                     <Route path='/rooms/:id' render={p =>
                         <Room roomId={p.match.params.id} {...p} refresh={this.fetchRooms} />

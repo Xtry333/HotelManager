@@ -6,7 +6,7 @@ import * as moment from 'moment';
 import { ResSummaryView, Reservation as ReservationDto } from '../dtos/Reservation.dto';
 import { ResourceError } from '../dtos/Error';
 import { Guest as GuestDto } from '../dtos/Guest.dto';
-import { SingleGuestView } from './Guests';
+import { SingleGuestView } from './Guests/Guests';
 import { RoomView, Room } from '../dtos/Room.dto';
 import DateInput from './DateInput';
 import { CreateGuestDiv } from './Guests/CreateGuest';

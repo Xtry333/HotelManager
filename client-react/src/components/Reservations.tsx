@@ -23,7 +23,13 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
 
     componentDidMount() {
         this.fetchData();
-        this.setState({ editMode: this.props.mode === 'edit' });
+    }
+
+    componentDidUpdate() {
+        const mode = this.props.mode === 'edit';
+        if (this.state.editMode !== mode) {
+            this.setState({ editMode: mode });
+        }
     }
 
     async fetchData() {

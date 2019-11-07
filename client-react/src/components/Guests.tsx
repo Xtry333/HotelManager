@@ -46,7 +46,13 @@ class Guest extends React.Component<GuestProps & RouteComponentProps, GuestState
 
     componentDidMount() {
         this.fetchGuest(this.props.guestId);
-        this.setState({ editMode: this.props.mode === 'edit' });
+    }
+
+    componentDidUpdate() {
+        const mode = this.props.mode === 'edit';
+        if (this.state.editMode !== mode) {
+            this.setState({ editMode: mode });
+        }
     }
 
     fetchGuest = async (id: number) => {
@@ -92,6 +98,7 @@ class Guest extends React.Component<GuestProps & RouteComponentProps, GuestState
     }
 
     render() {
+        console.info('render');
         const guest = this.state.guest;
         const editMode = this.state.editMode;
         if (guest) {
@@ -167,7 +174,7 @@ class GuestList extends React.Component<GuestListProps & RouteComponentProps, Gu
                         <i className="search icon"></i>
                     </div>
                 </div>
-                <table className='Guests-list ui table'>
+                <table className='Guests-list ui selectable table'>
                     <thead className='ui header'>
                         <tr>
                             <th>ID</th>

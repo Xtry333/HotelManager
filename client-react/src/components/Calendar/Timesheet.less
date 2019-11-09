@@ -1,0 +1,72 @@
+@slideCornerSize: 8px;
+@slideHeight: 15px;
+@slideColor: rgb(247, 129, 129);
+// @lightButtonFillColor  : rgb(230, 230, 230);
+// @lightButtonBorderColor: rgb(210, 210, 210);
+
+
+.timesheet-table {
+    table-layout: fixed;
+    width: 100%;
+    border-spacing: 0px 0px;
+    text-align: center;
+    box-sizing: border-box;
+    td {
+        border-right: 1px solid lightgray;
+    }
+    td:last-child {
+        border: none;
+    }
+}
+
+.numbers {
+    font-size: 0.85em;
+    border: 1px solid black;
+    
+}
+
+.slides-rail {
+    position: relative;
+    height: @slideHeight;
+}
+
+.slide {
+    position: absolute;
+    background: @slideColor;
+    width: 110%;
+    left: 35%;
+    height: inherit;
+    top: 0px;
+    z-index: 5;
+    clip-path: polygon(0 0, 0 100%, 100% 100%, 100% 0);
+    cursor: pointer;
+    &.hover {
+        background: darken(@slideColor, 15%);
+    }
+    &.right {
+        clip-path: polygon(0 0, 0 100%, 100% 100%, 75% 100%, 100% 50%, 100% 0);
+    }
+    &.left {
+        clip-path: polygon(0 50%, 0 100%, 100% 100%, 100% 0, 25% 0);
+    }
+    &.left.right {
+        clip-path: polygon(0 50%, 0 100%, 75% 100%, 100% 50%, 100% 0, 25% 0);
+    }
+    
+    // &.left:before {
+    //     content: '';
+    //     position: absolute;
+    //     top: 0; left: 0;
+    //     border-top: @slideCornerSize solid white;
+    //     border-right: @slideCornerSize solid @slideColor;
+    //     width: 0;
+    // }
+    // &.right:after {
+    //     content: '';
+    //     position: absolute;
+    //     bottom: 0; right: 0;
+    //     border-bottom: @slideCornerSize solid white;
+    //     border-left: @slideCornerSize solid @slideColor; 
+    //     width: 0;
+    // }
+}

@@ -16,7 +16,10 @@ export class CalendarRow extends React.Component<CalendarRowProps & RouteCompone
     }
 
     componentDidMount() {
-        this.fetchReservationsForRoom(this.props.activeRes.room);
+        const roomID = this.props.activeRes.room;
+        if (roomID) {
+            this.fetchReservationsForRoom(roomID);
+        }
     }
 
     fetchReservationsForRoom = async (roomID: number) => {
@@ -39,16 +42,10 @@ export class CalendarRow extends React.Component<CalendarRowProps & RouteCompone
     onEnterHover = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         const target = e.target as (EventTarget & HTMLDivElement);
         const id = parseInt(target.getAttribute('data-reservation-id'));
-        //const newHover = Object.assign({}, this.state.hover);
-        //newHover[id] = true;
         this.setState({ hover: id });
     }
 
     onLeaveHover = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-        const target = e.target as (EventTarget & HTMLDivElement);
-        const id = target.getAttribute('data-reservation-id');
-        //const newHover = Object.assign({}, this.state.hover);
-        //newHover[id] = false;
         this.setState({ hover: 0 });
     }
 
@@ -56,7 +53,7 @@ export class CalendarRow extends React.Component<CalendarRowProps & RouteCompone
         const daysOfWeek: JSX.Element[] = [];
         const numbers: JSX.Element[] = [];
         const slides: JSX.Element[] = [];
-        
+
         const otherRes = reservations.filter(r => r.id !== this.props.activeRes.id);
 
         const lengthDays = moment.duration(moment(activeRes.end).valueOf() - moment(activeRes.start).valueOf()).asDays();
@@ -68,7 +65,7 @@ export class CalendarRow extends React.Component<CalendarRowProps & RouteCompone
         let colorIndex = 0;
         for (let i = 0, tick = start.clone(), lastID = 0; tick <= end && i < 90; i++) {
             tick.add(1, 'day');
-            numbers.push(<td key={`number-${i}`}>{`${tick.format('DD')}`}</td>);
+            numbers.push(<td key={`number-${i}`} title={`${tick.format('YYYY-MM-DD')}`}>{`${tick.format('DD')}`}</td>);
             daysOfWeek.push(<td key={`day-of-week-${i}`}>{`${tick.format('dd').substr(0, 1)}`}</td>);
             let slide: JSX.Element = null;
             for (const res of [...otherRes, this.props.activeRes]) {

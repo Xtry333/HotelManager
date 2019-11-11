@@ -15,7 +15,7 @@ export async function query(query: string, args?: Array<string | number | boolea
                     args[i] = 0;
                 }
             }
-            console.info(`Executing query: '${query}' with [${args.map(x => `'${x}'`).join(', ')}]`);
+            console.info(`Executing query: '${query}' with params ${args}`);//[${args.map(x => `'${x}'`).join(', ')}]`);
         } else {
             console.info(`Executing query: '${query}'`);
         }

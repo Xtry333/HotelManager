@@ -27,15 +27,21 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
     }
 
     componentDidUpdate() {
+        //console.log('Component receivet update.');
         const mode = this.props.mode === 'edit';
+        const resID = this.props.reservationId;
         if (this.state.editMode !== mode) {
             this.setState({ editMode: mode });
         }
+        if (this.state.reservation && this.state.reservation.id.toString() !== resID.toString()) {
+            //window.location.reload();
+            this.fetchData();
+        }
     }
 
-    async fetchData() {
+    async fetchData(resID?: number) {
         try {
-            const resId = this.props.reservationId;
+            const resId = resID || this.props.reservationId;
             await Server.Get(`reservation/${resId}`).then(results => {
                 this.setState({ reservation: results.data });
             });

@@ -26,8 +26,9 @@ router.get('/summary/:id', async (req, res, next) => {
 
 /* GET all reservations. */
 router.get('/', async (req, res, next) => {
+    const roomID = parseInt(req.query.room);
     try {
-        const reservations = await ResController.getAll();
+        const reservations = roomID ? await ResController.getAllForRoom(roomID) : await ResController.getAll();
         res.json(reservations);
     } catch (error) {
         res.status(error.status).json(error);

@@ -33,40 +33,32 @@
 .slide {
     position: absolute;
     background: @slideColor;
-    width: 110%;
+    opacity: 70%;
+    width: 105%;
     left: 35%;
     height: inherit;
     top: 0px;
-    z-index: 5;
+    z-index: 1;
+    //border-top: 1px solid lightgray;
+    //border-bottom: 1px solid gray;
     clip-path: polygon(0 0, 0 100%, 100% 100%, 100% 0);
     cursor: pointer;
     &.hover {
         background: darken(@slideColor, 15%);
     }
     &.right {
+        //border-right: 1px solid gray;
         clip-path: polygon(0 0, 0 100%, 100% 100%, 75% 100%, 100% 50%, 100% 0);
     }
     &.left {
+        //border-left: 1px solid lightgray;
         clip-path: polygon(0 50%, 0 100%, 100% 100%, 100% 0, 25% 0);
     }
     &.left.right {
         clip-path: polygon(0 50%, 0 100%, 75% 100%, 100% 50%, 100% 0, 25% 0);
     }
-    
-    // &.left:before {
-    //     content: '';
-    //     position: absolute;
-    //     top: 0; left: 0;
-    //     border-top: @slideCornerSize solid white;
-    //     border-right: @slideCornerSize solid @slideColor;
-    //     width: 0;
-    // }
-    // &.right:after {
-    //     content: '';
-    //     position: absolute;
-    //     bottom: 0; right: 0;
-    //     border-bottom: @slideCornerSize solid white;
-    //     border-left: @slideCornerSize solid @slideColor; 
-    //     width: 0;
-    // }
+}
+
+.slide-text {
+    z-index: 2;
 }

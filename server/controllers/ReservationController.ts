@@ -19,6 +19,15 @@ export async function getAll() {
     }
 }
 
+export async function getAllForRoom(id: number) {
+    const rows = await Db.querySelectAll(Reservation, { room: id });
+    if (rows.length > -1) {
+        return rows;
+    } else {
+        throw new ResourceError('Could not get Reservation listing.', rows, 500);
+    }
+}
+
 export async function getById(id: number) {
     const rows = await Db.querySelectAll(Reservation, { id });
     if (rows.length < 1) {

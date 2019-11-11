@@ -6,7 +6,7 @@ import * as Server from '../../Server';
 
 import './Timesheet.less';
 
-export interface CalendarRowProps { from: Date, to?: Date, activeRes: ReservationDto }
+export interface CalendarRowProps { activeRes: ReservationDto }
 export interface CalendarRowState { hover: number, reservations: ReservationDto[] }
 
 export class CalendarRow extends React.Component<CalendarRowProps & RouteComponentProps, CalendarRowState> {

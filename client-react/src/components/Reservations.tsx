@@ -145,7 +145,7 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
                             </div>
                         </div>
                     </div>
-                    <CalendarRow {...this.props} activeRes={this.state.reservation} from={new Date('2019-08-09')} />
+                    <CalendarRow {...this.props} activeRes={this.state.reservation} />
                     <div className="ui hidden horizontal divider"></div>
                     {editMode ?
                         (<div className="ui separate buttons">

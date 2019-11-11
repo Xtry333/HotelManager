@@ -22,11 +22,21 @@ export class CalendarRow extends React.Component<CalendarRowProps & RouteCompone
         }
     }
 
+    componentDidUpdate(prevProps: CalendarRowProps, prevState: CalendarRowState) {
+        const roomID = parseInt(this.props.activeRes.room as any);
+        if (roomID && parseInt(prevProps.activeRes.room as any) !== roomID) {
+            this.fetchReservationsForRoom(roomID);
+        }
+    }
+
     fetchReservationsForRoom = async (roomID: number) => {
+        const id = parseInt(roomID as any);
         try {
-            await Server.Get(`reservation/?room=${roomID}`).then(results => {
-                this.setState({ reservations: [...results.data] });
-            });
+            if (id) {
+                await Server.Get(`reservation/?room=${id}`).then(results => {
+                    this.setState({ reservations: [...results.data] });
+                });
+            }
         } catch (error) {
             console.error(error);
         }
@@ -64,19 +74,24 @@ export class CalendarRow extends React.Component<CalendarRowProps & RouteCompone
 
         let colorIndex = 0;
         for (let i = 0, tick = start.clone(), lastID = 0; tick <= end && i < 90; i++) {
+            let error = false;
             tick.add(1, 'day');
-            numbers.push(<td key={`number-${i}`} title={`${tick.format('YYYY-MM-DD')}`}>{`${tick.format('DD')}`}</td>);
+            numbers.push(<td key={`number-${i}`} title={`${tick.format('YYYY-MM-DD, dddd')}`}>
+                <span className={tick.startOf('day').isSame(moment().startOf('day')) ? 'today' : ''}>{`${tick.format('DD')}`}</span>
+            </td>);
             daysOfWeek.push(<td key={`day-of-week-${i}`}>{`${tick.format('dd').substr(0, 1)}`}</td>);
             let slide: JSX.Element = null;
-            for (const res of [...otherRes, this.props.activeRes]) {
+            for (const res of [this.props.activeRes, ...otherRes]) {
                 const classNames = this.getSlideClassNames(res, tick);
                 if (classNames) {
                     if (lastID !== res.id) {
                         colorIndex += 1;
                         colorIndex %= 2;
                     }
-                    slide = <div key={`slide-${i}`} className={`${classNames}${colorIndex ? ' alt' : ''}`} data-reservation-id={`${res.id}`}
-                        onMouseEnter={this.onEnterHover} onMouseLeave={this.onLeaveHover} onClick={this.onClick} />;
+                    error = !!slide;
+                    slide = <div key={`slide-${i}`} className={`${classNames}${colorIndex ? ' alt' : ''}${error ? ' error' : ''}`}
+                        data-reservation-id={`${res.id}`} onMouseEnter={this.onEnterHover} 
+                        onMouseLeave={this.onLeaveHover} onClick={this.onClick} />;
                     lastID = res.id;
                 }
             }

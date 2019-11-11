@@ -260,7 +260,7 @@ class CreateReservationView extends React.Component<CreateReservationViewProps &
                                 <label htmlFor="numberOfPeople" className="ui">Number Of People</label>
                                 <div className='ui input left icon'>
                                     <input id="numberOfPeople" name='numberOfPeople' type='number' onChange={this.onReservationInputChange}
-                                        value={reservation.numberOfPeople} min="1" required />
+                                        value={reservation.numberOfPeople || ''} min={1} required />
                                     <i className='users icon' />
                                 </div>
                             </div>
@@ -269,7 +269,7 @@ class CreateReservationView extends React.Component<CreateReservationViewProps &
                                 <div className='ui input left icon'>
                                     <input id="pricePerDay" name='pricePerDay' type='number' min={0}
                                         onChange={this.onReservationInputChange}
-                                        value={reservation.pricePerDay || 0} required />
+                                        value={reservation.pricePerDay || ''} required />
                                     <i className='money icon' />
                                 </div>
                             </div>
@@ -278,13 +278,15 @@ class CreateReservationView extends React.Component<CreateReservationViewProps &
                             <label htmlFor="roomId" className="ui">Room ID</label>
                             <div className='ui input left icon'>
                                 <input id="roomId" name='room' type='number' min={0}
-                                    onChange={this.onReservationInputChange} value={reservation.room || 0} />
+                                    onChange={this.onReservationInputChange} value={reservation.room || ''} />
                                 <i className='home icon' />
                             </div>
+                            <CalendarRow activeRes={this.state.reservation}
+                                history={this.props.history} location={this.props.location} match={this.props.match} />
                         </div>
                         <label>Additional Reservation Info</label>
                         <div className="field">
-                            <textarea name="additionalResInfo" value={reservation.additionalResInfo} onChange={this.onReservationInputChange} />
+                            <textarea name="additionalResInfo" value={reservation.additionalResInfo || ''} onChange={this.onReservationInputChange} />
                         </div>
                         <button className='ui teal button' type="submit">Create</button>
                     </form>

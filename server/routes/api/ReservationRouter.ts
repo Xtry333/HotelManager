@@ -1,12 +1,20 @@
 import { Router } from 'express';
 import * as ResController from '../../controllers/ReservationController';
+import { Reservation as ReservationDto, ResSummaryView } from '../../dtos/Reservation.dto';
 
 const router = Router();
 
 // GET all reservations summary view
 router.get('/summary/', async (req, res, next) => {
+    const roomID = parseInt(req.query.room);
+    const guestID = parseInt(req.query.guest);
     try {
-        const reservations = await ResController.getAllResSummaryView();
+        let reservations: ResSummaryView[] = [];
+        if (roomID || guestID) {
+            reservations = await ResController.getAllResSummaryViewWithArgs({ roomID, guestID });
+        } else {
+            reservations = await ResController.getAllResSummaryView();
+        }
         res.json(reservations);
     } catch (error) {
         res.status(error.status).json(error);
@@ -27,8 +35,14 @@ router.get('/summary/:id', async (req, res, next) => {
 /* GET all reservations. */
 router.get('/', async (req, res, next) => {
     const roomID = parseInt(req.query.room);
+    const guestID = parseInt(req.query.guest);
     try {
-        const reservations = roomID ? await ResController.getAllForRoom(roomID) : await ResController.getAll();
+        let reservations: ReservationDto[] = [];
+        if (roomID || guestID) {
+            reservations = await ResController.getAllWithArgs({ room: roomID, guest: guestID });
+        } else {
+            reservations = await ResController.getAll();
+        }
         res.json(reservations);
     } catch (error) {
         res.status(error.status).json(error);

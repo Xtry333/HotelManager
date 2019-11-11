@@ -6,6 +6,8 @@ import { NotFound } from '../NotFound';
 import { CreateGuestView, CreateGuestDiv } from './CreateGuest';
 import { TopHeader } from '../TopHeader';
 import { GuestList } from './GuestList';
+import { Reservation as ReservationDto, ReservationList } from '../Reservations';
+import { ResSummaryView } from '../../dtos/Reservation.dto';
 
 interface SingleGuestViewProps { guest: GuestDto, className?: string }
 export function SingleGuestView({ guest, className }: SingleGuestViewProps) {
@@ -37,16 +39,17 @@ export function SingleGuestView({ guest, className }: SingleGuestViewProps) {
 }
 
 export interface GuestProps { guestId: number, refresh: Function, mode?: string }
-export interface GuestState { guest: GuestDto, editMode: boolean }
+export interface GuestState { guest: GuestDto, editMode: boolean, reservations: ResSummaryView[] }
 
 class Guest extends React.Component<GuestProps & RouteComponentProps, GuestState> {
     constructor() {
         super(undefined, undefined);
-        this.state = { guest: null, editMode: false };
+        this.state = { guest: null, editMode: false, reservations: [] };
     }
 
     componentDidMount() {
         this.fetchGuest(this.props.guestId);
+        this.fetchReservationsForGuest(this.props.guestId);
     }
 
     componentDidUpdate() {
@@ -60,6 +63,15 @@ class Guest extends React.Component<GuestProps & RouteComponentProps, GuestState
         try {
             const results = await Server.Get(`guest/${id}`);
             this.setState({ guest: results.data });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    fetchReservationsForGuest = async (guestID: number) => {
+        try {
+            const results = await Server.Get(`reservation/summary/?guest=${guestID}`);
+            this.setState({ reservations: results.data });
         } catch (error) {
             console.error(error);
         }
@@ -152,6 +164,8 @@ class Guest extends React.Component<GuestProps & RouteComponentProps, GuestState
                                         }}>Edit</button>
                                 </div>
                             </div>
+                            <div className="ui hidden divider" />
+                            <ReservationList simpleView={true} reservations={this.state.reservations} {...this.props} />
                         </div>)}
                 </div>
             );

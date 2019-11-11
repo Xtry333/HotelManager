@@ -19,8 +19,14 @@ export async function getAll() {
     }
 }
 
-export async function getAllForRoom(id: number) {
-    const rows = await Db.querySelectAll(Reservation, { room: id });
+export async function getAllWithArgs(vars: { [key: string]: string | number }) {
+    const args: { [key: string]: string | number } = {};
+    for (const key in vars) {
+        if (vars[key]) {
+            args[key] = vars[key];
+        }
+    }
+    const rows = await Db.querySelectAll(Reservation, args);
     if (rows.length > -1) {
         return rows;
     } else {
@@ -41,6 +47,21 @@ export async function getById(id: number) {
 
 export async function getAllResSummaryView() {
     const rows = await Db.querySelectAll(ResSummaryView);
+    if (rows.length > -1) {
+        return rows;
+    } else {
+        throw new ResourceError('Could not get ResSummaryView listing.', rows, 500);
+    }
+}
+
+export async function getAllResSummaryViewWithArgs(vars: { [key: string]: string | number }) {
+    const args: { [key: string]: string | number } = {};
+    for (const key in vars) {
+        if (vars[key]) {
+            args[key] = vars[key];
+        }
+    }
+    const rows = await Db.querySelectAll(ResSummaryView, args);
     if (rows.length > -1) {
         return rows;
     } else {

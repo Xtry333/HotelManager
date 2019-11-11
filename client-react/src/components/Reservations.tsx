@@ -141,10 +141,7 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
                         </div>
                         <div className='ui form'>
                             <div className='ui left corner labeled textarea'>
-                                <textarea name='additionalResInfo' className='ui textarea' onChange={this.onChange} readOnly={!editMode} value={reservation.additionalResInfo} />
-                                <div className="ui left corner label">
-                                    <i className='info icon' />
-                                </div>
+                                <textarea name='additionalResInfo' className='ui textarea' onChange={this.onChange} readOnly={!editMode} value={reservation.additionalResInfo || ''} />
                             </div>
                         </div>
                     </div>
@@ -298,47 +295,28 @@ class CreateReservationView extends React.Component<CreateReservationViewProps &
     }
 }
 
-interface ReservationListProps { reservations: ResSummaryView[], searchquery: string, onSearchChange: (event: React.ChangeEvent<HTMLInputElement>) => void }
+interface ReservationListProps { reservations: ResSummaryView[], simpleView?: boolean }
 interface ReservationListState { }
 
-class ReservationList extends React.Component<ReservationListProps & RouteComponentProps, ReservationListState> {
+export class ReservationList extends React.Component<ReservationListProps & RouteComponentProps, ReservationListState> {
     constructor() {
         super(undefined, undefined);
-        this.state = { searchquery: '' };
+        this.state = {};
     }
 
     render() {
-        //const reservations = this.props.reservations.map(reservation => <ReservationListItem key={reservation.resID} reservation={reservation} />);
-        const reservations: JSX.Element[] = [];
-        const query = this.props.searchquery.toLocaleLowerCase();
-        for (const r of this.props.reservations) {
-            if (!query || r.guestFirstname.toLocaleLowerCase().includes(query) || r.guestLastname.toLocaleLowerCase().includes(query) || `${r.guestFirstname} ${r.guestLastname}`.toLocaleLowerCase().includes(query)) {
-                reservations.push(<ReservationListItem {...this.props} key={r.resID} resView={r} />);
-            }
-        }
-
+        const simpleView = this.props.simpleView || false;
+        const reservations = this.props.reservations.map(
+            r => <ReservationListItem {...this.props} key={r.resID} resView={r} simpleView={simpleView} />
+        );
         return (
             <div>
-                <div className="ui four column grid">
-                    <div className="four wide left aligned column">
-                        <button className="ui teal fluid button"
-                            onClick={e => { this.props.history.push(`/reservations/create/`) }}>Create New</button>
-                    </div>
-                    <div className="eight wide center aligned column"></div>
-                    <div className="four wide right aligned column">
-                        <div className='ui icon fluid input'>
-                            <input type='text' onChange={this.props.onSearchChange} value={this.props.searchquery} placeholder="Search..." />
-                            <i className="search icon"></i>
-                        </div>
-                    </div>
-                </div>
-
                 <table className='Guests-list ui selectable table'>
                     <thead className='ui header'>
                         <tr>
                             <th>ID</th>
-                            <th>Guest Name</th>
-                            <th>Guest Lastname</th>
+                            {simpleView ? null : <th>Guest Name</th>}
+                            {simpleView ? null : <th>Guest Lastname</th>}
                             <th>People</th>
                             <th>Start</th>
                             <th>End</th>
@@ -354,12 +332,13 @@ class ReservationList extends React.Component<ReservationListProps & RouteCompon
     }
 }
 
-interface ReservationListItemProps { resView: ResSummaryView }
+interface ReservationListItemProps { resView: ResSummaryView, simpleView?: boolean }
 interface ReservationListItemState { }
 
 class ReservationListItem extends React.Component<ReservationListItemProps & RouteComponentProps, ReservationListItemState> {
     render() {
         const resView = this.props.resView;
+        const simpleView = this.props.simpleView || false;
         return (
             <tr className='Reservation-list-item pointer' onClick={e => this.props.history.push(`/reservations/${resView.resID}`)}>
                 <td>
@@ -369,16 +348,16 @@ class ReservationListItem extends React.Component<ReservationListItemProps & Rou
                         </div>
                     </Link>
                 </td>
-                <td>
+                {simpleView ? null : <td>
                     <Link to={`guests/${resView.guestID}`}>
                         {resView.guestFirstname}
                     </Link>
-                </td>
-                <td>
+                </td>}
+                {simpleView ? null : <td>
                     <Link to={`guests/${resView.guestID}`}>
                         {resView.guestLastname}
                     </Link>
-                </td>
+                </td>}
                 <td>
                     <i className='users icon' />
                     {resView.numberOfPeople}
@@ -423,13 +402,44 @@ export class Reservations extends React.Component<ReservationsProps & RouteCompo
     }
 
     render() {
+        const reservations: ResSummaryView[] = [];
+        const query = this.state.searchquery.toLocaleLowerCase();
+        if (query) {
+            for (const r of this.state.reservations) {
+                if (r.guestFirstname.toLocaleLowerCase().includes(query)
+                    || r.guestLastname.toLocaleLowerCase().includes(query)
+                    || `${r.guestFirstname} ${r.guestLastname}`.toLocaleLowerCase().includes(query)) {
+                    reservations.push(r);
+                }
+            }
+        } else {
+            this.state.reservations.every(x => reservations.push(x));
+        }
+
         return (
             <div className='Reservations'>
                 <TopHeader {...this.props}>Reservations Management</TopHeader>
                 <div className='Reservations-content'>
                     <Switch>
                         <Route path='/reservations/' exact render={p =>
-                            <ReservationList {...p} reservations={this.state.reservations} searchquery={this.state.searchquery} onSearchChange={this.onSearchChange} />
+                            <div>
+                                <div className="ui four column grid">
+                                    <div className="four wide left aligned column">
+                                        <button className="ui teal fluid button"
+                                            onClick={e => { this.props.history.push(`/reservations/create/`) }}>Create New</button>
+                                    </div>
+                                    <div className="eight wide center aligned column"></div>
+                                    <div className="four wide right aligned column">
+                                        <div className='ui icon fluid input'>
+                                            <input type='text' onChange={this.onSearchChange}
+                                                value={this.state.searchquery} placeholder="Search..." />
+                                            <i className="search icon"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="ui hidden divider" />
+                                <ReservationList {...p} reservations={reservations} />
+                            </div>
                         } />
                         <Route path='/reservations/edit/:id' render={p =>
                             <Reservation reservationId={p.match.params.id} {...p} refresh={this.fetchReservations} mode='edit' />

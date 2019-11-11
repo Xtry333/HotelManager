@@ -6,17 +6,17 @@ import * as Server from '../../Server';
 
 import './Timesheet.less';
 
-export interface CalendarRowProps { from: Date, to?: Date, specificRes: ReservationDto }
-export interface CalendarRowState { hover: { [key: string]: boolean }, reservations: ReservationDto[] }
+export interface CalendarRowProps { from: Date, to?: Date, activeRes: ReservationDto }
+export interface CalendarRowState { hover: number, reservations: ReservationDto[] }
 
 export class CalendarRow extends React.Component<CalendarRowProps & RouteComponentProps, CalendarRowState> {
     constructor(props: CalendarRowProps) {
-        super(undefined);
-        this.state = { hover: {}, reservations: [props.specificRes] };
+        super(props as any);
+        this.state = { hover: 0, reservations: [] };
     }
 
     componentDidMount() {
-        this.fetchReservationsForRoom(this.props.specificRes.room);
+        this.fetchReservationsForRoom(this.props.activeRes.room);
     }
 
     fetchReservationsForRoom = async (roomID: number) => {
@@ -32,46 +32,56 @@ export class CalendarRow extends React.Component<CalendarRowProps & RouteCompone
     onClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         const target = e.target as (EventTarget & HTMLDivElement);
         const id = target.getAttribute('data-reservation-id');
+        this.setState({ hover: 0 });
         this.props.history.push(`/reservations/${id}`);
     }
 
     onEnterHover = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         const target = e.target as (EventTarget & HTMLDivElement);
-        const id = target.getAttribute('data-reservation-id');
-        const newHover = Object.assign({}, this.state.hover);
-        newHover[id] = true;
-        this.setState({ hover: newHover });
+        const id = parseInt(target.getAttribute('data-reservation-id'));
+        //const newHover = Object.assign({}, this.state.hover);
+        //newHover[id] = true;
+        this.setState({ hover: id });
     }
 
     onLeaveHover = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         const target = e.target as (EventTarget & HTMLDivElement);
         const id = target.getAttribute('data-reservation-id');
-        const newHover = Object.assign({}, this.state.hover);
-        newHover[id] = false;
-        this.setState({ hover: newHover });
+        //const newHover = Object.assign({}, this.state.hover);
+        //newHover[id] = false;
+        this.setState({ hover: 0 });
     }
 
-    generateTimesheetContent(specificRes: ReservationDto, resGroup: ReservationDto[]) {
+    generateTimesheetContent(activeRes: ReservationDto, reservations: ReservationDto[]) {
         const daysOfWeek: JSX.Element[] = [];
         const numbers: JSX.Element[] = [];
         const slides: JSX.Element[] = [];
+        
+        const otherRes = reservations.filter(r => r.id !== this.props.activeRes.id);
 
-        const lengthDays = moment.duration(moment(specificRes.end).valueOf() - moment(specificRes.start).valueOf()).asDays();
-        const center = moment(specificRes.start).add(Math.floor(lengthDays / 2), 'days');
+        const lengthDays = moment.duration(moment(activeRes.end).valueOf() - moment(activeRes.start).valueOf()).asDays();
+        const center = moment(activeRes.start).add(Math.floor(lengthDays / 2), 'days');
         const range = 15;
         const start = center.clone().subtract(range, 'days');
         const end = center.clone().add(range, 'days');
 
         let colorIndex = 0;
-        for (let i = 0, tick = start.clone(); tick <= end && i < 90; i++) {
+        for (let i = 0, tick = start.clone(), lastID = 0; tick <= end && i < 90; i++) {
             tick.add(1, 'day');
             numbers.push(<td key={`number-${i}`}>{`${tick.format('DD')}`}</td>);
             daysOfWeek.push(<td key={`day-of-week-${i}`}>{`${tick.format('dd').substr(0, 1)}`}</td>);
             let slide: JSX.Element = null;
-            for (const res of [...resGroup, this.props.specificRes]) {
+            for (const res of [...otherRes, this.props.activeRes]) {
                 const classNames = this.getSlideClassNames(res, tick);
-                slide = classNames ? <div key={`slide-${i}`} className={classNames} data-reservation-id={`${res.id}`}
-                    onMouseEnter={this.onEnterHover} onMouseLeave={this.onLeaveHover} onClick={this.onClick} /> : slide;
+                if (classNames) {
+                    if (lastID !== res.id) {
+                        colorIndex += 1;
+                        colorIndex %= 2;
+                    }
+                    slide = <div key={`slide-${i}`} className={`${classNames}${colorIndex ? ' alt' : ''}`} data-reservation-id={`${res.id}`}
+                        onMouseEnter={this.onEnterHover} onMouseLeave={this.onLeaveHover} onClick={this.onClick} />;
+                    lastID = res.id;
+                }
             }
             slides.push(<td key={`slide-rail-${i}`} className="slides-rail">{slide}</td>);
         }
@@ -79,25 +89,26 @@ export class CalendarRow extends React.Component<CalendarRowProps & RouteCompone
     }
 
     isHovered(reservation: ReservationDto) {
-        return this.state.hover[reservation.id.toString()];
+        return this.state.hover === parseInt(reservation.id as any);
     }
 
     getSlideClassNames(reservation: ReservationDto, tick: moment.Moment): string {
         const classNames: string[] = [];
         const start = moment(reservation.start);
         const end = moment(reservation.end);
-        const day = 'day';
+        const day = "day";
         if (tick.isSameOrAfter(start) && tick.isBefore(end)) {
             classNames.push('slide');
-            if (tick.startOf(day).isSame(start.startOf(day))) classNames.push('left');
-            if (tick.startOf(day).isSame(end.subtract(1, 'day').startOf(day))) classNames.push('right');
-            if (this.isHovered(reservation)) classNames.push('hover');
+            if (tick.startOf(day).isSame(start.startOf(day))) classNames.push("left");
+            if (tick.startOf(day).isSame(end.subtract(1, day).startOf(day))) classNames.push("right");
+            if (reservation.id === this.props.activeRes.id) classNames.push("active");
+            if (this.isHovered(reservation)) classNames.push("hover");
         }
         return classNames.join(' ');
     }
 
     render() {
-        const timesheet = this.generateTimesheetContent(this.props.specificRes, this.state.reservations);
+        const timesheet = this.generateTimesheetContent(this.props.activeRes, this.state.reservations);
 
         return (
             <div className="ui segment">

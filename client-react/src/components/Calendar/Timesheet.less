@@ -1,19 +1,21 @@
-@slideCornerSize: 8px;
-@slideHeight: 15px;
-@slideColor: rgb(247, 129, 129);
+@slideCornerSize          : 8px;
+@slideHeight              : 15px;
+@slideColor               : rgb(220, 220, 220);
+@slideColorAlt            : rgb(190, 190, 190);
 // @lightButtonFillColor  : rgb(230, 230, 230);
 // @lightButtonBorderColor: rgb(210, 210, 210);
 
-
 .timesheet-table {
-    table-layout: fixed;
-    width: 100%;
+    table-layout  : fixed;
+    width         : 100%;
     border-spacing: 0px 0px;
-    text-align: center;
-    box-sizing: border-box;
+    text-align    : center;
+    box-sizing    : border-box;
+
     td {
         border-right: 1px solid lightgray;
     }
+
     td:last-child {
         border: none;
     }
@@ -21,39 +23,57 @@
 
 .numbers {
     font-size: 0.85em;
-    border: 1px solid black;
-    
+    border   : 1px solid black;
+
 }
 
 .slides-rail {
     position: relative;
-    height: @slideHeight;
+    height  : @slideHeight;
 }
 
 .slide {
-    position: absolute;
-    background: @slideColor;
-    opacity: 70%;
-    width: 105%;
-    left: 35%;
-    height: inherit;
-    top: 0px;
-    z-index: 1;
-    //border-top: 1px solid lightgray;
-    //border-bottom: 1px solid gray;
-    clip-path: polygon(0 0, 0 100%, 100% 100%, 100% 0);
-    cursor: pointer;
+    position         : absolute;
+    background       : @slideColor;
+    //opacity        : 70%;
+    width            : 107%;
+    left             : 35%;
+    height           : inherit;
+    top              : 0px;
+    z-index          : 1;
+    //border-top     : 1px solid lightgray;
+    //border-bottom  : 1px solid gray;
+    clip-path        : polygon(0 0, 0 100%, 100% 100%, 100% 0);
+    cursor           : pointer;
+
+    &.alt {
+        background: @slideColorAlt;
+    }
+
+    &.active {
+        background: darken(lightgreen, 25%);
+    }
+
     &.hover {
         background: darken(@slideColor, 15%);
+
+        &.alt {
+            background: darken(@slideColorAlt, 15%);
+        }
+
+        &.active {
+            background: darken(lightgreen, 35%);
+        }
     }
+
     &.right {
-        //border-right: 1px solid gray;
         clip-path: polygon(0 0, 0 100%, 100% 100%, 75% 100%, 100% 50%, 100% 0);
     }
+
     &.left {
-        //border-left: 1px solid lightgray;
         clip-path: polygon(0 50%, 0 100%, 100% 100%, 100% 0, 25% 0);
     }
+
     &.left.right {
         clip-path: polygon(0 50%, 0 100%, 75% 100%, 100% 50%, 100% 0, 25% 0);
     }

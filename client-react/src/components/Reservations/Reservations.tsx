@@ -1,17 +1,18 @@
 import * as React from 'react';
-import { Route, Link, Redirect, Switch, RouteComponentProps } from "react-router-dom";
-import * as Server from '../Server';
+import { Route, Redirect, Switch, RouteComponentProps } from "react-router-dom";
+import * as Server from '../../Server';
 import * as moment from 'moment';
 
-import { ResSummaryView, Reservation as ReservationDto } from '../dtos/Reservation.dto';
-import { ResourceError } from '../dtos/Error';
-import { Guest as GuestDto } from '../dtos/Guest.dto';
-import { SingleGuestView } from './Guests/Guests';
-import { RoomView, Room } from '../dtos/Room.dto';
-import DateInput from './DateInput';
-import { CreateGuestDiv } from './Guests/CreateGuest';
-import { TopHeader } from './TopHeader';
-import { RowCalendar } from './Calendar/RowCalendar';
+import { ResSummaryView, Reservation as ReservationDto } from '../../dtos/Reservation.dto';
+import { ResourceError } from '../../dtos/Error';
+import { Guest as GuestDto } from '../../dtos/Guest.dto';
+import { SingleGuestView } from '../Guests/Guests';
+import { RoomView, Room } from '../../dtos/Room.dto';
+import DateInput from '../DateInput';
+import { CreateGuestDiv } from '../Guests/CreateGuest';
+import { TopHeader } from '../TopHeader';
+import { RowCalendar } from '../Calendar/RowCalendar';
+import { ReservationList } from './ReservationListProps';
 
 export interface ReservationProps { reservationId: number, refresh: Function, mode?: string }
 export interface ReservationState { reservation: ReservationDto, guest: GuestDto, room: RoomView, editMode: boolean }
@@ -295,92 +296,6 @@ class CreateReservationView extends React.Component<CreateReservationViewProps &
             );
         }
         return (<div />);
-    }
-}
-
-interface ReservationListProps { reservations: ResSummaryView[], simpleView?: boolean }
-interface ReservationListState { }
-
-export class ReservationList extends React.Component<ReservationListProps & RouteComponentProps, ReservationListState> {
-    constructor(props: ReservationListProps & RouteComponentProps) {
-        super(props);
-        this.state = {};
-    }
-
-    render() {
-        const simpleView = this.props.simpleView || false;
-        const reservations = this.props.reservations.map(
-            r => <ReservationListItem {...this.props} key={r.resID} resView={r} simpleView={simpleView} />
-        );
-        reservations.reverse();
-        return (
-            <div>
-                <table className='Guests-list ui selectable table'>
-                    <thead className='ui header'>
-                        <tr>
-                            <th>ID</th>
-                            {simpleView ? null : <th>Guest Name</th>}
-                            {simpleView ? null : <th>Guest Lastname</th>}
-                            <th>People</th>
-                            <th>Start</th>
-                            <th>End</th>
-                            <th>Room</th>
-                        </tr>
-                    </thead>
-                    <tbody className=''>
-                        {reservations}
-                    </tbody>
-                </table>
-            </div>
-        );
-    }
-}
-
-interface ReservationListItemProps { resView: ResSummaryView, simpleView?: boolean }
-interface ReservationListItemState { }
-
-class ReservationListItem extends React.Component<ReservationListItemProps & RouteComponentProps, ReservationListItemState> {
-    render() {
-        const resView = this.props.resView;
-        const simpleView = this.props.simpleView || false;
-        return (
-            <tr className='Reservation-list-item pointer' onClick={e => this.props.history.push(`/reservations/${resView.resID}`)}>
-                <td>
-                    {/* <Link to={`reservations/${resView.resID}`}> */}
-                    <div className='ui label circular'>
-                        {resView.resID}
-                    </div>
-                    {/* </Link> */}
-                </td>
-                {simpleView ? null : <td>
-                    <Link to={`guests/${resView.guestID}`}>
-                        {resView.guestFirstname}
-                    </Link>
-                </td>}
-                {simpleView ? null : <td>
-                    <Link to={`guests/${resView.guestID}`}>
-                        {resView.guestLastname}
-                    </Link>
-                </td>}
-                <td>
-                    <i className='users icon' />
-                    {resView.numberOfPeople}/{resView.roomSpots}
-                </td>
-                <td>
-                    {moment(resView.resStart).format('YYYY-MM-DD')}
-                </td>
-                <td>
-                    {moment(resView.resEnd).format('YYYY-MM-DD')}
-                </td>
-                <td>
-                    <Link to={`rooms/${resView.roomID}`} onClick={e => e.stopPropagation()}>
-                        <div className='label circular ui button'>
-                            {resView.roomID}
-                        </div>
-                    </Link>
-                </td>
-            </tr>
-        );
     }
 }
 

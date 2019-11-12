@@ -1,16 +1,6 @@
 import * as React from 'react';
-import { Route, Redirect, Switch, RouteComponentProps, Link } from "react-router-dom";
-import * as Server from '../../Server';
+import { RouteComponentProps, Link } from "react-router-dom";
 import * as moment from 'moment';
-
-import { ResourceError } from '../../dtos/Error';
-import { Guest as GuestDto } from '../../dtos/Guest.dto';
-import { SingleGuestView } from '../Guests/Guests';
-import { RoomView, Room } from '../../dtos/Room.dto';
-import DateInput from '../DateInput';
-import { CreateGuestDiv } from '../Guests/CreateGuest';
-import { TopHeader } from '../TopHeader';
-import { RowCalendar } from '../Calendar/RowCalendar';
 
 import { ResSummaryView } from '../../dtos/Reservation.dto';
 

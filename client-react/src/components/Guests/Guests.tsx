@@ -7,7 +7,7 @@ import { CreateGuestView, CreateGuestDiv } from './CreateGuest';
 import { TopHeader } from '../TopHeader';
 import { GuestList } from './GuestList';
 import { Reservation as ReservationDto } from '../Reservations/Reservations';
-import { ReservationList } from "../Reservations/ReservationListProps";
+import { ReservationList } from "../Reservations/ReservationList";
 import { ResSummaryView } from '../../dtos/Reservation.dto';
 
 interface SingleGuestViewProps { guest: GuestDto, className?: string }

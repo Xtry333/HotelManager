@@ -12,6 +12,7 @@ export interface CreateReservationViewProps {
     refresh: Function;
     guestId?: number;
 }
+
 export interface CreateReservationViewState {
     reservation: ReservationDto;
     guest: GuestDto;
@@ -22,6 +23,7 @@ export class CreateReservationView extends React.Component<CreateReservationView
         super(undefined, undefined);
         this.state = { reservation: null, guest: null };
     }
+
     componentDidMount() {
         const reservation = new ReservationDto();
         reservation.numberOfPeople = 1;
@@ -39,6 +41,7 @@ export class CreateReservationView extends React.Component<CreateReservationView
             this.setState({ guest });
         }
     }
+
     onGuestInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const name = event.target.name;
         const value = event.target.value;
@@ -46,6 +49,7 @@ export class CreateReservationView extends React.Component<CreateReservationView
         guest[name] = value;
         this.setState({ guest: guest });
     };
+
     onReservationInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const name = event.target.name;
         const value = event.target.value;
@@ -53,6 +57,7 @@ export class CreateReservationView extends React.Component<CreateReservationView
         res[name] = value;
         this.setState({ reservation: res });
     };
+
     onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         console.log('post');
         event.preventDefault();
@@ -68,6 +73,7 @@ export class CreateReservationView extends React.Component<CreateReservationView
             console.error(error);
         }
     };
+
     render() {
         const reservation = this.state.reservation;
         const guest = this.state.guest;

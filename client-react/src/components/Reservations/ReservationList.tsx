@@ -8,14 +8,15 @@ interface ReservationListProps {
     reservations: ResSummaryView[];
     simpleView?: boolean;
 }
-interface ReservationListState {
-}
+
+interface ReservationListState { }
 
 export class ReservationList extends React.Component<ReservationListProps & RouteComponentProps, ReservationListState> {
     constructor(props: ReservationListProps & RouteComponentProps) {
         super(props);
         this.state = {};
     }
+
     render() {
         const simpleView = this.props.simpleView || false;
         const reservations = this.props.reservations.map(r => <ReservationListItem {...this.props} key={r.resID} resView={r} simpleView={simpleView} />);

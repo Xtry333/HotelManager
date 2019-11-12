@@ -27,6 +27,7 @@ export class ResSummaryView implements Dto {
 	guestLastname: string;
 	guestPhoneNumber: string;
 	numberOfPeople: number;
+	roomSpots: number;
 	pricePerDay: number;
 	resAdded: Date;
 	resStart: Date;

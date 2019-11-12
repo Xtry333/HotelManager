@@ -364,7 +364,7 @@ class ReservationListItem extends React.Component<ReservationListItemProps & Rou
                 </td>}
                 <td>
                     <i className='users icon' />
-                    {resView.numberOfPeople}
+                    {resView.numberOfPeople}/{resView.roomSpots}
                 </td>
                 <td>
                     {moment(resView.resStart).format('YYYY-MM-DD')}

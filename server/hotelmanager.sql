@@ -106,8 +106,8 @@ CREATE TABLE `payment` (
 );
 
 CREATE OR REPLACE VIEW `resSummary` AS
-	SELECT `res`.`id` AS `resID`, `res`.`room` AS `roomID`, `res`.`guest` AS `guestID`, `d`.`id` AS `depoID`, `p`.`id` AS `paymID`, `res`.`token` AS `resToken`, `g`.`firstname` AS `guestFirstname`, `g`.`lastname` AS `guestLastname`, `g`.`phoneNumber` AS `guestPhoneNumber`, `res`.`numberOfPeople` AS `numberOfPeople`, `res`.`pricePerDay` AS `pricePerDay`, `res`.`added` AS `resAdded`, `res`.`start` AS `resStart`, `res`.`end` AS `resEnd`, `d`.`amount` AS `depoAmount`, `d`.`added` AS `depoAdded`, `p`.`amount` AS `paymAmount`, `p`.`added` AS `paymAdded`, `res`.`additionalResInfo` AS `additionalResInfo`
-	FROM `reservation` `res` LEFT JOIN `deposit` AS `d` ON `res`.`id` = `d`.`reservation` LEFT JOIN `payment` AS `p` ON `res`.`id` = `p`.`reservation` LEFT JOIN `guest` AS `g` ON `res`.`guest` = `g`.`id` WHERE `res`.`deleted` = 0 ORDER BY `res`.`start` ASC;
+	SELECT `res`.`id` AS `resID`, `res`.`room` AS `roomID`, `res`.`guest` AS `guestID`, `d`.`id` AS `depoID`, `p`.`id` AS `paymID`, `res`.`token` AS `resToken`, `g`.`firstname` AS `guestFirstname`, `g`.`lastname` AS `guestLastname`, `g`.`phoneNumber` AS `guestPhoneNumber`, `res`.`numberOfPeople` AS `numberOfPeople`, `res`.`pricePerDay` AS `pricePerDay`, `res`.`added` AS `resAdded`, `res`.`start` AS `resStart`, `res`.`end` AS `resEnd`, `d`.`amount` AS `depoAmount`, `d`.`added` AS `depoAdded`, `p`.`amount` AS `paymAmount`, `p`.`added` AS `paymAdded`, `r`.`spots` AS `roomSpots`, `res`.`additionalResInfo` AS `additionalResInfo`
+	FROM `reservation` `res` LEFT JOIN `deposit` AS `d` ON `res`.`id` = `d`.`reservation` LEFT JOIN `payment` AS `p` ON `res`.`id` = `p`.`reservation` LEFT JOIN `guest` AS `g` ON `res`.`guest` = `g`.`id` JOIN `room` AS `r` ON `res`.`room` = `r`.`id` WHERE `res`.`deleted` = 0 ORDER BY `res`.`start` ASC;
 	    
 CREATE OR REPLACE VIEW `defaultRoomImagesView` AS
     SELECT * FROM `roomImages` WHERE `default` = 1;

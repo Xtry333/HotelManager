@@ -440,8 +440,9 @@ export class Reservations extends React.Component<ReservationsProps & RouteCompo
                                         </div>
                                     </div>
                                 </div>
-                                <div className="ui hidden divider" />
-                                <ReservationList {...p} reservations={reservations} />
+                                <div style={{ marginTop: '14px' }}>
+                                    <ReservationList {...p} reservations={reservations} />
+                                </div>
                             </div>
                         } />
                         <Route path='/reservations/edit/:id' render={p =>

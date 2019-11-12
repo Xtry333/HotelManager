@@ -345,11 +345,11 @@ class ReservationListItem extends React.Component<ReservationListItemProps & Rou
         return (
             <tr className='Reservation-list-item pointer' onClick={e => this.props.history.push(`/reservations/${resView.resID}`)}>
                 <td>
-                    <Link to={`reservations/${resView.resID}`}>
-                        <div className='label circular ui button'>
+                    {/* <Link to={`reservations/${resView.resID}`}> */}
+                        <div className='ui label circular'>
                             {resView.resID}
                         </div>
-                    </Link>
+                    {/* </Link> */}
                 </td>
                 {simpleView ? null : <td>
                     <Link to={`guests/${resView.guestID}`}>
@@ -372,7 +372,7 @@ class ReservationListItem extends React.Component<ReservationListItemProps & Rou
                     {moment(resView.resEnd).format('YYYY-MM-DD')}
                 </td>
                 <td>
-                    <Link to={`rooms/${resView.roomID}`}>
+                    <Link to={`rooms/${resView.roomID}`} onClick={e => e.stopPropagation()}>
                         <div className='label circular ui button'>
                             {resView.roomID}
                         </div>

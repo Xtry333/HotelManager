@@ -154,7 +154,8 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
                             <button className="ui orange basic button"
                                 onClick={e => {
                                     this.props.history.push(`/reservations/${reservation.id}`);
-                                    this.setState({ editMode: false })
+                                    this.setState({ editMode: false });
+                                    this.fetchData();
                                 }}>Cancel</button>
                             <button className="ui red basic button"
                                 onClick={this.deleteRes}>Delete</button>
@@ -346,9 +347,9 @@ class ReservationListItem extends React.Component<ReservationListItemProps & Rou
             <tr className='Reservation-list-item pointer' onClick={e => this.props.history.push(`/reservations/${resView.resID}`)}>
                 <td>
                     {/* <Link to={`reservations/${resView.resID}`}> */}
-                        <div className='ui label circular'>
-                            {resView.resID}
-                        </div>
+                    <div className='ui label circular'>
+                        {resView.resID}
+                    </div>
                     {/* </Link> */}
                 </td>
                 {simpleView ? null : <td>

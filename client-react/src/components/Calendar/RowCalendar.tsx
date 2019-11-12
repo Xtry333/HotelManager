@@ -7,11 +7,11 @@ import * as Server from '../../Server';
 import './Timesheet.less';
 import { Room } from '../../dtos/Room.dto';
 
-export interface CalendarRowProps { activeRes?: ReservationDto, activeRoomID?: number, centerDate?: moment.Moment }
-export interface CalendarRowState { hover: number, reservations: ReservationDto[] }
+export interface RowCalendarProps { activeRes?: ReservationDto, activeRoomID?: number, centerDate?: moment.Moment }
+export interface RowCalendarState { hover: number, reservations: ReservationDto[] }
 
-export class CalendarRow extends React.Component<CalendarRowProps & RouteComponentProps, CalendarRowState> {
-    constructor(props: CalendarRowProps & RouteComponentProps) {
+export class RowCalendar extends React.Component<RowCalendarProps & RouteComponentProps, RowCalendarState> {
+    constructor(props: RowCalendarProps & RouteComponentProps) {
         super(props);
         this.state = { hover: 0, reservations: [] };
     }
@@ -23,7 +23,7 @@ export class CalendarRow extends React.Component<CalendarRowProps & RouteCompone
         }
     }
 
-    componentDidUpdate(prevProps: CalendarRowProps, prevState: CalendarRowState) {
+    componentDidUpdate(prevProps: RowCalendarProps, prevState: RowCalendarState) {
         const id = this.props.activeRoomID || this.props.activeRes.room;
         const roomID = parseInt(id as any);
         if (roomID && this.props.activeRes) {
@@ -107,7 +107,7 @@ export class CalendarRow extends React.Component<CalendarRowProps & RouteCompone
                     lastID = res.id;
                 }
             }
-            slides.push(<td key={`slide-rail-${i}`} className="slides-rail">{slide}</td>);
+            slides.push(<td key={`slide-rail-${i}`}>{slide}</td>);
         }
         return { daysOfWeek, numbers, slides };
     }
@@ -138,9 +138,9 @@ export class CalendarRow extends React.Component<CalendarRowProps & RouteCompone
             <div className="ui segment">
                 <table className="timesheet-table">
                     <tbody>
-                        <tr className="numbers">{timesheet.daysOfWeek}</tr>
-                        <tr className="numbers">{timesheet.numbers}</tr>
-                        <tr>{timesheet.slides}</tr>
+                        <tr className="days-of-week-rail">{timesheet.daysOfWeek}</tr>
+                        <tr className="day-numbers-rail">{timesheet.numbers}</tr>
+                        <tr className="slides-rail">{timesheet.slides}</tr>
                     </tbody>
                 </table>
             </div>

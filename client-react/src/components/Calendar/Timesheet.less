@@ -12,8 +12,13 @@
     text-align    : center;
     box-sizing    : border-box;
 
+    * {
+        box-sizing    : border-box;
+    }
+
     td {
         border-right: 1px solid lightgray;
+        padding: 0;
     }
 
     td:last-child {
@@ -21,7 +26,12 @@
     }
 }
 
-.numbers {
+.days-of-week-rail {
+    font-size: 0.85em;
+    border   : 1px solid black;
+}
+
+.numbers-rail {
     font-size: 0.85em;
     border   : 1px solid black;
 
@@ -33,15 +43,17 @@
 }
 
 .slides-rail {
-    position: relative;
-    height  : @slideHeight;
+    div {
+        position: relative;
+        height  : @slideHeight;
+    }
 }
 
 .slide {
     position         : absolute;
     background       : @slideColor;
     //opacity        : 70%;
-    width            : 107%;
+    width            : 110%;
     left             : 35%;
     height           : inherit;
     top              : 0px;
@@ -80,15 +92,19 @@
     }
 
     &.right {
-        clip-path: polygon(0 0, 0 100%, 100% 100%, 75% 100%, 100% 50%, 100% 0);
+        //clip-path: polygon(0 0, 0 100%, 100% 100%, 75% 100%, 100% 50%, 100% 0);
+        clip-path: polygon(0 0, 75% 0, 100% 100%, 0 100%);
     }
 
     &.left {
-        clip-path: polygon(0 50%, 0 100%, 100% 100%, 100% 0, 25% 0);
+        //clip-path: polygon(25% 50%, 0 100%, 100% 100%, 100% 0, 25% 0);
+        //clip-path: polygon(0 50%, 0 100%, 100% 100%, 100% 0, 25% 0);
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 25% 100%);
     }
 
     &.left.right {
-        clip-path: polygon(0 50%, 0 100%, 75% 100%, 100% 50%, 100% 0, 25% 0);
+        //clip-path: polygon(0 50%, 0 100%, 75% 100%, 100% 50%, 100% 0, 25% 0);
+        clip-path: polygon(0 0, 75% 0, 100% 100%, 25% 100%);
     }
 }
 

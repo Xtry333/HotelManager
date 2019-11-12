@@ -3,7 +3,7 @@ import { Route, Link, Redirect, RouteComponentProps } from "react-router-dom";
 import * as Server from '../Server';
 import { RoomView } from '../dtos/Room.dto';
 import { TopHeader } from './TopHeader';
-import { CalendarRow } from './Calendar/CalendarRow';
+import { RowCalendar } from './Calendar/RowCalendar';
 import moment = require('moment');
 
 //import '../styles/Rooms.less';
@@ -57,7 +57,7 @@ class Room extends React.Component<RoomProps & RouteComponentProps, RoomState> {
                             {images}
                         </div>
                         <button className="App-button" onClick={e => { this.setState({ editMode: true }) }}>Edit</button>
-                        <CalendarRow centerDate={moment().startOf('week').add(13, 'days')} activeRoomID={this.state.room.roomID} {...this.props} />
+                        <RowCalendar centerDate={moment().startOf('week').add(13, 'days')} activeRoomID={this.state.room.roomID} {...this.props} />
                     </div>
                 );
             }

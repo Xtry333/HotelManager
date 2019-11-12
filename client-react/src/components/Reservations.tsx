@@ -11,7 +11,7 @@ import { RoomView, Room } from '../dtos/Room.dto';
 import DateInput from './DateInput';
 import { CreateGuestDiv } from './Guests/CreateGuest';
 import { TopHeader } from './TopHeader';
-import { CalendarRow } from './Calendar/CalendarRow';
+import { RowCalendar } from './Calendar/RowCalendar';
 
 export interface ReservationProps { reservationId: number, refresh: Function, mode?: string }
 export interface ReservationState { reservation: ReservationDto, guest: GuestDto, room: RoomView, editMode: boolean }
@@ -145,7 +145,7 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
                             </div>
                         </div>
                     </div>
-                    <CalendarRow {...this.props} activeRes={this.state.reservation} />
+                    <RowCalendar {...this.props} activeRes={this.state.reservation} />
                     <div className="ui hidden horizontal divider"></div>
                     {editMode ?
                         (<div className="ui separate buttons">
@@ -281,7 +281,7 @@ class CreateReservationView extends React.Component<CreateReservationViewProps &
                                     onChange={this.onReservationInputChange} value={reservation.room || ''} />
                                 <i className='home icon' />
                             </div>
-                            <CalendarRow activeRes={this.state.reservation}
+                            <RowCalendar activeRes={this.state.reservation}
                                 history={this.props.history} location={this.props.location} match={this.props.match} />
                         </div>
                         <label>Additional Reservation Info</label>

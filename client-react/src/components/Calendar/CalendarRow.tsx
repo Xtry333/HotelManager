@@ -78,7 +78,7 @@ export class CalendarRow extends React.Component<CalendarRowProps & RouteCompone
         const lengthDays = activeRes ? moment.duration(moment(activeRes.end).valueOf()
             - moment(activeRes.start).valueOf()).asDays() : 0;
         const centerDate = activeRes ? moment(activeRes.start).add(Math.floor(lengthDays / 2), 'days') : this.props.centerDate;
-        const range = 15;
+        const range = 16;
         const start = centerDate.clone().subtract(range, 'days');
         const end = centerDate.clone().add(range, 'days');
 

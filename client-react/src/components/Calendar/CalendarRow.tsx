@@ -5,28 +5,37 @@ import * as moment from 'moment';
 import * as Server from '../../Server';
 
 import './Timesheet.less';
+import { Room } from '../../dtos/Room.dto';
 
-export interface CalendarRowProps { activeRes: ReservationDto }
+export interface CalendarRowProps { activeRes?: ReservationDto, activeRoomID?: number, centerDate?: moment.Moment }
 export interface CalendarRowState { hover: number, reservations: ReservationDto[] }
 
 export class CalendarRow extends React.Component<CalendarRowProps & RouteComponentProps, CalendarRowState> {
-    constructor(props: CalendarRowProps) {
-        super(props as any);
+    constructor(props: CalendarRowProps & RouteComponentProps) {
+        super(props);
         this.state = { hover: 0, reservations: [] };
     }
 
     componentDidMount() {
-        const roomID = this.props.activeRes.room;
+        const roomID = this.props.activeRoomID || this.props.activeRes.room;
         if (roomID) {
             this.fetchReservationsForRoom(roomID);
         }
     }
 
     componentDidUpdate(prevProps: CalendarRowProps, prevState: CalendarRowState) {
-        const roomID = parseInt(this.props.activeRes.room as any);
-        if (roomID && parseInt(prevProps.activeRes.room as any) !== roomID) {
-            this.fetchReservationsForRoom(roomID);
+        const id = this.props.activeRoomID || this.props.activeRes.room;
+        const roomID = parseInt(id as any);
+        if (roomID && this.props.activeRes) {
+            if (parseInt(prevProps.activeRes.room as any) !== roomID) {
+                this.fetchReservationsForRoom(roomID);
+            }
+        } else {
+            if (parseInt(prevProps.activeRoomID as any) !== roomID) {
+                this.fetchReservationsForRoom(roomID);
+            }
         }
+
     }
 
     fetchReservationsForRoom = async (roomID: number) => {
@@ -64,13 +73,14 @@ export class CalendarRow extends React.Component<CalendarRowProps & RouteCompone
         const numbers: JSX.Element[] = [];
         const slides: JSX.Element[] = [];
 
-        const otherRes = reservations.filter(r => r.id !== this.props.activeRes.id);
+        const otherRes = activeRes ? reservations.filter(r => r.id !== activeRes.id) : reservations.filter(x => true);
 
-        const lengthDays = moment.duration(moment(activeRes.end).valueOf() - moment(activeRes.start).valueOf()).asDays();
-        const center = moment(activeRes.start).add(Math.floor(lengthDays / 2), 'days');
+        const lengthDays = activeRes ? moment.duration(moment(activeRes.end).valueOf()
+            - moment(activeRes.start).valueOf()).asDays() : 0;
+        const centerDate = activeRes ? moment(activeRes.start).add(Math.floor(lengthDays / 2), 'days') : this.props.centerDate;
         const range = 15;
-        const start = center.clone().subtract(range, 'days');
-        const end = center.clone().add(range, 'days');
+        const start = centerDate.clone().subtract(range, 'days');
+        const end = centerDate.clone().add(range, 'days');
 
         let colorIndex = 0;
         for (let i = 0, tick = start.clone(), lastID = 0; tick <= end && i < 90; i++) {
@@ -81,7 +91,9 @@ export class CalendarRow extends React.Component<CalendarRowProps & RouteCompone
             </td>);
             daysOfWeek.push(<td key={`day-of-week-${i}`}>{`${tick.format('dd').substr(0, 1)}`}</td>);
             let slide: JSX.Element = null;
-            for (const res of [this.props.activeRes, ...otherRes]) {
+            for (const res of [activeRes, ...otherRes]) {
+                if (res === null || res === undefined)
+                    continue;
                 const classNames = this.getSlideClassNames(res, tick);
                 if (classNames) {
                     if (lastID !== res.id) {
@@ -90,7 +102,7 @@ export class CalendarRow extends React.Component<CalendarRowProps & RouteCompone
                     }
                     error = !!slide;
                     slide = <div key={`slide-${i}`} className={`${classNames}${colorIndex ? ' alt' : ''}${error ? ' error' : ''}`}
-                        data-reservation-id={`${res.id}`} onMouseEnter={this.onEnterHover} 
+                        data-reservation-id={`${res.id}`} onMouseEnter={this.onEnterHover}
                         onMouseLeave={this.onLeaveHover} onClick={this.onClick} />;
                     lastID = res.id;
                 }
@@ -113,7 +125,7 @@ export class CalendarRow extends React.Component<CalendarRowProps & RouteCompone
             classNames.push('slide');
             if (tick.startOf(day).isSame(start.startOf(day))) classNames.push("left");
             if (tick.startOf(day).isSame(end.subtract(1, day).startOf(day))) classNames.push("right");
-            if (reservation.id === this.props.activeRes.id) classNames.push("active");
+            if (this.props.activeRes && reservation.id === this.props.activeRes.id) classNames.push("active");
             if (this.isHovered(reservation)) classNames.push("hover");
         }
         return classNames.join(' ');

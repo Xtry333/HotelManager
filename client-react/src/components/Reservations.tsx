@@ -311,6 +311,7 @@ export class ReservationList extends React.Component<ReservationListProps & Rout
         const reservations = this.props.reservations.map(
             r => <ReservationListItem {...this.props} key={r.resID} resView={r} simpleView={simpleView} />
         );
+        reservations.reverse();
         return (
             <div>
                 <table className='Guests-list ui selectable table'>
@@ -417,7 +418,6 @@ export class Reservations extends React.Component<ReservationsProps & RouteCompo
         } else {
             this.state.reservations.every(x => reservations.push(x));
         }
-        reservations.reverse();
 
         return (
             <div className='Reservations'>

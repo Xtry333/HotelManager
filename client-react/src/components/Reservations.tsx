@@ -301,8 +301,8 @@ interface ReservationListProps { reservations: ResSummaryView[], simpleView?: bo
 interface ReservationListState { }
 
 export class ReservationList extends React.Component<ReservationListProps & RouteComponentProps, ReservationListState> {
-    constructor() {
-        super(undefined, undefined);
+    constructor(props: ReservationListProps & RouteComponentProps) {
+        super(props);
         this.state = {};
     }
 
@@ -417,6 +417,7 @@ export class Reservations extends React.Component<ReservationsProps & RouteCompo
         } else {
             this.state.reservations.every(x => reservations.push(x));
         }
+        reservations.reverse();
 
         return (
             <div className='Reservations'>

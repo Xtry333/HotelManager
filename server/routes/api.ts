@@ -5,6 +5,7 @@ import loginRouter from './api/auth/login';
 import usersRouter from './api/auth/users';
 import roomsRouter from './api/rooms';
 import ReservationRouter from './api/ReservationRouter';
+import PaymentRouter from './api/PaymentRouter';
 import futureRouter from './api/future';
 import confirmRouter from './api/confirmReservation';
 import guestsRouter from './api/guests';
@@ -27,6 +28,7 @@ api.use('/user', usersRouter);
 api.use('/room', roomsRouter);
 api.use('/guest', guestsRouter);
 api.use('/reservation', ReservationRouter);
+api.use('/payment', PaymentRouter);
 api.use('/future', futureRouter);
 
 export default api;

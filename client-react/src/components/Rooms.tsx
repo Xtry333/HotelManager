@@ -49,7 +49,7 @@ class Room extends React.Component<RoomProps & RouteComponentProps, RoomState> {
                 );
             } else {
                 let index = 0;
-                const images = room.images.map(v => <img key={v.id} src={v.imageLink} alt={`Zdjęcie ${index}`} />);
+                const images = room.images.map(v => <img key={v.id} src={v.imageLink} style={{width: '350px'}} alt={`Zdjęcie ${index}`} />);
                 return (
                     <div className="Room-single">
                         {room.roomID}, {room.roomNumber}, {room.floorCaption}, {room.spots} {(room as any).spotsTag}

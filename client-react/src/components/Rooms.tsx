@@ -114,8 +114,8 @@ export interface RoomsProps { };
 export interface RoomsState { rooms: RoomView[] };
 
 class Rooms extends React.Component<RoomsProps & RouteComponentProps, RoomsState> {
-    constructor() {
-        super(undefined, undefined);
+    constructor(props: RoomsProps & RouteComponentProps) {
+        super(props);
         this.state = { rooms: [] };
     }
 

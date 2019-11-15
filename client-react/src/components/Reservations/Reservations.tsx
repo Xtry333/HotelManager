@@ -94,9 +94,16 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
         if (reservation && guest && room) {
             return (
                 <div>
-                    <div className="ui horizontal divider">Guest</div>
-                    <div className='ui'>
-                        <SingleGuestView guest={guest} className='ui basic segment' />
+                    <div className="ui two column grid">
+                        <div className="column center aligned">
+                            <div className="ui horizontal divider">Guest</div>
+                            <SingleGuestView guest={guest} className='ui basic segment' />
+                        </div>
+                        <div className="column">
+                            <div className="ui horizontal divider">Room</div>
+                            <div className="">
+                            </div>
+                        </div>
                     </div>
                     <div className="ui horizontal divider">Details</div>
                     <div className='ui form'>

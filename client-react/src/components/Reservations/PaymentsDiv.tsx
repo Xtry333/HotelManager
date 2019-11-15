@@ -8,20 +8,20 @@ export interface PaymentsDivProps {
 }
 
 export interface PaymentsDivState {
-    payment: PaymentDto;
+    payments: PaymentDto;
 }
 
 export default class PaymentsDiv extends React.Component<PaymentsDivProps, PaymentsDivState> {
     constructor(props: PaymentsDivProps) {
         super(props);
-        this.state = { payment: null };
+        this.state = { payments: null };
     }
 
     async fetchData(resID?: number) {
         try {
             const resId = resID || this.props.reservationID;
             await Server.Get(`payment/${resId}`).then(results => {
-                this.setState({ payment: results.data });
+                this.setState({ payments: results.data });
             });
         } catch (error) {
             console.error(error);
@@ -29,6 +29,8 @@ export default class PaymentsDiv extends React.Component<PaymentsDivProps, Payme
     }
 
     render() {
+        if (!this.state.payments)
+            return (<div />);
         return (
             <div>
 

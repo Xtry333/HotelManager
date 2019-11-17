@@ -13,6 +13,7 @@ import { TopHeader } from '../TopHeader';
 import { RowCalendar } from '../Calendar/RowCalendar';
 import { ReservationList } from './ReservationList';
 import { CreateReservationView } from './CreateReservation';
+import RoomDiv from '../Rooms/RoomDiv';
 
 export interface ReservationProps { reservationId: number, refresh: Function, mode?: string }
 export interface ReservationState { reservation: ReservationDto, guest: GuestDto, room: RoomView, editMode: boolean }
@@ -100,9 +101,7 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
                             <SingleGuestView guest={guest} className='ui basic segment' />
                         </div>
                         <div className="column">
-                            <div className="ui horizontal divider">Room</div>
-                            <div className="">
-                            </div>
+                            <RoomDiv room={room} match={this.props.match} location={this.props.location} history={this.props.history} />
                         </div>
                     </div>
                     <div className="ui horizontal divider">Details</div>

@@ -7,3 +7,12 @@ export class Payment implements Dto {
 	amount: number;
 	added: string;
 }
+
+export class Deposit implements Dto {
+	public dtoName = 'deposit';
+	id: number;
+	reservation: number;
+	amount: number;
+	added: string;
+	returned: boolean;
+}

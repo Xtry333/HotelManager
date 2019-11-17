@@ -12,7 +12,7 @@ export async function getForReservation(reservationID: number) {
     const paymentRows = await Db.querySelectAll(PaymentDto, { reservation: reservationID });
     const depositRows = await Db.querySelectAll(DepositDto, { reservation: reservationID });
     if (paymentRows && depositRows) {
-        return { payments: paymentRows, deposits: depositRows };
+        return [ ...paymentRows, ...depositRows ];
     } else {
         throw new ResourceError(`Could not get payments for Reservation ID ${reservationID}.`, reservationID, 500);
     }

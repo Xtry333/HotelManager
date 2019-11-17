@@ -14,6 +14,7 @@ import { RowCalendar } from '../Calendar/RowCalendar';
 import { ReservationList } from './ReservationList';
 import { CreateReservationView } from './CreateReservation';
 import RoomDiv from '../Rooms/RoomDiv';
+import PaymentsDiv from './PaymentsDiv';
 
 export interface ReservationProps { reservationId: number, refresh: Function, mode?: string }
 export interface ReservationState { reservation: ReservationDto, guest: GuestDto, room: RoomView, editMode: boolean }
@@ -153,6 +154,8 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
                             </div>
                         </div>
                     </div>
+                    <PaymentsDiv reservationID={this.props.reservationId} />
+
                     <div className="ui hidden horizontal divider"></div>
                     {editMode ?
                         (<div className="ui separate buttons">

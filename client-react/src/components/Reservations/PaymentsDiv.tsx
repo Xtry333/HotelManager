@@ -49,8 +49,8 @@ export default class PaymentsDiv extends React.Component<PaymentsDivProps, Payme
                 <table className="ui table">
                     <thead>
                         <tr>
-                            <th className="six wide">Date</th>
-                            <th className="right aligned six wide">Amount</th>
+                            <th className="eigth wide">Date</th>
+                            <th className="right aligned two wide">Amount</th>
                             <th className="four wide">Type</th>
                         </tr>
                     </thead>
@@ -59,9 +59,9 @@ export default class PaymentsDiv extends React.Component<PaymentsDivProps, Payme
                     </tbody>
                     <tfoot>
                         <tr>
-                            <th>Total</th><th className="right aligned">{sum} PLN</th>
+                            <th className="right aligned">Total</th><th className="right aligned">{sum} PLN</th>
                             <th className="right aligned">
-                                <button className="ui primary labeled right icon button">
+                                <button className="ui primary labeled fluid icon button">
                                     <i className="money icon"></i>
                                     Add
                                 </button>

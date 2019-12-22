@@ -93,7 +93,7 @@ export async function GetAllBy<T extends Dto>(url: string, expectedObject: { new
 
     } catch (error) {
         if (error.response && error.response.status === 401) {
-            //this.setState({ singout: true });
+            SystemLogout();
         }
         console.error(error);
     }

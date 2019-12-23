@@ -84,30 +84,26 @@ CREATE TABLE `reservation` (
 	FOREIGN KEY (`guest`) REFERENCES `guest`(`id`)
 );
 
-CREATE TABLE `deposit` (
+CREATE TABLE `payment` (
 	`id` INT NOT NULL AUTO_INCREMENT,
-	`reservation` INT UNIQUE NOT NULL,
+	`reservation` INT NOT NULL,
+	`type` VARCHAR(30) NOT NULL,
 	`amount` DECIMAL(15,2) NOT NULL,
 	`added` DATETIME DEFAULT CURRENT_TIMESTAMP,
 	`returned` BOOLEAN DEFAULT 0,
+	`deleted` BOOLEAN DEFAULT 0,
 	
 	PRIMARY KEY (`id`),
 	FOREIGN KEY (`reservation`) REFERENCES `reservation`(`id`)
 );
 
-CREATE TABLE `payment` (
-	`id` INT NOT NULL AUTO_INCREMENT,
-	`reservation` INT UNIQUE NOT NULL,
-	`amount` DECIMAL(15,2) NOT NULL,
-	`added` DATETIME DEFAULT CURRENT_TIMESTAMP,
-	
-	PRIMARY KEY (`id`),
-	FOREIGN KEY (`reservation`) REFERENCES `reservation`(`id`)
-);
+CREATE OR REPLACE VIEW `depositView` AS
+	SELECT `reservation`.`id` AS `reservation`, sum(`payment`.`amount`) AS `amount`
+	FROM `reservation` RIGHT JOIN `payment` ON `reservation`.`id` = `payment`.`reservation` WHERE `payment`.`type` = 'deposit' GROUP BY `payment`.`reservation`;
 
 CREATE OR REPLACE VIEW `resSummary` AS
-	SELECT `res`.`id` AS `resID`, `res`.`room` AS `roomID`, `res`.`guest` AS `guestID`, `d`.`id` AS `depoID`, `p`.`id` AS `paymID`, `res`.`token` AS `resToken`, `g`.`firstname` AS `guestFirstname`, `g`.`lastname` AS `guestLastname`, `g`.`phoneNumber` AS `guestPhoneNumber`, `res`.`numberOfPeople` AS `numberOfPeople`, `res`.`pricePerDay` AS `pricePerDay`, `res`.`added` AS `resAdded`, `res`.`start` AS `resStart`, `res`.`end` AS `resEnd`, `d`.`amount` AS `depoAmount`, `d`.`added` AS `depoAdded`, `p`.`amount` AS `paymAmount`, `p`.`added` AS `paymAdded`, `r`.`spots` AS `roomSpots`, `res`.`additionalResInfo` AS `additionalResInfo`
-	FROM `reservation` `res` LEFT JOIN `deposit` AS `d` ON `res`.`id` = `d`.`reservation` LEFT JOIN `payment` AS `p` ON `res`.`id` = `p`.`reservation` LEFT JOIN `guest` AS `g` ON `res`.`guest` = `g`.`id` JOIN `room` AS `r` ON `res`.`room` = `r`.`id` WHERE `res`.`deleted` = 0 ORDER BY `res`.`start` ASC;
+	SELECT `res`.`id` AS `resID`, `res`.`room` AS `roomID`, `res`.`guest` AS `guestID`, `res`.`token` AS `resToken`, `g`.`firstname` AS `guestFirstname`, `g`.`lastname` AS `guestLastname`, `g`.`phoneNumber` AS `guestPhoneNumber`, `res`.`numberOfPeople` AS `numberOfPeople`, `res`.`pricePerDay` AS `pricePerDay`, `res`.`added` AS `resAdded`, `res`.`start` AS `resStart`, `res`.`end` AS `resEnd`, `d`.`amount` AS `depoAmount`, `r`.`spots` AS `roomSpots`, `res`.`additionalResInfo` AS `additionalResInfo`
+	FROM `reservation` AS `res` LEFT JOIN `guest` AS `g` ON `res`.`guest` = `g`.`id` JOIN `room` AS `r` ON `res`.`room` = `r`.`id` LEFT JOIN `depositView` AS `d` ON `d`.`reservation` = `res`.`id` WHERE `res`.`deleted` = 0 ORDER BY `res`.`start` ASC;
 	    
 CREATE OR REPLACE VIEW `defaultRoomImagesView` AS
     SELECT * FROM `roomImages` WHERE `default` = 1;
@@ -198,13 +194,11 @@ INSERT INTO `reservation` (`room`, `guest`, `numberOfPeople`, `pricePerDay`, `ad
 	(13, 3, 3, '200.00', '2019-08-05 01:31:56', '2019-06-29', '2019-07-03', '7fXzCnp5WaiHp8JDgaP9ix'),
 	(18, 5, 4, '175.00', '2019-08-06 17:13:02', '2019-08-05', '2019-08-09', 'Focq8jFWrSv22jDEFyBo14');
 	
-INSERT INTO `deposit` (`reservation`, `amount`, `added`) VALUES
-	(1, '200.00', '2019-08-03 14:18:13'),
-	(3, '155.00', '2019-08-05 20:17:27'),
-	(7, '230.00', '2019-08-06 17:13:19');
-	
-INSERT INTO `payment` (`reservation`, `amount`, `added`) VALUES
-	(3, '2850.00', '2019-08-05 20:20:42');
+INSERT INTO `payment` (`reservation`, `amount`, `type`, `added`) VALUES
+	(3, '2850.00', 'payment', '2019-08-05 20:20:42'),
+	(1, '200.00', 'deposit', '2019-08-03 14:18:13'),
+	(3, '155.00', 'deposit', '2019-08-05 20:17:27'),
+	(7, '230.00', 'deposit', '2019-08-06 17:13:19');
 
 INSERT INTO `user` (`firstname`, `username`, `password`) VALUES
 	('Admin', 'admin', '37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f'),

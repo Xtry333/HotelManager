@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { RouteComponentProps } from "react-router-dom";
 import * as Server from '../../Server';
-import { Payment as PaymentDto, Deposit as DepositDto } from '../../dtos/Payment.dto';
+import { Payment as PaymentDto } from '../../dtos/Payment.dto';
 import moment = require('moment');
 
 export interface PaymentsDivProps {
@@ -9,7 +9,7 @@ export interface PaymentsDivProps {
 }
 
 export interface PaymentsDivState {
-    payments: PaymentDto[] & DepositDto[];
+    payments: PaymentDto[];
 }
 
 export default class PaymentsDiv extends React.Component<PaymentsDivProps, PaymentsDivState> {
@@ -40,8 +40,8 @@ export default class PaymentsDiv extends React.Component<PaymentsDivProps, Payme
         const rows = this.state.payments.map(x => (
             <tr key={x.dtoName + x.id}>
                 <td>{moment(x.added).format("YYYY-MM-DD HH:mm")}</td>
-                <td className="right aligned">{parseFloat(x.amount as any)} PLN</td>
-                <td>{x.dtoName}</td>
+                <td className="right aligned">{parseFloat(x.amount as any).toFixed(2)} PLN</td>
+                <td>{x.type}</td>
             </tr>));
         const sum = this.state.payments.reduce((a, b) => a + parseFloat(b.amount as any), 0);
         return (
@@ -50,8 +50,8 @@ export default class PaymentsDiv extends React.Component<PaymentsDivProps, Payme
                     <thead>
                         <tr>
                             <th className="eigth wide">Date</th>
-                            <th className="right aligned two wide">Amount</th>
-                            <th className="four wide">Type</th>
+                            <th className="right aligned three wide">Amount</th>
+                            <th className="three wide">Type</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -59,7 +59,7 @@ export default class PaymentsDiv extends React.Component<PaymentsDivProps, Payme
                     </tbody>
                     <tfoot>
                         <tr>
-                            <th className="right aligned">Total</th><th className="right aligned">{sum} PLN</th>
+                            <th className="right aligned">Total</th><th className="right aligned">{sum.toFixed(2)} PLN</th>
                             <th className="right aligned">
                                 <button className="ui primary labeled fluid icon button">
                                     <i className="money icon"></i>

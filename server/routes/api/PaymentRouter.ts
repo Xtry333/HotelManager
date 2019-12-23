@@ -15,21 +15,13 @@ router.get('/:id', async (req, res, next) => {
     }
 });
 
-/* PUT payment or deposit for reservation */
+/* PUT payment for reservation id */
 router.put('/:id', async (req, res, next) => {
     try {
         const reservationID = parseInt(req.params.id);
-        const type = req.body.type === "deposit" ? "deposit" : req.body.type === "payment" ? "payment" : null;
         const amount = parseFloat(req.body.amount);
-        if (type === "payment") {
-            const paymentID = await PaymentController.add(reservationID, amount);
-            res.status(201).json(paymentID);
-        } else if (type === "deposit") {
-            const depositID = await PaymentController.deposit(reservationID, amount);
-            res.status(201).json(depositID);
-        } else {
-            throw new ResourceError("Please provide valid payment type", type, 400);
-        }
+        const paymentID = await PaymentController.add(reservationID, amount);
+        res.status(201).json(paymentID);
     } catch (error) {
         res.status(error.status).json(error);
     }
@@ -39,7 +31,7 @@ router.put('/:id', async (req, res, next) => {
 router.delete('/:id', async (req, res, next) => {
     try {
         const id = parseInt(req.params.id);
-        const results = await PaymentController.deleteDepositById(id);
+        const results = await PaymentController.deletePaymentById(id);
         res.status(200).json(results);
     } catch (error) {
         res.status(error.status).json(error);

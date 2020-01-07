@@ -24,7 +24,8 @@ export async function add(reservationID: number, amount: number, type: string = 
         throw new ResourceError(`Amount has not been specified.`, reservationID, 400);
 
     const newObj = {} as PaymentDto;
-    newObj.added = moment().format(dateFormat);
+    newObj.reservation = reservationID;
+    newObj.added = moment().format(dateTimeFormat);
     newObj.amount = amount;
     newObj.type = type;
 

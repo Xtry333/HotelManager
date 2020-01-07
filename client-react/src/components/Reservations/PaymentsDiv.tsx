@@ -4,18 +4,35 @@ import * as Server from '../../Server';
 import { Payment as PaymentDto } from '../../dtos/Payment.dto';
 import moment = require('moment');
 
+import { Button, Header, Icon, Modal, Input, Select, Dropdown } from 'semantic-ui-react'
+
 export interface PaymentsDivProps {
     reservationID: number;
 }
 
 export interface PaymentsDivState {
     payments: PaymentDto[];
+    modalOpen: boolean;
+    modalPaymentAmount: number;
+    modalPaymentType: string;
 }
 
 export default class PaymentsDiv extends React.Component<PaymentsDivProps, PaymentsDivState> {
     constructor(props: PaymentsDivProps) {
         super(props);
-        this.state = { payments: null };
+        this.state = { payments: null, modalOpen: false, modalPaymentAmount: 0, modalPaymentType: 'payment' };
+    }
+
+    paymentOptions = [{ text: 'Payment', value: 'payment' }, { text: 'Deposit', value: 'deposit' }];
+
+    handleOpen = () => this.setState({ modalOpen: true })
+
+    handleClose = () => this.setState({ modalOpen: false })
+
+    handleSubmit = () => {
+        const data = { type: this.state.modalPaymentType, amount: this.state.modalPaymentAmount }
+        Server.Put(`payment/${this.props.reservationID}`, data);
+        this.setState({ modalOpen: false })
     }
 
     componentDidMount() {
@@ -61,7 +78,7 @@ export default class PaymentsDiv extends React.Component<PaymentsDivProps, Payme
                         <tr>
                             <th className="right aligned">Total</th><th className="right aligned">{sum.toFixed(2)} PLN</th>
                             <th className="right aligned">
-                                <button className="ui primary labeled fluid icon button">
+                                <button className="ui primary labeled fluid icon button" onClick={this.handleOpen}>
                                     <i className="money icon"></i>
                                     Add
                                 </button>
@@ -69,6 +86,29 @@ export default class PaymentsDiv extends React.Component<PaymentsDivProps, Payme
                         </tr>
                     </tfoot>
                 </table>
+                <Modal open={this.state.modalOpen} onClose={this.handleClose} size='small' >
+                    <Header icon='money' content='Add Payment' />
+                    <Modal.Content>
+                        <p>Please select the type and enter payment amount:</p>
+                        <Input type='text' value={this.state.modalPaymentAmount}
+                            onChange={(e, d) => this.setState({ modalPaymentAmount: d.value as any })}>
+                        </Input><br />
+                        <Dropdown
+                            selection
+                            options={this.paymentOptions}
+                            value={this.state.modalPaymentType}
+                            onChange={(e, d) => this.setState({ modalPaymentType: d.value as string })}>
+                        </Dropdown>
+                    </Modal.Content>
+                    <Modal.Actions>
+                        <Button color='red' onClick={this.handleClose} inverted>
+                            <Icon name='x' /> Cancel
+                        </Button>
+                        <Button color='green' onClick={this.handleSubmit} inverted>
+                            <Icon name='checkmark' /> Confirm
+                        </Button>
+                    </Modal.Actions>
+                </Modal>
             </div>
         );
     }

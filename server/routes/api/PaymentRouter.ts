@@ -20,7 +20,8 @@ router.put('/:id', async (req, res, next) => {
     try {
         const reservationID = parseInt(req.params.id);
         const amount = parseFloat(req.body.amount);
-        const paymentID = await PaymentController.add(reservationID, amount);
+        const type = req.body.type;
+        const paymentID = await PaymentController.add(reservationID, amount, type);
         res.status(201).json(paymentID);
     } catch (error) {
         res.status(error.status).json(error);

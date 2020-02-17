@@ -5,7 +5,7 @@
     "private": true,
     "scripts": {
         "tsc": "tsc",
-        "test": "mocha --require @babel/register tests/*.js --exit",
+        "test": "mocha --require ts-node/register tests/*.ts --exit",
         "start": "nodemon --exec babel-node ./bin/www",
         "dev": "ts-node-dev --respawn --transpileOnly ./server.ts",
         "prod": "tsc && node ./build/server.js"

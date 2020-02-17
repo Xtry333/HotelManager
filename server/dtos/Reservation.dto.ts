@@ -7,6 +7,7 @@ export class Reservation implements Dto {
 	guest: number;
 	numberOfPeople: number;
 	pricePerDay: number;
+	status: string;
 	token: string;
 	added: number;
 	start: number;
@@ -29,6 +30,7 @@ export class ResSummaryView implements Dto {
 	numberOfPeople: number;
 	roomSpots: number;
 	pricePerDay: number;
+	resStatus: string;
 	resAdded: Date;
 	resStart: Date;
 	resEnd: Date;

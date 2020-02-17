@@ -73,6 +73,7 @@ CREATE TABLE `reservation` (
 	`guest` INT NOT NULL,
 	`numberOfPeople` INT NOT NULL,
 	`pricePerDay` DECIMAL(15,2) NOT NULL,
+	`status` VARCHAR(128) NOT NULL,
     `token` CHAR(128) UNIQUE,
 	`added` DATETIME DEFAULT CURRENT_TIMESTAMP,
 	`start` DATE NOT NULL,
@@ -103,7 +104,7 @@ CREATE OR REPLACE VIEW `depositView` AS
 	FROM `reservation` RIGHT JOIN `payment` ON `reservation`.`id` = `payment`.`reservation` WHERE `payment`.`type` = 'deposit' GROUP BY `payment`.`reservation`;
 
 CREATE OR REPLACE VIEW `resSummary` AS
-	SELECT `res`.`id` AS `resID`, `res`.`room` AS `roomID`, `res`.`guest` AS `guestID`, `res`.`token` AS `resToken`, `g`.`firstname` AS `guestFirstname`, `g`.`lastname` AS `guestLastname`, `g`.`phoneNumber` AS `guestPhoneNumber`, `res`.`numberOfPeople` AS `numberOfPeople`, `res`.`pricePerDay` AS `pricePerDay`, `res`.`added` AS `resAdded`, `res`.`start` AS `resStart`, `res`.`end` AS `resEnd`, `d`.`amount` AS `depoAmount`, `r`.`spots` AS `roomSpots`, `res`.`additionalResInfo` AS `additionalResInfo`
+	SELECT `res`.`id` AS `resID`, `res`.`room` AS `roomID`, `res`.`guest` AS `guestID`, `res`.`token` AS `resToken`, `g`.`firstname` AS `guestFirstname`, `g`.`lastname` AS `guestLastname`, `g`.`phoneNumber` AS `guestPhoneNumber`, `res`.`numberOfPeople` AS `numberOfPeople`, `res`.`status` AS `resStatus`, `res`.`pricePerDay` AS `pricePerDay`, `res`.`added` AS `resAdded`, `res`.`start` AS `resStart`, `res`.`end` AS `resEnd`, `d`.`amount` AS `depoAmount`, `r`.`spots` AS `roomSpots`, `res`.`additionalResInfo` AS `additionalResInfo`
 	FROM `reservation` AS `res` LEFT JOIN `guest` AS `g` ON `res`.`guest` = `g`.`id` JOIN `room` AS `r` ON `res`.`room` = `r`.`id` LEFT JOIN `depositView` AS `d` ON `d`.`reservation` = `res`.`id` WHERE `res`.`deleted` = 0 ORDER BY `res`.`start` ASC;
 	    
 CREATE OR REPLACE VIEW `defaultRoomImagesView` AS

@@ -7,9 +7,10 @@ export class Guest implements Dto {
     firstname: string;
     lastname: string;
     pesel: number;
-    phoneNumber: number;
     email: string;
+    phoneNumber: number;
     streetName: string;
+    houseNumber: string;
     city: string;
     added: number;
     additionalGuestInfo: string;

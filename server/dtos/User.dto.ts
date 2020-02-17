@@ -6,6 +6,7 @@ export class User implements Dto {
     username: string;
     firstname: string;
     lastname: string;
+    email: string;
     password: string;
     created: number;
     additionalInfo: string;

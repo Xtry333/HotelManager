@@ -1,6 +1,7 @@
 import * as Db from '../js/query';
 import { User as UserDto } from '../dtos/User.dto';
 import { ResourceError } from '../dtos/Error';
+import * as Validator from '../js/validator';
 
 export async function getAll() {
     return await Db.querySelectAll(UserDto);
@@ -19,27 +20,28 @@ export async function getById(id: number): Promise<UserDto | undefined> {
 
 export async function create(user: UserDto) {
     console.log(user);
-    if (user && user.username && user.firstname && user.email && user.password) {
-        // TODO: validate(guest.email, Email);
+    const errorFields: string[] = [];
+    if (user) {
+        if (!Validator.validateEmail(user.email)) errorFields.push('email');
+        if (!Validator.isEmpty(user.username)) errorFields.push('username');
+        if (!Validator.isEmpty(user.password)) errorFields.push('password');
+        if (!Validator.isEmpty(user.firstname)) errorFields.push('firstname');
 
         const newObj: any = {};
         newObj.username = user.username;
         newObj.firstname = user.firstname;
-        newObj.lastname = user.lastname;
+        if (!Validator.isEmpty(user.lastname)) newObj.lastname = user.lastname;
         newObj.email = user.email;
         newObj.password = user.password;
 
-        const userId = await Db.queryInsert(UserDto, newObj);
-        user.id = userId;
-        return user;
-    } else {
-        const errorFields = [];
-        if (user) {
-            if (!user.username) errorFields.push('username');
-            if (!user.password) errorFields.push('password');
-            if (!user.firstname) errorFields.push('firstname');
-            if (!user.email) errorFields.push('email');
+        if (errorFields.length === 0) {
+            const userId = await Db.queryInsert(UserDto, newObj);
+            user.id = userId;
+            return user;
+        } else {
+            throw new ResourceError('Could not create user. These fields have invalid values', errorFields, 400);
         }
+    } else {
         throw new ResourceError('Could not create user. Check syntax.', errorFields, 400);
     }
 }

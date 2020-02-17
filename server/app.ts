@@ -21,10 +21,6 @@ import indexRouter from './routes/api/index';
 
 const app: express.Application = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
-
 app.use(helmet());
 
 app.use(cors());

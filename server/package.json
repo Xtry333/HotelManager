@@ -19,10 +19,10 @@
         "express": "~4.17.1",
         "helmet": "^3.21.2",
         "http-errors": "~1.7.3",
-        "jade": "~1.11.0",
         "moment": "^2.24.0",
         "morgan": "~1.9.1",
         "mysql2": "^2.1.0",
+        "pug": "^2.0.4",
         "randomstring": "^1.1.5",
         "uid-generator": "^2.0.0"
     },
@@ -53,6 +53,7 @@
         "mocha": "^7.0.1",
         "nodemon": "^2.0.2",
         "ts-node-dev": "^1.0.0-pre.43",
-        "typescript": "^3.7.5"
+        "typescript": "^3.7.5",
+        "npm-check-updates": "^4.0.1"
     }
 }

@@ -116,6 +116,7 @@ CREATE TABLE `user` (
 	`id` INT NOT NULL AUTO_INCREMENT,
 	`firstname` VARCHAR(50) NOT NULL,
 	`lastname` VARCHAR(50),
+	`email` VARCHAR(64) UNIQUE NOT NULL,
 	`username` VARCHAR(25) UNIQUE NOT NULL,
 	`password` VARCHAR(256) NOT NULL,
 	`created` DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -200,7 +201,7 @@ INSERT INTO `payment` (`reservation`, `amount`, `type`, `added`) VALUES
 	(3, '155.00', 'deposit', '2019-08-05 20:17:27'),
 	(7, '230.00', 'deposit', '2019-08-06 17:13:19');
 
-INSERT INTO `user` (`firstname`, `username`, `password`) VALUES
-	('Admin', 'admin', '37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f'),
-	('Michał', 'xtry333', '2ad6be3141bdc6b0bf76b53c4fc47dc66fc88d83f363b6c66e4a2870494a35ec');
+INSERT INTO `user` (`firstname`, `username`, `email`, `password`) VALUES
+	('Admin', 'admin', 'admin@manager.com', '37a8eec1ce19687d132fe29051dca629d164e2c4958ba141d5f4133a33f0688f'),
+	('Michał', 'xtry333', 'xtry333@gmail.com', '2ad6be3141bdc6b0bf76b53c4fc47dc66fc88d83f363b6c66e4a2870494a35ec');
 

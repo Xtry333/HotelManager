@@ -8,6 +8,7 @@ import Home from './components/Home';
 import Rooms from './components/Rooms';
 import Guests from './components/Guests/Guests';
 import { Reservations } from './components/Reservations/Reservations';
+import { Timesheet } from './components/Calendar/Timesheet';
 import { NotFound } from './components/NotFound';
 import { Maitenance } from './components/Maitenance';
 //import Confirmation from './components/Confirmation';
@@ -54,6 +55,7 @@ class App extends React.Component<{}, AppState> {
                                     {/* <Route path='/future/' component={Future} /> */}
                                     <Route path='/rooms/' component={Rooms} />
                                     <Route path='/reservations/' component={Reservations} />
+                                    <Route path='/timesheet/' component={Timesheet} />
                                     <Route path='/guests/' component={Guests} />
                                     <Route path='*' component={NotFound} />
                                 </Switch>

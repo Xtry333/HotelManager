@@ -2,7 +2,7 @@ import express from 'express';
 
 import tokenRouter from './api/auth/token';
 import loginRouter from './api/auth/login';
-import usersRouter from './api/auth/users';
+import userRouter from './api/auth/userRouter';
 import roomsRouter from './api/rooms';
 import ReservationRouter from './api/ReservationRouter';
 import PaymentRouter from './api/PaymentRouter';
@@ -24,7 +24,7 @@ api.use('/token', tokenRouter);
 
 // After here all requests require a X-Token header
 api.use(isAuthorized); 
-api.use('/user', usersRouter);
+api.use('/user', userRouter);
 api.use('/room', roomsRouter);
 api.use('/guest', guestsRouter);
 api.use('/reservation', ReservationRouter);

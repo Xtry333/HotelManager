@@ -49,15 +49,44 @@ class Room extends React.Component<RoomProps & RouteComponentProps, RoomState> {
                 );
             } else {
                 let index = 0;
-                const images = room.images.map(v => <img key={v.id} src={v.imageLink} style={{width: '350px'}} alt={`Zdjęcie ${index}`} />);
+                const images = room.images.map(v => <img key={v.id} src={v.imageLink} style={{ width: '350px' }} alt={`Zdjęcie ${index}`} />);
                 return (
                     <div className="Room-single">
-                        {room.roomID}, {room.roomNumber}, {room.floorCaption}, {room.spots} {(room as any).spotsTag}
+                        <table className='ui definition table'>
+                            <tbody>
+                                <tr>
+                                    <td className="six wide">
+                                        Room ID
+                                    </td>
+                                    <td>
+                                        {room.roomID}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Room Floor
+                                    </td>
+                                    <td>
+                                        {room.floorCaption}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        Sleeping spots
+                                    </td>
+                                    <td>
+                                        {room.spots}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                         <div>
                             {images}
                         </div>
-                        <button className="App-button" onClick={e => { this.setState({ editMode: true }) }}>Edit</button>
-                        <RowCalendar centerDate={moment().startOf('week').add(13, 'days')} activeRoomID={this.state.room.roomID} {...this.props} />
+                        <button className="App-button ui basic orange button" onClick={e => { this.setState({ editMode: true }) }}>Edit</button>
+                        <div className="ui segment">
+                            <RowCalendar centerDate={moment().startOf('week').add(13, 'days')} activeRoomID={this.state.room.roomID} {...this.props} />
+                        </div>
                     </div>
                 );
             }

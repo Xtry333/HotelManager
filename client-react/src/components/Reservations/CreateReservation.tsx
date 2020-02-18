@@ -120,7 +120,9 @@ export class CreateReservationView extends React.Component<CreateReservationView
                             <input id="roomId" name='room' type='number' min={0} onChange={this.onReservationInputChange} value={reservation.room || ''} />
                             <i className='home icon' />
                         </div>
-                        <RowCalendar activeRes={this.state.reservation} history={this.props.history} location={this.props.location} match={this.props.match} />
+                        <div className="ui segment">
+                            <RowCalendar activeRes={this.state.reservation} history={this.props.history} location={this.props.location} match={this.props.match} />
+                        </div>
                     </div>
                     <label>Additional Reservation Info</label>
                     <div className="field">

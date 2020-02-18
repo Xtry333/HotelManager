@@ -136,7 +136,9 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
                                 </div>
                             </div>
                         </div>
-                        <RowCalendar {...this.props} activeRes={this.state.reservation} />
+                        <div className="ui segment">
+                            <RowCalendar {...this.props} activeRes={this.state.reservation} />
+                        </div>
                         <div>
                             <label>Nights: </label>
                             <span>

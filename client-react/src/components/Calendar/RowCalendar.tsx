@@ -6,8 +6,9 @@ import * as Server from '../../Server';
 
 import './Timesheet.less';
 import { Room } from '../../dtos/Room.dto';
+import { Link } from 'react-router-dom';
 
-export interface RowCalendarProps { activeRes?: ReservationDto, activeRoomID?: number, centerDate?: moment.Moment }
+export interface RowCalendarProps { activeRes?: ReservationDto, activeRoomID?: number, centerDate?: moment.Moment, headless?: boolean }
 export interface RowCalendarState { hover: number, reservations: ReservationDto[] }
 
 export class RowCalendar extends React.Component<RowCalendarProps & RouteComponentProps, RowCalendarState> {
@@ -69,9 +70,17 @@ export class RowCalendar extends React.Component<RowCalendarProps & RouteCompone
     }
 
     generateTimesheetContent(activeRes: ReservationDto, reservations: ReservationDto[]) {
-        const daysOfWeek: JSX.Element[] = [];
-        const numbers: JSX.Element[] = [];
-        const slides: JSX.Element[] = [];
+        const roomLabel = (
+            <td>
+                <Link to={`/rooms/${activeRes ? activeRes.room : this.props.activeRoomID}`}>
+                    <div className='ui circular label button'>
+                        {activeRes ? activeRes.room : this.props.activeRoomID}
+                    </div>
+                </Link>
+            </td>);
+        const daysOfWeek: JSX.Element[] = [<td />];
+        const numbers: JSX.Element[] = [<td />];
+        const slides: JSX.Element[] = [roomLabel];
 
         const otherRes = activeRes ? reservations.filter(r => r.id !== activeRes.id) : reservations.filter(x => true);
 
@@ -86,9 +95,11 @@ export class RowCalendar extends React.Component<RowCalendarProps & RouteCompone
         for (let i = 0, tick = start.clone(), lastID = 0; tick <= end && i < 90; i++) {
             let error = false;
             tick.add(1, 'day');
-            numbers.push(<td key={`number-${i}`} title={`${tick.format('YYYY-MM-DD, dddd')}`}>
-                <span className={tick.startOf('day').isSame(moment().startOf('day')) ? 'today' : ''}>{`${tick.format('DD')}`}</span>
-            </td>);
+            numbers.push(
+                <td key={`number-${i}`} title={`${tick.format('YYYY-MM-DD, dddd')}`}>
+                    <span className={tick.startOf('day').isSame(moment().startOf('day')) ? 'today' : ''}>{`${tick.format('DD')}`}</span>
+                </td>
+            );
             daysOfWeek.push(<td key={`day-of-week-${i}`}>{`${tick.format('dd').substr(0, 1)}`}</td>);
             let slide: JSX.Element = null;
             for (const res of [activeRes, ...otherRes]) {
@@ -135,15 +146,15 @@ export class RowCalendar extends React.Component<RowCalendarProps & RouteCompone
         const timesheet = this.generateTimesheetContent(this.props.activeRes, this.state.reservations);
 
         return (
-            <div className="ui segment">
-                <table className="timesheet-table">
-                    <tbody>
-                        <tr className="days-of-week-rail">{timesheet.daysOfWeek}</tr>
-                        <tr className="day-numbers-rail">{timesheet.numbers}</tr>
-                        <tr className="slides-rail">{timesheet.slides}</tr>
-                    </tbody>
-                </table>
-            </div>
+            <table className="timesheet-table">
+                <tbody>
+                    {!this.props.headless ?
+                        <tr className="days-of-week-rail">{timesheet.daysOfWeek}</tr> : undefined}
+                    {!this.props.headless ?
+                        <tr className="day-numbers-rail">{timesheet.numbers}</tr> : undefined}
+                    <tr className="slides-rail">{timesheet.slides}</tr>
+                </tbody>
+            </table>
         );
     }
 }

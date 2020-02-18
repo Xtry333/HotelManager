@@ -65,7 +65,12 @@ export class Timesheet extends React.Component<TimesheetProps & RouteComponentPr
         const rooms = this.state.rooms;
         const centerDate = this.state.centerDate;
         if (rooms) {
-            const calendar = rooms.map(room => <RowCalendar key={room.roomID} {...this.props} centerDate={centerDate} activeRoomID={room.roomID} />);
+            let index = 0;
+            const calendar = rooms.map(room => {
+                return <RowCalendar key={room.roomID} {...this.props} 
+                    centerDate={centerDate} activeRoomID={room.roomID} 
+                    headless={index++ !== 0} />
+            });
             return (
                 <div>
                     <div className='three fields'>
@@ -79,7 +84,9 @@ export class Timesheet extends React.Component<TimesheetProps & RouteComponentPr
                             <i className="right arrow icon"></i>
                         </div>
                     </div>
+                    <div className='ui segment'>
                     {calendar}
+                    </div>
                 </div>
             );
         }

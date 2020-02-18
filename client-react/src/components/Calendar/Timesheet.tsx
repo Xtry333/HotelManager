@@ -39,13 +39,18 @@ export class Timesheet extends React.Component<TimesheetProps & RouteComponentPr
         }
     }
 
-    // onChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    //     const name = event.target.name;
-    //     const value = event.target.value;
-    //     const res: any = Object.assign({}, this.state.reservation);
-    //     res[name] = value;
-    //     this.setState({ reservation: res });
-    // }
+    onDateChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const value = event.target.value;
+        this.setState({ centerDate: moment(value) });
+    }
+
+    onDateInc = () => {
+        this.setState({ centerDate: this.state.centerDate.clone().add(1, 'day') });
+    }
+
+    onDateDec = () => {
+        this.setState({ centerDate: this.state.centerDate.clone().subtract(1, 'day') });
+    }
 
     // onReservationSave = async () => {
     //     const res = this.state.reservation;
@@ -63,6 +68,17 @@ export class Timesheet extends React.Component<TimesheetProps & RouteComponentPr
             const calendar = rooms.map(room => <RowCalendar key={room.roomID} {...this.props} centerDate={centerDate} activeRoomID={room.roomID} />);
             return (
                 <div>
+                    <div className='three fields'>
+                        <div className="ui icon button" onClick={this.onDateDec} tabIndex={0}>
+                            <i className="left arrow icon"></i>
+                        </div>
+                        <div className='ui input'>
+                            <DateInput onChange={this.onDateChange} date={this.state.centerDate.format('YYYY-MM-DD')} />
+                        </div>
+                        <div className="ui icon button" onClick={this.onDateInc} tabIndex={2}>
+                            <i className="right arrow icon"></i>
+                        </div>
+                    </div>
                     {calendar}
                 </div>
             );

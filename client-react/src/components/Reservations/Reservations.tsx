@@ -147,6 +147,13 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
                             </span>
                         </div>
                         <div>
+                            <label>Total Cost: </label>
+                            <span>
+                                {Math.ceil((new Date(reservation.end).getTime() -
+                                    new Date(reservation.start).getTime()) / (1000 * 60 * 60 * 24)) * reservation.pricePerDay}
+                            </span>
+                        </div>
+                        <div>
                             <i className='users icon' />
                             {reservation.numberOfPeople}/{room.spots}
                         </div>

@@ -8,8 +8,7 @@ export const getSetting = async (name: string): Promise<Setting> => {
     if (cached) {
         return cached;
     }
-    //TODO: Caching settings
-    //const setting = await query('SELECT `value` FROM `settings` WHERE `name` = ?', [name]) as Setting[];
+    // TODO: Caching settings with timelimit
     const setting = await querySelectAll(Setting, { name }) as Setting[];
     if (setting.length == 1) {
         Settings.push(setting[0]);
@@ -26,4 +25,6 @@ export const setSetting = async (name: string, value: string | number | boolean)
     } else {
         await query('UPDATE `settings` SET `value` = ? WHERE `name` = ?', [value, name.toString()]);
     }
+    const index = Settings.findIndex(s => s.name == name);
+    Settings.splice(index, 1);
 }

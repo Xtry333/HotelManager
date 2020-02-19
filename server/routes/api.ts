@@ -4,7 +4,7 @@ import tokenRouter from './api/auth/token';
 import loginRouter from './api/auth/login';
 import userRouter from './api/auth/userRouter';
 import roomsRouter from './api/rooms';
-import ReservationRouter from './api/ReservationRouter';
+import reservationRouter from './api/ReservationRouter';
 import PaymentRouter from './api/PaymentRouter';
 import futureRouter from './api/future';
 import confirmRouter from './api/confirmReservation';
@@ -27,7 +27,7 @@ api.use(isAuthorized);
 api.use('/user', userRouter);
 api.use('/room', roomsRouter);
 api.use('/guest', guestsRouter);
-api.use('/reservation', ReservationRouter);
+api.use('/reservation', reservationRouter);
 api.use('/payment', PaymentRouter);
 api.use('/future', futureRouter);
 

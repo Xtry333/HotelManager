@@ -10,7 +10,8 @@ import * as Server from '../../Server';
 
 export interface CreateReservationViewProps {
     refresh: Function;
-    guestId?: number;
+    guestID?: number;
+    roomID?: number;
 }
 
 export interface CreateReservationViewState {
@@ -19,20 +20,23 @@ export interface CreateReservationViewState {
 }
 
 export class CreateReservationView extends React.Component<CreateReservationViewProps & RouteComponentProps & React.HTMLProps<HTMLElement>, CreateReservationViewState> {
-    constructor() {
-        super(undefined, undefined);
+    constructor(props: CreateReservationViewProps & RouteComponentProps) {
+        super(props);
         this.state = { reservation: null, guest: null };
     }
 
     componentDidMount() {
         const reservation = new ReservationDto();
         reservation.numberOfPeople = 1;
-        if (this.props.guestId) {
-            reservation.guest = parseInt(this.props.guestId as any);
+        if (this.props.guestID) {
+            reservation.guest = parseInt(this.props.guestID as any);
+        }
+        if (this.props.roomID) {
+            reservation.room = parseInt(this.props.roomID as any);
         }
         this.setState({ reservation });
-        if (this.props.guestId) {
-            Server.Get(`guest/${this.props.guestId}`).then(results => {
+        if (this.props.guestID) {
+            Server.Get(`guest/${this.props.guestID}`).then(results => {
                 this.setState({ guest: results.data });
             });
         }
@@ -80,7 +84,7 @@ export class CreateReservationView extends React.Component<CreateReservationView
         if (reservation) {
             return (<div>
                 <form className="ui form" onSubmit={this.onSubmit}>
-                    {!this.props.guestId ? (<CreateGuestDiv guest={guest} onInputChange={this.onGuestInputChange} />) : (<SingleGuestView guest={this.state.guest} />)}
+                    {!this.props.guestID ? (<CreateGuestDiv guest={guest} onInputChange={this.onGuestInputChange} />) : (<SingleGuestView guest={this.state.guest} />)}
                     <h4 className="ui dividing header">Create Reservation</h4>
                     <div className="two fields">
                         <div className="field">

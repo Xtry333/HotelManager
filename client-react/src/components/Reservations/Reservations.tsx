@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Route, Redirect, Switch, RouteComponentProps } from "react-router-dom";
 import * as Server from '../../Server';
 import * as moment from 'moment';
+import * as queryString from 'query-string'
 
 import { ResSummaryView, Reservation as ReservationDto } from '../../dtos/Reservation.dto';
 import { ResourceError } from '../../dtos/Error';
@@ -258,12 +259,10 @@ export class Reservations extends React.Component<ReservationsProps & RouteCompo
                         <Route path='/reservations/edit/:id' render={p =>
                             <Reservation reservationId={p.match.params.id} {...p} refresh={this.fetchReservations} mode='edit' />
                         } />
-                        <Route path='/reservations/create/:id' render={p =>
-                            <CreateReservationView guestId={p.match.params.id} {...p} refresh={this.fetchReservations} />
-                        } />
-                        <Route path='/reservations/create/' render={p =>
-                            <CreateReservationView {...p} refresh={this.fetchReservations} />
-                        } />
+                        <Route path='/reservations/create/' render={p => {
+                            const query = queryString.parse(p.location.search);
+                            return <CreateReservationView guestID={parseInt(query.guestID as any)} roomID={parseInt(query.roomID as any)} {...p} refresh={this.fetchReservations} />
+                        }} />
                         <Route path='/reservations/:id' render={p =>
                             <Reservation reservationId={p.match.params.id} {...p} refresh={this.fetchReservations} />
                         } />

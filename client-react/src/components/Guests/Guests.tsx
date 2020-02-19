@@ -156,7 +156,7 @@ class Guest extends React.Component<GuestProps & RouteComponentProps, GuestState
                                 <div>
                                     <button className="ui teal basic button"
                                         onClick={e => {
-                                            this.props.history.push(`/reservations/create/${guest.id}`);
+                                            this.props.history.push(`/reservations/create/?guestID=${guest.id}`);
                                         }}>Create Reservation</button>
                                     <button className="ui orange basic button"
                                         onClick={e => {

@@ -50,7 +50,7 @@ export async function getFree(start: string, end: string): Promise<Room[]> {
         const startDate = moment(start).format(dateFormat);
         const endDate = moment(end).format(dateFormat);
         const results = await Db.query(
-            "SELECT * FROM `room` LEFT JOIN (SELECT * FROM `reservation` AS `res` WHERE (res.start >= ? AND res.end <= ?) OR (res.start < ? AND res.end >= ?) OR (res.end >= ? AND res.start <= ?)) AS `res` ON room.id = res.room WHERE room IS NULL;",
+            "SELECT * FROM `roomView` LEFT JOIN (SELECT room, start, end FROM `reservation` AS `res` WHERE (res.start > ? AND res.end < ?) OR (res.start <= ? AND res.end > ?) OR (res.end >= ? AND res.start < ?)) AS `res` ON roomID = res.room WHERE room IS NULL;",
             [startDate, endDate, startDate, startDate, endDate, endDate]
         );
         return results as Room[];

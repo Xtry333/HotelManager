@@ -1,12 +1,18 @@
 import * as React from 'react';
 import { RouteComponentProps } from "react-router-dom";
-import { Reservation as ReservationDto } from '../../dtos/Reservation.dto';
+import { Reservation as ReservationDto, Reservation } from '../../dtos/Reservation.dto';
 import { Guest as GuestDto } from '../../dtos/Guest.dto';
+import { RoomView as RoomViewDto } from '../../dtos/Room.dto';
 import { SingleGuestView } from '../Guests/Guests';
 import DateInput from '../DateInput';
 import { CreateGuestDiv } from '../Guests/CreateGuest';
 import { RowCalendar } from '../Calendar/RowCalendar';
 import * as Server from '../../Server';
+
+import { Dropdown, DropdownOnSearchChangeData, DropdownProps } from 'semantic-ui-react'
+import moment = require('moment');
+
+const dateFormat = 'YYYY-MM-DD';
 
 export interface CreateReservationViewProps {
     refresh: Function;
@@ -17,12 +23,13 @@ export interface CreateReservationViewProps {
 export interface CreateReservationViewState {
     reservation: ReservationDto;
     guest: GuestDto;
+    freeRooms: RoomViewDto[];
 }
 
 export class CreateReservationView extends React.Component<CreateReservationViewProps & RouteComponentProps & React.HTMLProps<HTMLElement>, CreateReservationViewState> {
     constructor(props: CreateReservationViewProps & RouteComponentProps) {
         super(props);
-        this.state = { reservation: null, guest: null };
+        this.state = { reservation: null, guest: null, freeRooms: [] };
     }
 
     componentDidMount() {
@@ -35,6 +42,9 @@ export class CreateReservationView extends React.Component<CreateReservationView
             reservation.room = parseInt(this.props.roomID as any);
         }
         this.setState({ reservation });
+        Server.Get(`room/`).then(results => {
+            this.setState({ freeRooms: results.data });
+        });
         if (this.props.guestID) {
             Server.Get(`guest/${this.props.guestID}`).then(results => {
                 this.setState({ guest: results.data });
@@ -43,6 +53,16 @@ export class CreateReservationView extends React.Component<CreateReservationView
         else {
             const guest = new GuestDto();
             this.setState({ guest });
+        }
+    }
+
+    componentDidUpdate(prevProps: CreateReservationViewProps & RouteComponentProps, prevState: CreateReservationViewState) {
+        if (prevState && prevState.reservation) {
+            if ((prevState.reservation.start != this.state.reservation.start ||
+                prevState.reservation.end != this.state.reservation.end) &&
+                this.state.reservation.start && this.state.reservation.end) {
+                this.fetchAvailableRooms(this.state.reservation.start, this.state.reservation.end);
+            }
         }
     }
 
@@ -60,6 +80,31 @@ export class CreateReservationView extends React.Component<CreateReservationView
         const res: any = Object.assign({}, this.state.reservation);
         res[name] = value;
         this.setState({ reservation: res });
+    };
+
+    onRoomDropdownChange = (event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
+        const res: Reservation = Object.assign({}, this.state.reservation);
+        res.room = parseInt(data.value.toString());
+        this.setState({ reservation: res });
+    };
+
+    fetchAvailableRooms = async (start: string | Date, end: string | Date) => {
+        if (start && end) {
+            const startDate = moment(start).format(dateFormat);
+            const endDate = moment(end).format(dateFormat);
+            const response = await Server.Get(`room/free/${startDate}/${endDate}`);
+            this.setState({ freeRooms: response.data });
+        }
+    };
+
+    mapRoomsForDropdown = (rooms: RoomViewDto[]) => {
+        return rooms.map((r: RoomViewDto) => {
+            return {
+                key: r.roomID,
+                value: r.roomID,
+                text: `Room ${r.floorNumber}${r.roomNumber}, ${r.floorCaption}, beds: ${r.spots}`
+            }
+        });
     };
 
     onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -119,14 +164,17 @@ export class CreateReservationView extends React.Component<CreateReservationView
                         </div>
                     </div>
                     <div className="field">
-                        <label htmlFor="roomId" className="ui">Room ID</label>
-                        <div className='ui input left icon'>
-                            <input id="roomId" name='room' type='number' min={0} onChange={this.onReservationInputChange} value={reservation.room || ''} />
-                            <i className='home icon' />
-                        </div>
                         <div className="ui segment">
                             <RowCalendar activeRes={this.state.reservation} history={this.props.history} location={this.props.location} match={this.props.match} />
                         </div>
+                        <label htmlFor="roomId" className="ui">Room</label>
+                        <Dropdown
+                            name='room' fluid search selection
+                            placeholder='Select Room'
+                            options={this.mapRoomsForDropdown(this.state.freeRooms)}
+                            value={reservation.room}
+                            onChange={this.onRoomDropdownChange}
+                        />
                     </div>
                     <label>Additional Reservation Info</label>
                     <div className="field">

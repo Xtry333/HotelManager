@@ -9,6 +9,7 @@ import { ResourceError } from '../../dtos/Error';
 import { Guest as GuestDto } from '../../dtos/Guest.dto';
 import { SingleGuestView } from '../Guests/Guests';
 import { RoomView, Room } from '../../dtos/Room.dto';
+import { RoomView as RoomViewDto } from '../../dtos/Room.dto';
 import DateInput from '../DateInput';
 import { TopHeader } from '../TopHeader';
 import { RowCalendar } from '../Calendar/RowCalendar';
@@ -16,18 +17,30 @@ import { ReservationList } from './ReservationList';
 import { CreateReservationView } from './CreateReservation';
 import RoomDiv from '../Rooms/RoomDiv';
 import PaymentsDiv from './PaymentsDiv';
+import { Dropdown, DropdownProps } from 'semantic-ui-react';
+
+const dateFormat = 'YYYY-MM-DD';
 
 export interface ReservationProps { reservationId: number, refresh: Function, mode?: string }
-export interface ReservationState { reservation: ReservationDto, guest: GuestDto, room: RoomView, editMode: boolean }
+export interface ReservationState {
+    reservation: ReservationDto,
+    guest: GuestDto,
+    room: RoomView,
+    editMode: boolean,
+    freeRooms: RoomViewDto[];
+}
 
 export class Reservation extends React.Component<ReservationProps & RouteComponentProps, ReservationState> {
     constructor() {
         super(undefined, undefined);
-        this.state = { reservation: null, guest: null, room: null, editMode: false };
+        this.state = { reservation: null, guest: null, room: null, editMode: false, freeRooms: [] };
     }
 
     componentDidMount() {
         this.fetchData();
+        Server.Get(`room/`).then(results => {
+            this.setState({ freeRooms: results.data });
+        });
     }
 
     componentDidUpdate() {
@@ -41,7 +54,23 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
             //window.location.reload();
             this.fetchData();
         }
-    }
+    };
+
+    mapRoomsForDropdown = (rooms: RoomViewDto[]) => {
+        return rooms.map((r: RoomViewDto) => {
+            return {
+                key: r.roomID,
+                value: r.roomID,
+                text: `Room ${r.floorNumber}${r.roomNumber}, ${r.floorCaption}, beds: ${r.spots}`
+            }
+        });
+    };
+
+    onRoomDropdownChange = (event: React.SyntheticEvent<HTMLElement, Event>, data: DropdownProps) => {
+        const res: ReservationDto = Object.assign({}, this.state.reservation);
+        res.room = parseInt(data.value.toString());
+        this.setState({ reservation: res });
+    };
 
     async fetchData(resID?: number) {
         try {
@@ -69,6 +98,15 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
         res[name] = value;
         this.setState({ reservation: res });
     }
+
+    fetchAvailableRooms = async (start: string | Date, end: string | Date) => {
+        if (start && end) {
+            const startDate = moment(start).format(dateFormat);
+            const endDate = moment(end).format(dateFormat);
+            const response = await Server.Get(`room/free/${startDate}/${endDate}`);
+            this.setState({ freeRooms: response.data });
+        }
+    };
 
     onReservationSave = async () => {
         const res = this.state.reservation;
@@ -139,6 +177,16 @@ export class Reservation extends React.Component<ReservationProps & RouteCompone
                         </div>
                         <div className="ui segment">
                             <RowCalendar {...this.props} activeRes={this.state.reservation} />
+                        </div>
+                        <div>
+                            <label htmlFor="roomId" className="ui">Room</label>
+                            <Dropdown
+                                name='room' fluid search selection
+                                placeholder='Select Room'
+                                options={this.mapRoomsForDropdown(this.state.freeRooms)}
+                                value={reservation.room}
+                                onChange={this.onRoomDropdownChange}
+                            />
                         </div>
                         <div>
                             <label>Nights: </label>

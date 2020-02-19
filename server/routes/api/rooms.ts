@@ -4,10 +4,11 @@ import * as RoomController from '../../controllers/RoomController';
 const router = Express.Router();
 
 /* GET free rooms for date. */
-router.get('/free', async (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
+router.get('/free/:start/:end', async (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
     try {
-        const id = parseInt(req.params.id);
-        const room = await RoomController.getById(id);
+        const start = req.params.start;
+        const end = req.params.end;
+        const room = await RoomController.getFree(start, end);
         res.json(room);
     } catch (error) {
         res.status(error.status).json(error);

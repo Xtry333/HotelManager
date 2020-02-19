@@ -1,7 +1,10 @@
 import { Room, RoomImagesLink, RoomView } from "../dtos/Room.dto";
 import { ResourceError } from "../dtos/Error";
+import moment from 'moment';
 
 import * as Db from '../js/query'
+
+const dateFormat = 'YYYY-MM-DD';
 
 export async function getAll() {
     const rows = await Db.querySelectAll(RoomView);
@@ -34,10 +37,24 @@ export async function create(room: Room): Promise<RoomView> {
 }
 
 export async function getImagesForRoomId(id: number): Promise<RoomImagesLink[]> {
-    const results = await Db.querySelectAll(RoomImagesLink, {room: id});
+    const results = await Db.querySelectAll(RoomImagesLink, { room: id });
     if (results.length > -1) {
         return results;
     } else {
         throw new ResourceError(`Error when getting images for Room ID ${id}.`, results, 500);
+    }
+}
+
+export async function getFree(start: string, end: string): Promise<Room[]> {
+    if (start && end) {
+        const startDate = moment(start).format(dateFormat);
+        const endDate = moment(end).format(dateFormat);
+        const results = await Db.query(
+            "SELECT * FROM `room` LEFT JOIN (SELECT * FROM `reservation` AS `res` WHERE (res.start >= ? AND res.end <= ?) OR (res.start < ? AND res.end >= ?) OR (res.end >= ? AND res.start <= ?)) AS `res` ON room.id = res.room WHERE room IS NULL;",
+            [startDate, endDate, startDate, startDate, endDate, endDate]
+        );
+        return results as Room[];
+    } else {
+        return [];
     }
 }

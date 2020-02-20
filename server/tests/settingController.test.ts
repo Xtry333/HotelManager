@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import {getSetting, setSetting} from '../controllers/SettingController';
+import { getSetting, setSetting } from '../controllers/SettingController';
 import { now } from 'moment';
 
 describe.only('Setting Controller', () => {
@@ -8,7 +8,7 @@ describe.only('Setting Controller', () => {
         await getSetting('test-setting');
         await setSetting('test-setting', time);
         expect(+(await getSetting('test-setting')).value).to.eq(time);
-        await setSetting('test-setting', time-1);
+        await setSetting('test-setting', time - 1);
         expect(+(await getSetting('test-setting')).value).to.not.eq(time);
     });
 });

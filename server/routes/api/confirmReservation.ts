@@ -7,11 +7,11 @@ router.get('/((:json/)?:id/:token)', function (req, res, next) {
     const id = req.params.id;
     const token = req.params.token;
     const json = req.params.json == 'json';
-    const confirmation = {id, token};
+    const confirmation = { id, token };
     mysql.query('SELECT * FROM `ressummary` WHERE `resToken` = ? AND `resID` = ?', [token, id], (err, row, field) => {
         if (err) throw err;
         if (row.length == 0) {
-            res.status(404).json({error: {message: "No such reservation."}});
+            res.status(404).json({ error: { message: "No such reservation." } });
         } else {
             const reservation = row[0];
             if (reservation.depoAdded) {
@@ -34,7 +34,7 @@ router.get('/((:json/)?:id/:token)', function (req, res, next) {
                 confirmation.roomNumber = room.roomNumber;
                 confirmation.floorCaption = room.floorCaption;
 
-                if (json){
+                if (json) {
                     res.json(confirmation);
                 } else {
                     res.render('resconfirmation', confirmation);

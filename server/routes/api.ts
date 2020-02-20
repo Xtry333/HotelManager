@@ -23,7 +23,7 @@ api.use('/login', loginRouter);
 api.use('/token', tokenRouter);
 
 // After here all requests require a X-Token header
-api.use(isAuthorized); 
+api.use(isAuthorized);
 api.use('/user', userRouter);
 api.use('/room', roomsRouter);
 api.use('/guest', guestsRouter);

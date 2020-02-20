@@ -20,7 +20,7 @@ describe('Validator', () => {
     });
 
     it('correctly checks length of string', () => {
-        const length = {min: 3, max: 8};
+        const length = { min: 3, max: 8 };
         expect(Validator.validateLength('a cookie', length)).to.be.true;
         expect(Validator.validateLength('a cookiee', length)).to.be.false;
         expect(Validator.validateLength('a', length)).to.be.false;

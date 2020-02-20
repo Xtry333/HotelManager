@@ -13,10 +13,10 @@ router.get('/((:json/)?:date)', async (req, res, next) => {
     const date = req.params.date;
     if (date == 'today') { res.redirect('/future/' + moment().format('YYYY-MM-DD')); }
     const rooms = [];
-    const [rows, fields] = await mysql.promise().execute('SELECT * FROM `resSummary` WHERE `resStart` = ?', [date]).catch(err => {throw err});
+    const [rows, fields] = await mysql.promise().execute('SELECT * FROM `resSummary` WHERE `resStart` = ?', [date]).catch(err => { throw err });
     for (let index = 0; index < rows.length; index++) {
         const reservation = rows[index];
-        const [rows2, fields] = await mysql.promise().execute('SELECT * FROM `roomView` WHERE `roomID` = ?', [reservation.roomID]).catch(err => {throw err});
+        const [rows2, fields] = await mysql.promise().execute('SELECT * FROM `roomView` WHERE `roomID` = ?', [reservation.roomID]).catch(err => { throw err });
         const room = rows2[0];
         if (reservation.depoAdded) {
             reservation.depoAddedString = moment(reservation.depoAdded).format('DD.MM.YYYY HH:MM:SS');
@@ -28,7 +28,7 @@ router.get('/((:json/)?:date)', async (req, res, next) => {
         rooms.push(room);
     }
 
-    res.json({rooms, date, text: moment(date).fromNow()});
+    res.json({ rooms, date, text: moment(date).fromNow() });
 });
 
 export default router;

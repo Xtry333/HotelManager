@@ -45,7 +45,7 @@ export async function getImagesForRoomId(id: number): Promise<RoomImagesLink[]> 
     }
 }
 
-export async function getFree(start: string, end: string): Promise<Room[]> {
+export async function getFree(start: string, end: string): Promise<RoomView[]> {
     if (start && end) {
         const startDate = moment(start).format(dateFormat);
         const endDate = moment(end).format(dateFormat);
@@ -53,7 +53,7 @@ export async function getFree(start: string, end: string): Promise<Room[]> {
             "SELECT * FROM `roomView` LEFT JOIN (SELECT room, start, end FROM `reservation` AS `res` WHERE (res.start > ? AND res.end < ?) OR (res.start <= ? AND res.end > ?) OR (res.end >= ? AND res.start < ?)) AS `res` ON roomID = res.room WHERE room IS NULL;",
             [startDate, endDate, startDate, startDate, endDate, endDate]
         );
-        return results as Room[];
+        return results as RoomView[];
     } else {
         return [];
     }

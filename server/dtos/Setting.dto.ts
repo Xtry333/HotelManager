@@ -1,9 +1,11 @@
 import { Dto } from './Dto';
+import { now } from 'moment';
 
 export class Setting implements Dto {
     dtoName = 'settings';
-    name: string;
-    value: string;
+    readonly name: string;
+    readonly value: string;
+    cachedTime: number;
 
     constructor(name?: string, value?: string | number | boolean) {
         if (name) {
@@ -12,5 +14,6 @@ export class Setting implements Dto {
                 this.value = value.toString();
             }
         }
+        this.cachedTime = now();
     }
 }

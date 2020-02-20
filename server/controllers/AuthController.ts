@@ -8,7 +8,7 @@ import { ResourceError } from '../dtos/Error';
 import { getSetting, setSetting } from './SettingController';
 
 export let loginExpiration: number;
-setSetting('login-expiration', 60 * 60 * 24 * 7);
+//setSetting('login-expiration', 60 * 60 * 24 * 1);
 
 export const authUser = async (login: { username: string, passwordHash: string, userAgent: string }) => {
     const result = await Db.querySelectAll(User, { username: login.username, password: login.passwordHash });
@@ -16,7 +16,7 @@ export const authUser = async (login: { username: string, passwordHash: string, 
     //    [login.username, login.password]);
     if (result.length == 1) {
         const user = result[0];
-        const token = randomstring.generate(32);
+        const token = randomstring.generate(64);
         const userAgent = login.userAgent;
         await Db.queryInsert(Token, { user: user.id, token, userAgent });
         //await query('INSERT INTO `token` (`token`, `user`, `userAgent`) VALUES (?, ?, ?)', [token, user.id, userAgent]);

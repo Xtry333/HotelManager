@@ -8,5 +8,7 @@ describe.only('Setting Controller', () => {
         await getSetting('test-setting');
         await setSetting('test-setting', time);
         expect(+(await getSetting('test-setting')).value).to.eq(time);
+        await setSetting('test-setting', time-1);
+        expect(+(await getSetting('test-setting')).value).to.not.eq(time);
     });
 });

@@ -1,12 +1,16 @@
 import { query, querySelectAll } from "../js/query"
 import { Setting } from "../dtos/Setting.dto";
+import { now } from "moment";
 
 export const Settings: Setting[] = [];
 
-export const getSetting = async (name: string): Promise<Setting> => {
-    const cached = Settings.find(s => s.name === name);
-    if (cached) {
-        return cached;
+export const getSetting = async (name: string, defaultValue?: string | number | boolean): Promise<Setting> => {
+    const cachedSetting = Settings.find(s => s.name === name);
+    if (cachedSetting) {
+        if (cachedSetting.cachedTime + 1000*60*60 > now()) {
+            return cachedSetting;
+        }
+        removeFromCache(name);
     }
     // TODO: Caching settings with timelimit
     const setting = await querySelectAll(Setting, { name }) as Setting[];
@@ -25,6 +29,10 @@ export const setSetting = async (name: string, value: string | number | boolean)
     } else {
         await query('UPDATE `settings` SET `value` = ? WHERE `name` = ?', [value, name.toString()]);
     }
+    removeFromCache(name);
+}
+
+const removeFromCache = (name: string) => {
     const index = Settings.findIndex(s => s.name == name);
     Settings.splice(index, 1);
 }

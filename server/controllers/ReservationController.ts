@@ -6,6 +6,7 @@ import { Reservation, ResSummaryView } from '../dtos/Reservation.dto';
 import { ResourceError } from '../dtos/Error';
 import { Guest } from '../dtos/Guest.dto';
 import moment from 'moment';
+import { Room, RoomView } from '../dtos/Room.dto';
 
 const dateFormat = 'YYYY-MM-DD';
 const dateTimeFormat = 'YYYY-MM-DD hh:mm';
@@ -94,6 +95,7 @@ export async function getSummaryByToken(token: string) {
 }
 
 export async function create(reservation: Reservation, guest?: Guest) {
+    const errorFields: string[] = [];
     //TODO: Check if reservations overlap with any other, if so, deny
     // For reservations not to overlap there must be, not same room or
     // This ones start date must be earlier than start of another one or later than end of another one
@@ -112,6 +114,16 @@ export async function create(reservation: Reservation, guest?: Guest) {
             throw new ResourceError('Reservation is missing guest ID and new guest not been specified.', reservation, 400);
         }
     }
+
+    if (reservation.start >= reservation.end) {
+        throw new ResourceError('Reservation cannot end earlier than it starts!', reservation, 400);
+    }
+
+    const freeRooms = await RoomController.getFree(reservation.start as any, reservation.end as any)
+    if (!freeRooms.find(room => room.roomID == reservation.room)) {
+        throw new ResourceError('Reservation cannot overlap with any other!', reservation, 400);
+    }
+
 
     if (reservation.room) {
         //const roomID = await RoomController.getById(reservation.room);
@@ -147,6 +159,10 @@ export async function updateById(id: number, reservation: Reservation) {
         newObj.numberOfPeople = reservation.numberOfPeople;
         newObj.additionalResInfo = reservation.additionalResInfo || '';
         newObj.room = reservation.room;
+        if (reservation.start >= reservation.end) {
+            throw new ResourceError('Reservation cannot end earlier than it starts!', reservation, 400);
+        }
+        //TODO: Check if reservations overlap with any other, if so, deny
         Db.queryUpdate(Reservation, newObj, { id: id });
     } else {
         throw new ResourceError('Either reservation is missing key fields or something went wrong', reservation, 400);

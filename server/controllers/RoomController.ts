@@ -36,6 +36,12 @@ export async function create(room: Room): Promise<RoomView> {
     throw new ResourceError('Room creation not implemented yet.');
 }
 
+export async function updateById(room: Room): Promise<RoomView> {
+    //await query('INSERT INTO `guest` (`firstname`, `lastname`, `phoneNumber`) VALUES (?, ?, ?)', [guest.firstname, guest.lastname, guest.phoneNumber]);
+    //const id = await sql.getLastInsertedId();
+    throw new ResourceError('Room updating not implemented yet.');
+}
+
 export async function getImagesForRoomId(id: number): Promise<RoomImagesLink[]> {
     const results = await Db.querySelectAll(RoomImagesLink, { room: id });
     if (results.length > -1) {

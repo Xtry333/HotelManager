@@ -8,19 +8,8 @@ import { Guest } from '../dtos/Guest.dto';
 import moment from 'moment';
 import { Room, RoomView } from '../dtos/Room.dto';
 
-const dateFormat = 'YYYY-MM-DD';
-const dateTimeFormat = 'YYYY-MM-DD hh:mm';
 
-export async function getAll() {
-    const rows = await Db.querySelectAll(Reservation);
-    if (rows.length > -1) {
-        return rows;
-    } else {
-        throw new ResourceError('Could not get Reservation listing.', rows, 500);
-    }
-}
-
-export async function getAllWithArgs(vars: { [key: string]: string | number }) {
+export async function getAll(vars?: { [key: string]: string | number }) {
     const args: { [key: string]: string | number } = {};
     for (const key in vars) {
         if (vars[key]) {
@@ -46,16 +35,16 @@ export async function getById(id: number) {
     }
 }
 
-export async function getAllResSummaryView() {
-    const rows = await Db.querySelectAll(ResSummaryView);
-    if (rows.length > -1) {
-        return rows;
-    } else {
-        throw new ResourceError('Could not get ResSummaryView listing.', rows, 500);
-    }
-}
+// export async function getAllResSummaryView() {
+//     const rows = await Db.querySelectAll(ResSummaryView);
+//     if (rows.length > -1) {
+//         return rows;
+//     } else {
+//         throw new ResourceError('Could not get ResSummaryView listing.', rows, 500);
+//     }
+// }
 
-export async function getAllResSummaryViewWithArgs(vars: { [key: string]: string | number }) {
+export async function getAllResSummaryView(vars?: { [key: string]: string | number }) {
     const args: { [key: string]: string | number } = {};
     for (const key in vars) {
         if (vars[key]) {
@@ -136,8 +125,8 @@ export async function create(reservation: Reservation, guest?: Guest) {
     newObj.guest = reservation.guest;
     newObj.room = reservation.room;
     newObj.pricePerDay = reservation.pricePerDay;
-    newObj.start = moment(reservation.start).format(dateFormat);
-    newObj.end = moment(reservation.end).format(dateFormat);
+    newObj.start = moment(reservation.start).format(Db.dateFormat);
+    newObj.end = moment(reservation.end).format(Db.dateFormat);
     newObj.numberOfPeople = reservation.numberOfPeople;
     newObj.additionalResInfo = reservation.additionalResInfo || '';
 
@@ -154,8 +143,8 @@ export async function updateById(id: number, reservation: Reservation) {
     if (id && reservation) {
         const newObj: any = {};
         newObj.pricePerDay = reservation.pricePerDay;
-        newObj.start = moment(reservation.start).format(dateFormat);
-        newObj.end = moment(reservation.end).format(dateFormat);
+        newObj.start = moment(reservation.start).format(Db.dateFormat);
+        newObj.end = moment(reservation.end).format(Db.dateFormat);
         newObj.numberOfPeople = reservation.numberOfPeople;
         newObj.additionalResInfo = reservation.additionalResInfo || '';
         newObj.room = reservation.room;
@@ -169,7 +158,7 @@ export async function updateById(id: number, reservation: Reservation) {
     }
 }
 
-export async function deleteById(id: number) {
+export async function deleteById(id: number): Promise<boolean> {
     if (id) {
         await Db.query('DELETE FROM `reservation` WHERE `id` = ?', [id]);
         // const reservation = await getById(id);
@@ -183,4 +172,12 @@ export async function deleteById(id: number) {
     } else {
         throw new ResourceError(`Reservation ID ${id} does not exist.`, undefined, 404);
     }
+}
+
+export async function getCurrentForDate(date?: string): Promise<Reservation[]> {
+    if (!date) {
+        date = moment().format(Db.dateFormat);
+    }
+    const activeRes = await Db.query("SELECT * FROM `reservation` WHERE `deleted` = 0 AND ? BETWEEN `start` AND `end`", [date]);
+    return activeRes as Reservation[];
 }

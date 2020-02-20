@@ -1,60 +1,47 @@
-import { Router } from 'express';
+import Express from 'express';
 import * as ResController from '../../controllers/ReservationController';
-import { Reservation as ReservationDto, ResSummaryView } from '../../dtos/Reservation.dto';
 
-const router = Router();
+const router = Express.Router();
 
 // GET all reservations summary view
-router.get('/summary/', async (req, res, next) => {
+router.get('/summary/:id?', async (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
+    const resID = parseInt(req.params.id);
     const roomID = parseInt(req.query.room);
     const guestID = parseInt(req.query.guest);
     try {
-        let reservations: ResSummaryView[] = [];
-        if (roomID || guestID) {
-            reservations = await ResController.getAllResSummaryViewWithArgs({ roomID, guestID });
+        if (resID) {
+            res.json(await ResController.getSummaryById(resID));
         } else {
-            reservations = await ResController.getAllResSummaryView();
+            const args = roomID || guestID ? { roomID, guestID } : undefined;
+            res.json(await ResController.getAllResSummaryView(args));
         }
-        res.json(reservations);
     } catch (error) {
         res.status(error.status).json(error);
     }
 });
 
-// GET reservation summary view for id
-router.get('/summary/:id', async (req, res, next) => {
+// GET currently active reservations.
+router.get('/current/:date?', async (req, res, next) => {
     try {
-        const id = parseInt(req.params.id);
-        const reservations = await ResController.getSummaryById(id);
-        res.json(reservations);
+        const date: string | undefined = req.params.date;
+        res.json(await ResController.getCurrentForDate(date));
     } catch (error) {
         res.status(error.status).json(error);
     }
 });
 
 /* GET all reservations. */
-router.get('/', async (req, res, next) => {
+router.get('/:id?', async (req, res, next) => {
+    const resID = parseInt(req.params.id);
     const roomID = parseInt(req.query.room);
     const guestID = parseInt(req.query.guest);
     try {
-        let reservations: ReservationDto[] = [];
-        if (roomID || guestID) {
-            reservations = await ResController.getAllWithArgs({ room: roomID, guest: guestID });
+        if (resID) {
+            res.json(await ResController.getById(resID));
         } else {
-            reservations = await ResController.getAll();
+            const args = roomID || guestID ? { room: roomID, guest: guestID } : undefined;
+            res.json(await ResController.getAll(args));
         }
-        res.json(reservations);
-    } catch (error) {
-        res.status(error.status).json(error);
-    }
-});
-
-/* GET reservation with id. */
-router.get('/:id', async (req, res, next) => {
-    try {
-        const id = parseInt(req.params.id);
-        const reservation = await ResController.getById(id);
-        res.json(reservation);
     } catch (error) {
         res.status(error.status).json(error);
     }

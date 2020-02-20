@@ -3,6 +3,8 @@ import { ResourceError } from '../dtos/Error';
 import { RowDataPacket } from 'mysql';
 import { Dto } from '../dtos/Dto';
 
+export const dbDateFormat = 'YYYY-MM-DD';
+
 export async function query(query: string, args?: Array<string | number | boolean>) {
     try {
         if (args) {

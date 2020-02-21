@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import { HashRouter as Router, Route, Switch, Redirect, RouteComponentProps } from 'react-router-dom';
 import Nav from './components/Navigation';
 import { Login, Logout } from './components/Login';
-//import Future from './components/Future';
+import Today from './components/Today';
 import Home from './components/Home';
 import Rooms from './components/Rooms';
 import Guests from './components/Guests/Guests';
@@ -52,7 +52,7 @@ class App extends React.Component<{}, AppState> {
                             <div className='App-content ui segment'>
                                 <Switch>
                                     <Route path='/' exact component={Home} />
-                                    {/* <Route path='/future/' component={Future} /> */}
+                                    <Route path='/today/' component={Today} />
                                     <Route path='/rooms/' component={Rooms} />
                                     <Route path='/reservations/' component={Reservations} />
                                     <Route path='/timesheet/' component={Timesheet} />

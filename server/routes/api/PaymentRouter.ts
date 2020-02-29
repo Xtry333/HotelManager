@@ -11,7 +11,7 @@ router.get('/:id', async (req, res, next) => {
         const payments = await PaymentController.getForReservation(reservationID);
         res.json(payments);
     } catch (error) {
-        res.status(error.status).json(error); 
+        res.status(error.status).json(error);
     }
 });
 

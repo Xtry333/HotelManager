@@ -5,12 +5,10 @@ import * as Room from '../src/controllers/RoomController';
 describe('Rooms', () => {
     let chainError: Error;
     it('Create a Room', (done) => {
-
-
         done(chainError);
     });
     it('Get created Room', (done) => {
-        chainError = new Error('Something went wrong.')
+        chainError = new Error('Something went wrong.');
 
         done(chainError);
     });

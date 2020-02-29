@@ -8,8 +8,7 @@ import { Guest } from '../dtos/Guest.dto';
 import moment from 'moment';
 import { Room, RoomView } from '../dtos/Room.dto';
 
-
-export async function getAll(vars?: { [key: string]: string | number }) {
+export async function getAll (vars?: { [key: string]: string | number }) {
     const args: { [key: string]: string | number } = {};
     for (const key in vars) {
         if (vars[key]) {
@@ -24,14 +23,14 @@ export async function getAll(vars?: { [key: string]: string | number }) {
     }
 }
 
-export async function getById(id: number) {
+export async function getById (id: number) {
     const rows = await Db.querySelectAll(Reservation, { id });
     if (rows.length < 1) {
         throw new ResourceError(`Reservation ID ${id} not found.`, rows, 404);
     } else if (rows.length === 1) {
         return rows[0];
     } else if (rows.length > 1) {
-        throw new ResourceError(`Found more rows with one id.`, rows, 500);
+        throw new ResourceError('Found more rows with one id.', rows, 500);
     }
 }
 
@@ -44,7 +43,7 @@ export async function getById(id: number) {
 //     }
 // }
 
-export async function getAllResSummaryView(vars?: { [key: string]: string | number }) {
+export async function getAllResSummaryView (vars?: { [key: string]: string | number }) {
     const args: { [key: string]: string | number } = {};
     for (const key in vars) {
         if (vars[key]) {
@@ -59,33 +58,33 @@ export async function getAllResSummaryView(vars?: { [key: string]: string | numb
     }
 }
 
-export async function getSummaryById(id: number) {
+export async function getSummaryById (id: number) {
     const rows = await Db.querySelectAll(ResSummaryView, { resID: id });
     if (rows.length < 1) {
         throw new ResourceError(`Reservation Summary ID ${id} not found.`, rows, 404);
     } else if (rows.length === 1) {
         return rows[0];
     } else if (rows.length > 1) {
-        throw new ResourceError(`Found more rows with one id.`, rows, 500);
+        throw new ResourceError('Found more rows with one id.', rows, 500);
     }
     throw new ResourceError(`Reservation Summary ID ${id} does not exist.`, rows, 404);
 }
 
-export async function getSummaryByToken(token: string) {
+export async function getSummaryByToken (token: string) {
     const rows = await Db.querySelectAll(ResSummaryView, { resToken: token });
     if (rows.length < 1) {
         throw new ResourceError(`Reservation Summary with Token ${token} not found.`, rows, 404);
     } else if (rows.length === 1) {
         return rows[0];
     } else if (rows.length > 1) {
-        throw new ResourceError(`Found more rows with one id.`, rows, 500);
+        throw new ResourceError('Found more rows with one id.', rows, 500);
     }
     throw new ResourceError(`Reservation Summary with Token ${token} does not exist.`, rows, 404);
 }
 
-export async function create(reservation: Reservation, guest?: Guest) {
+export async function create (reservation: Reservation, guest?: Guest) {
     const errorFields: string[] = [];
-    //TODO: Check if reservations overlap with any other, if so, deny
+    // TODO: Check if reservations overlap with any other, if so, deny
     // For reservations not to overlap there must be, not same room or
     // This ones start date must be earlier than start of another one or later than end of another one
     // This ones end date must be earlier than next ones start date
@@ -108,14 +107,13 @@ export async function create(reservation: Reservation, guest?: Guest) {
         throw new ResourceError('Reservation cannot end earlier than it starts!', reservation, 400);
     }
 
-    const freeRooms = await RoomController.getFree(reservation.start as any, reservation.end as any)
+    const freeRooms = await RoomController.getFree(reservation.start as any, reservation.end as any);
     if (!freeRooms.find(room => room.roomID == reservation.room)) {
         throw new ResourceError('Reservation cannot overlap with any other!', reservation, 400);
     }
 
-
     if (reservation.room) {
-        //const roomID = await RoomController.getById(reservation.room);
+        // const roomID = await RoomController.getById(reservation.room);
     } else {
         throw new ResourceError('Reservation is missing room ID.', reservation, 400);
     }
@@ -131,7 +129,7 @@ export async function create(reservation: Reservation, guest?: Guest) {
     newObj.additionalResInfo = reservation.additionalResInfo || '';
 
     const resId = await Db.queryInsert(Reservation, { ...newObj });
-    //await Db.query('INSERT INTO `reservation` (`room`, `guest`, `numberOfPeople`, `pricePerDay`, `start`, `end`, `token`) VALUES (?, ?, ?, ?, ?, ?, ?)',
+    // await Db.query('INSERT INTO `reservation` (`room`, `guest`, `numberOfPeople`, `pricePerDay`, `start`, `end`, `token`) VALUES (?, ?, ?, ?, ?, ?, ?)',
     //    [reservation.room.id, guest.id, reservation.numberOfPeople, reservation.pricePerDay, reservation.dateStart, reservation.dateEnd, token]);
 
     reservation.id = resId;
@@ -139,7 +137,7 @@ export async function create(reservation: Reservation, guest?: Guest) {
     return reservation;
 }
 
-export async function updateById(id: number, reservation: Reservation) {
+export async function updateById (id: number, reservation: Reservation) {
     if (id && reservation) {
         const newObj: any = {};
         newObj.pricePerDay = reservation.pricePerDay;
@@ -151,20 +149,20 @@ export async function updateById(id: number, reservation: Reservation) {
         if (reservation.start >= reservation.end) {
             throw new ResourceError('Reservation cannot end earlier than it starts!', reservation, 400);
         }
-        //TODO: Check if reservations overlap with any other, if so, deny
+        // TODO: Check if reservations overlap with any other, if so, deny
         Db.queryUpdate(Reservation, newObj, { id: id });
     } else {
         throw new ResourceError('Either reservation is missing key fields or something went wrong', reservation, 400);
     }
 }
 
-export async function deleteById(id: number): Promise<boolean> {
+export async function deleteById (id: number): Promise<boolean> {
     if (id) {
         await Db.query('DELETE FROM `reservation` WHERE `id` = ?', [id]);
         // const reservation = await getById(id);
         // if (reservation) {
         //     if (!reservation.deleted) {
-        //await Db.query('UPDATE `reservation` SET `deleted` = 1 WHERE `id` = ?', [id]);
+        // await Db.query('UPDATE `reservation` SET `deleted` = 1 WHERE `id` = ?', [id]);
         //         return reservation;
         //     }
         // }
@@ -174,10 +172,10 @@ export async function deleteById(id: number): Promise<boolean> {
     }
 }
 
-export async function getCurrentForDate(date?: string): Promise<Reservation[]> {
+export async function getCurrentForDate (date?: string): Promise<Reservation[]> {
     if (!date) {
         date = moment().format(Db.dateFormat);
     }
-    const activeRes = await Db.query("SELECT * FROM `reservation` WHERE `deleted` = 0 AND ? BETWEEN `start` AND `end`", [date]);
+    const activeRes = await Db.query('SELECT * FROM `reservation` WHERE `deleted` = 0 AND ? BETWEEN `start` AND `end`', [date]);
     return activeRes as Reservation[];
 }

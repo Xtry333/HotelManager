@@ -6,9 +6,8 @@ import { Payment as PaymentDto } from '../dtos/Payment.dto';
 const dateFormat = 'YYYY-MM-DD';
 const dateTimeFormat = 'YYYY-MM-DD hh:mm';
 
-export async function getForReservation(reservationID: number) {
-    if (!reservationID)
-        throw new ResourceError(`Reservation ID has not been specified.`, reservationID, 400);
+export async function getForReservation (reservationID: number) {
+    if (!reservationID) { throw new ResourceError('Reservation ID has not been specified.', reservationID, 400); }
     const paymentRows = await Db.querySelectAll(PaymentDto, { reservation: reservationID });
     if (paymentRows) {
         return paymentRows;
@@ -17,11 +16,9 @@ export async function getForReservation(reservationID: number) {
     }
 }
 
-export async function add(reservationID: number, amount: number, type: string = 'payment') {
-    if (!reservationID)
-        throw new ResourceError(`Reservation ID has not been specified.`, reservationID, 400);
-    if (!amount)
-        throw new ResourceError(`Amount has not been specified.`, reservationID, 400);
+export async function add (reservationID: number, amount: number, type: string = 'payment') {
+    if (!reservationID) { throw new ResourceError('Reservation ID has not been specified.', reservationID, 400); }
+    if (!amount) { throw new ResourceError('Amount has not been specified.', reservationID, 400); }
 
     const newObj = {} as PaymentDto;
     newObj.reservation = reservationID;
@@ -33,7 +30,7 @@ export async function add(reservationID: number, amount: number, type: string = 
     return paymentID;
 }
 
-export async function deletePaymentById(paymentID: number) {
+export async function deletePaymentById (paymentID: number) {
     if (paymentID) {
         await Db.query('DELETE FROM `payment` WHERE `id` = ?', [paymentID]);
         return true;

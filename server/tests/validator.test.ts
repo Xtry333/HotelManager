@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import * as Validator from '../js/validator';
+import * as Validator from '../src/common/validator';
 
 describe('Validator', () => {
     it('correctly validates isEmpty', () => {

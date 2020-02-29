@@ -3,22 +3,22 @@ import { User as UserDto } from '../dtos/User.dto';
 import { ResourceError } from '../dtos/Error';
 import * as Validator from '../common/validator';
 
-export async function getAll() {
+export async function getAll () {
     return await Db.querySelectAll(UserDto);
 }
 
-export async function getById(id: number): Promise<UserDto | undefined> {
+export async function getById (id: number): Promise<UserDto | undefined> {
     const rows = await Db.querySelectAll(UserDto, { id });
     if (rows.length < 1) {
         throw new ResourceError(`User ID ${id} not found`, rows);
     } else if (rows.length === 1) {
         return { ...rows[0] };
     } else if (rows.length > 1) {
-        throw new ResourceError(`Found more rows with one id.`, rows);
+        throw new ResourceError('Found more rows with one id.', rows);
     }
 }
 
-export async function create(user: UserDto) {
+export async function create (user: UserDto) {
     console.log(user);
     const errorFields: string[] = [];
     if (user) {
@@ -46,7 +46,7 @@ export async function create(user: UserDto) {
     }
 }
 
-export async function updateById(id: number, user: UserDto) {
+export async function updateById (id: number, user: UserDto) {
     if (id && user) {
         const newObj: any = {};
         newObj.firstname = user.firstname;
@@ -55,7 +55,7 @@ export async function updateById(id: number, user: UserDto) {
         newObj.email = user.email;
         newObj.additionalInfo = user.additionalInfo;
         if (user.password) newObj.password = user.password;
-        
+
         Db.queryUpdate(UserDto, newObj, { id: id });
     } else {
         const errorFields = [];
@@ -68,7 +68,7 @@ export async function updateById(id: number, user: UserDto) {
     }
 }
 
-export async function deleteById(id: number) {
+export async function deleteById (id: number) {
     if (id) {
         await Db.query('DELETE FROM `user` WHERE `id` = ?', [id]);
         return true;

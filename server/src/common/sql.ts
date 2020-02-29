@@ -1,5 +1,5 @@
 import mysql from 'mysql2';
-import * as config from './credentials'
+import * as config from './credentials';
 
 const pool = mysql.createPool({
     host: 'localhost',

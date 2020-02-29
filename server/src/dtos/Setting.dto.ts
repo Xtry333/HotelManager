@@ -7,7 +7,7 @@ export class Setting implements Dto {
     readonly value: string;
     cachedTime: number;
 
-    constructor(name?: string, value?: string | number | boolean) {
+    constructor (name?: string, value?: string | number | boolean) {
         if (name) {
             this.name = name;
             if (value) {

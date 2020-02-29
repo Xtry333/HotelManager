@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { getSetting, setSetting } from '../controllers/SettingController';
+import { getSetting, setSetting } from '../src/controllers/SettingController';
 import { now } from 'moment';
 
 describe.only('Setting Controller', () => {

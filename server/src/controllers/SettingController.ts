@@ -1,4 +1,4 @@
-import { query, querySelectAll } from "../js/query"
+import { query, querySelectAll } from "../common/query"
 import { Setting } from "../dtos/Setting.dto";
 import { now } from "moment";
 

@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import * as roomController from '../controllers/RoomController';
+import * as roomController from '../src/controllers/RoomController';
 
 describe('Room Controller', () => {
     it('can get a list of free rooms', async () => {

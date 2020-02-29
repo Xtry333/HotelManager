@@ -1,6 +1,6 @@
-import app from '../app';
+import app from '../src/app';
 import chai from 'chai';
-import * as Room from '../controllers/RoomController';
+import * as Room from '../src/controllers/RoomController';
 
 describe('Rooms', () => {
     let chainError: Error;

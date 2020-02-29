@@ -5,5 +5,7 @@
 /client-react/node_modules/
 /client/node_modules/
 /server/node_modules/
+/server/package-lock.json
+/client-react/package-lock.json
 hotelmanager.sql.bak
 .vscode

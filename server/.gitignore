@@ -1,4 +1,7 @@
 node_modules/*
 !node_modules/_rq
-/js/sql.js
+/common/sql.js
 /.vs
+
+# Evironment config file
+.env

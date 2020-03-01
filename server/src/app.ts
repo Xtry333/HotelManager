@@ -22,7 +22,7 @@ import indexRouter from './routes/api/index';
 
 const app: express.Application = express();
 
-dotenv.config();
+dotenv.config(); 
 
 app.use(helmet());
 

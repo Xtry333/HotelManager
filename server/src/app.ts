@@ -1,5 +1,6 @@
 import createError, { HttpError } from 'http-errors';
 import express from 'express';
+import dotenv from 'dotenv';
 
 import path from 'path';
 import cookieParser from 'cookie-parser';
@@ -20,6 +21,8 @@ import indexRouter from './routes/api/index';
 // }
 
 const app: express.Application = express();
+
+dotenv.config();
 
 app.use(helmet());
 

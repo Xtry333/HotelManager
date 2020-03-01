@@ -1,16 +1,16 @@
 import express from 'express';
 
-import tokenRouter from './api/auth/token';
-import loginRouter from './api/auth/login';
-import userRouter from './api/auth/userRouter';
-import roomsRouter from './api/roomRouter';
-import reservationRouter from './api/reservationRouter';
-import PaymentRouter from './api/PaymentRouter';
-import futureRouter from './api/future';
-import confirmRouter from './api/confirmReservation';
-import guestsRouter from './api/guests';
+import tokenRouter from 'routes/api/auth/token';
+import loginRouter from 'routes/api/auth/login';
+import userRouter from 'routes/api/auth/userRouter';
+import roomsRouter from 'routes/api/roomRouter';
+import reservationRouter from 'routes/api/reservationRouter';
+import PaymentRouter from 'routes/api/PaymentRouter';
+// import futureRouter from './api/future';
+// import confirmRouter from './api/confirmReservation';
+import guestsRouter from 'routes/api/guests';
 
-import { isAuthorized } from '../controllers/AuthController';
+import { isAuthorized } from 'controllers/AuthController';
 
 const api: express.Router = express.Router();
 
@@ -18,7 +18,7 @@ const api: express.Router = express.Router();
 //     res.render('api');
 // });
 
-api.use('/confirm', confirmRouter);
+// api.use('/confirm', confirmRouter);
 api.use('/login', loginRouter);
 api.use('/token', tokenRouter);
 
@@ -29,6 +29,6 @@ api.use('/room', roomsRouter);
 api.use('/guest', guestsRouter);
 api.use('/reservation', reservationRouter);
 api.use('/payment', PaymentRouter);
-api.use('/future', futureRouter);
+// api.use('/future', futureRouter);
 
 export default api;

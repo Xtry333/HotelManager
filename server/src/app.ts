@@ -8,29 +8,22 @@ import logger from 'morgan';
 import cors from 'cors';
 import helmet from 'helmet';
 
-import apiRoute from './routes/api';
-import indexRouter from './routes/api/index';
-
-// // Include for absolute path
-// global.base_dir = __dirname;
-// global.abs_path = function (path) {
-//     return base_dir + path;
-// }
-// global.include = function (file) {
-//     return require(abs_path('/' + file));
-// }
-
-const app: express.Application = express();
+import apiRoute from 'routes/api';
+import indexRouter from 'routes/api/index';
 
 dotenv.config();
 
-app.use(helmet());
+const app: express.Application = express();
 
+
+app.use(helmet());
 app.use(cors());
 app.use(logger('dev'));
+
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api', apiRoute);

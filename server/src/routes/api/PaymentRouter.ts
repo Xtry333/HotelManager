@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import * as PaymentController from '../../controllers/PaymentController';
+import * as PaymentController from 'controllers/PaymentController';
 import { ResourceError } from '../../dtos/Error';
 
 const router = Router();

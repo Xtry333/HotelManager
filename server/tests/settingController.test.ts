@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import { expect } from 'chai';
 import { getSetting, setSetting } from '../src/controllers/SettingController';
 import { now } from 'moment';

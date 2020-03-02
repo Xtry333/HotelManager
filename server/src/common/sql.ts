@@ -1,5 +1,10 @@
 import mysql from 'mysql2';
-import * as config from './credentials';
+
+const config = {
+    username: process.env.USERNAME,
+    password: process.env.PASSWORD,
+    database: process.env.DATABASE,
+}
 
 const pool = mysql.createPool({
     host: 'localhost',

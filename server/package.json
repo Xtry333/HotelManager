@@ -45,6 +45,7 @@
         "@types/uid-generator": "^2.0.2",
         "@typescript-eslint/eslint-plugin": "^2.21.0",
         "@typescript-eslint/parser": "^2.21.0",
+        "@zerollup/ts-transform-paths": "^1.7.12",
         "chai": "^4.2.0",
         "chai-http": "^4.3.0",
         "eslint": "^6.8.0",
@@ -57,6 +58,7 @@
         "nodemon": "^2.0.2",
         "ts-node-dev": "^1.0.0-pre.43",
         "tsconfig-paths": "^3.9.0",
+        "ttypescript": "^1.5.10",
         "typescript": "^3.8.2"
     }
 }

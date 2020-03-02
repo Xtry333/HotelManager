@@ -22,19 +22,19 @@ app.use(logger('dev'));
 
 app.use(cookieParser());
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api', apiRoute);
 app.use('/', indexRouter);
 
-// catch 404 and forward to error handler
+// Catch 404 and forward to error handler
 app.use((_req: express.Request, _res: express.Response, next: express.NextFunction) => {
     next(createError(404));
 });
 
-// error handler
+// Error handler
 app.use((err: HttpError, req: express.Request, res: express.Response, _next: express.NextFunction) => {
     // set locals, only providing error in development
     res.locals.message = err.message;

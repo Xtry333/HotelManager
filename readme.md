@@ -1,5 +1,5 @@
 # System wewnętrznego zarządzania obiektem hotelowym
-Szczegółowo opisany został w pracy inynierskiem tego samego autora pod tytułem "Projekt i implementacja systemu wewnętrznego zarządzania obiektem hotelowym".
+Szczegółowo opisany został w pracy inżynierskiej tego samego autora pod tytułem "Projekt i implementacja systemu wewnętrznego zarządzania obiektem hotelowym".
 
 # Uruchamianie
 Uruchomienie systemu odbywa się poprzez platformę _node.js_ w wersji _13.8.0_

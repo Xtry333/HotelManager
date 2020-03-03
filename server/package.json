@@ -40,7 +40,7 @@
         "@types/mocha": "^7.0.1",
         "@types/morgan": "^1.7.37",
         "@types/mysql2": "github:types/mysql2",
-        "@types/node": "^13.7.6",
+        "@types/node": "~13.7.7",
         "@types/randomstring": "^1.1.6",
         "@types/uid-generator": "^2.0.2",
         "@typescript-eslint/eslint-plugin": "^2.21.0",
@@ -59,6 +59,6 @@
         "ts-node-dev": "^1.0.0-pre.43",
         "tsconfig-paths": "^3.9.0",
         "ttypescript": "^1.5.10",
-        "typescript": "^3.8.2"
+        "typescript": "~3.8.3"
     }
 }

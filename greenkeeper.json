@@ -1,0 +1,13 @@
+{
+  "groups": {
+    "default": {
+      "packages": [
+        "client-ng/package.json",
+        "client-react/package.json",
+        "client-vue/package.json",
+        "client/package.json",
+        "server/package.json"
+      ]
+    }
+  }
+}

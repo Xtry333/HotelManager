@@ -1,4 +1,7 @@
 # System wewnętrznego zarządzania obiektem hotelowym
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/Xtry333/HotelManager.svg)](https://greenkeeper.io/)
+
 Szczegółowo opisany został w pracy inżynierskiej tego samego autora pod tytułem "Projekt i implementacja systemu wewnętrznego zarządzania obiektem hotelowym".
 
 # Uruchamianie

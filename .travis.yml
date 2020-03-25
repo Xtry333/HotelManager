@@ -6,6 +6,4 @@ cache:
         - "node_modules"
         - "server/node_modules"
         - "client-react/node_modules"
-before_install:
-    cd server
 script: bash run-tests.sh

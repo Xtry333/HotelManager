@@ -6,4 +6,4 @@ cache:
         - "node_modules"
 before_install:
     cd server
-script: ./run-tests.sh
+script: bash run-tests.sh

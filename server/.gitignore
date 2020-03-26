@@ -3,7 +3,5 @@ node_modules/*
 /common/sql.js
 /.vs
 
-package-lock.json
-
 # Evironment config file
 .env

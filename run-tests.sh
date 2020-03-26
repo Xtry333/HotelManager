@@ -9,11 +9,11 @@ then
     exit $server_tests
 fi
 
-# Run tests on client
-(cd client-react && npm install && npm run test)
-client_tests=$?
+# # Run tests on client
+# (cd client-react && npm install && npm run test)
+# client_tests=$?
 
-if [ $client_tests -ne 0 ]
-then
-    exit $client_tests
-fi
+# if [ $client_tests -ne 0 ]
+# then
+#     exit $client_tests
+# fi

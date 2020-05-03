@@ -7,10 +7,13 @@ import { Reservation } from './ReservationDBO';
 export class Payment extends BaseModel<Payment> {
     @Column(DataType.ENUM('deposit', 'payment'))
     public type: string
+
+    @Column
+    public amount: number
     
     @Column
     @ForeignKey(() => Reservation)
     public reservationId: number
     @BelongsTo(() => Reservation)
-    public reservation: Room;
+    public reservation: Reservation;
 }

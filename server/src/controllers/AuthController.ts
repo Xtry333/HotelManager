@@ -11,6 +11,7 @@ export let loginExpiration: number;
 // setSetting('login-expiration', 60 * 60 * 24 * 1);
 
 export const authUser = async (login: { username: string, passwordHash: string, userAgent: string }) => {
+    console.log(login)
     const result = await Db.querySelectAll(User, { username: login.username, password: login.passwordHash });
     // const response = await query('SELECT `id`, `firstname`, `lastname`, `username` FROM `user` WHERE `username` = ? AND `password` = ?',
     //    [login.username, login.password]);

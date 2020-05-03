@@ -1,0 +1,1 @@
+export const apiHostAddres = 'http://localhost:3002/api/';

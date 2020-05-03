@@ -1,0 +1,118 @@
+@slideCornerSize          : 8px;
+@slideHeight              : 15px;
+@slideColor               : rgb(220, 220, 220);
+@slideColorAlt            : rgb(190, 190, 190);
+// @lightButtonFillColor  : rgb(230, 230, 230);
+// @lightButtonBorderColor: rgb(210, 210, 210);
+
+.timesheet-table {
+    table-layout  : fixed;
+    width         : 100%;
+    border-spacing: 0px 0px;
+    text-align    : center;
+    box-sizing    : border-box;
+    margin-bottom: 5px;
+
+    * {
+        box-sizing: border-box;
+    }
+
+    td {
+        border-right: 1px solid lightgray;
+        padding     : 0;
+    }
+
+    td:last-child {
+        border: none;
+    }
+}
+
+.days-of-week-rail {
+    font-size: 0.85em;
+    border   : 1px solid black;
+}
+
+.day-numbers-rail {
+    font-size: 0.85em;
+    border   : 1px solid black;
+
+    .today {
+        background   : @slideColor;
+        border-radius: 3px;
+        padding      : 2px 4px;
+    }
+}
+
+.slides-rail {
+    td {
+        height: @slideHeight;
+    }
+
+    div {
+        position: relative;
+        height  : @slideHeight;
+    }
+}
+
+.slide {
+    position         : absolute;
+    background       : @slideColor;
+    //opacity        : 70%;
+    width            : 110%;
+    left             : 35%;
+    height           : inherit;
+    top              : 0px;
+    z-index          : 1;
+    //border-top     : 1px solid lightgray;
+    //border-bottom  : 1px solid gray;
+    clip-path        : polygon(0 0, 0 100%, 100% 100%, 100% 0);
+    cursor           : pointer;
+
+    &.alt {
+        background: @slideColorAlt;
+    }
+
+    &.active {
+        background: darken(lightgreen, 25%);
+    }
+
+    &.error {
+        background: red;
+    }
+
+    &.hover {
+        background: darken(@slideColorAlt, 15%);
+
+        &.alt {
+            background: darken(@slideColorAlt, 15%);
+        }
+
+        &.active {
+            background: darken(lightgreen, 35%);
+        }
+
+        &.error {
+            background: darken(red, 15%);
+        }
+    }
+
+    &.right {
+        //clip-path: polygon(0 0, 0 100%, 100% 100%, 75% 100%, 100% 50%, 100% 0);
+        clip-path  : polygon(0 0, 75% 0, 100% 100%, 0 100%);
+    }
+
+    &.left {
+        //clip-path: polygon(25% 50%, 0 100%, 100% 100%, 100% 0, 25% 0);
+        //clip-path: polygon(0 50%, 0 100%, 100% 100%, 100% 0, 25% 0);
+        clip-path  : polygon(0 0, 100% 0, 100% 100%, 25% 100%);
+    }
+
+    &.left.right {
+        //clip-path: polygon(0 50%, 0 100%, 75% 100%, 100% 50%, 100% 0, 25% 0);
+        clip-path  : polygon(0 0, 75% 0, 100% 100%, 25% 100%);
+    }
+}
+
+.slide-text {
+    z-index: 2;
+}

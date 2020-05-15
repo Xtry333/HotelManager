@@ -2,6 +2,14 @@ import * as Db from '../common/query';
 import { User as UserDto } from '../dtos/User.dto';
 import { ResourceError } from '../dtos/Error';
 import * as Validator from '../common/validator';
+import { GenericController } from './GenericController';
+import { User } from 'models/UserDBO';
+
+class UserController extends GenericController<User> {
+
+}
+
+export default new UserController(User);
 
 export async function getAll () {
     return await Db.querySelectAll(UserDto);
